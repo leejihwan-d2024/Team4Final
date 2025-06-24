@@ -1,0 +1,107 @@
+.layout-header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 11px;
+  width: 10px;
+  z-index: 3;
+
+  color: #cbe074;
+  font-size: 18px;
+  font-weight: 100;
+  font-family: "Arial Black", "Impact", sans-serif;
+  text-transform: uppercase;
+  padding: 10px;
+  cursor: pointer;
+}
+.layout-content {
+  padding-top: 20px; /* 헤더 높이만큼 여백 줘야 콘텐츠 안 가려짐 */
+}
+
+.layout-header {
+  position: fixed;
+  font-family: "Arial Black", "Impact", sans-serif;
+  font-size: 15px;
+  line-height: 1.2;
+  font-weight: 900;
+  text-transform: uppercase;
+  color: #cbe074;
+  cursor: pointer;
+
+  letter-spacing: 1px;
+  text-shadow: -2px -2px 0 #000, 2px -2px 0 #000, -2px 1px 0 #000,
+    1px 1px 0 #000, 0px 0px 8px #bad546; /* glow 효과 */
+}
+
+.navbar {
+  background-color: white;
+  border-bottom: 1px solid #ccc;
+}
+
+.menu {
+  display: flex;
+  padding: 0;
+  margin: 0;
+  list-style: none;
+  justify-content: space-around;
+  position: relative;
+}
+
+.menu-item {
+  white-space: nowrap;
+  position: relative;
+  padding: 1rem;
+  cursor: pointer;
+}
+
+.submenu {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  background: white;
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  border: 1px solid #ccc;
+  min-width: 160px;
+  opacity: 0;
+  transform: translateY(-10px);
+  transition: all 0.2s ease;
+  pointer-events: none;
+  z-index: 999;
+}
+
+.menu-item:hover .submenu {
+  opacity: 1;
+  transform: translateY(0);
+  pointer-events: auto;
+}
+
+.submenu li {
+  padding: 0.75rem 1rem;
+  white-space: nowrap;
+}
+
+.submenu li:hover {
+  background-color: #f0f0f0;
+}
+.search-area {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+  padding: 16px;
+  background-color: #f9f9f9;
+  z-index: 1;
+  position: relative;
+}
+
+.search-input {
+  width: 300px;
+  padding: 10px;
+  font-size: 16px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  cursor: text;
+  z-index: 2;
+}
