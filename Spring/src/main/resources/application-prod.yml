@@ -1,0 +1,128 @@
+server:
+  port: 3000
+  compression:
+    enabled: true
+  tomcat:
+    accesslog:
+      enabled: true
+      directory: C:\\WAS_DATA\\tomcat_log
+      prefix: access_log
+      suffix: .txt
+      file-date-format: yyyy-MM-dd
+
+security:
+  basic:
+    enable: false
+  ignored: /**
+
+spring:
+  mvc:
+    pathmatch:
+      matching-strategy: ant_path_matcher
+  output:
+    ansi:
+      enabled: always
+  datasource:
+    driver-class-name: net.sf.log4jdbc.sql.jdbcapi.DriverSpy
+    url: ENC(-4msIeRxFkf4pJ979SHFTDuduvKZuiDLuLWE7EAwzBBYQdyJ4dxSUCVSs3oB1zECJYqeuZs+OJL9bvKGOybx99g==)
+    username: ENC(sYUCUN7n4FVH2wzoao9Qp0ifP0ZgfILg)
+    password: ENC(dsaWtFmFD3fbbxzcfgaLqA==)
+    type: com.zaxxer.hikari.HikariDataSource
+  servlet:
+    multipart:
+      enabled: true
+      max-file-size: 10MB
+      max-request-size: 10MB
+      location: C:\\WAS_DATA\\multipart\\temp
+      file-size-threshold: 1MB
+  #  sql:
+  #    init:
+  #      mode: always
+  jpa:
+    .hibernate:
+      ddl-auto: none
+    .generate-ddl: false
+    .show-sql: true
+    .database-platform: org.hibernate.dialect.Oracle12cDialect
+    .properties.hibernate.format_sql: true
+  jackson:
+    serialization:
+      WRITE_DATES_AS_TIMESTAMPS: false
+    time-zone: Asia/Seoul
+    date-format: yyyy-MM-dd
+    jpa-date-time-format: yyyy-MM-dd HH:mm:ss
+mybatis:
+  mapper-locations: classpath:mappers/*.xml
+  type-aliases-package: kr.co.kh.model.vo
+  configuration:
+    map-underscore-to-camel-case: true
+  # config-location: classpath:mybatis-config.xml
+
+  #logging:
+  #  level:
+  #    root: info
+  #    org:
+  #      hibernate:
+  #        SQL: DEBUG
+  file:
+    path: C:\\WAS_DATA\\mybatis\\mybatis-log.txt
+
+
+
+#JWT properties
+app:
+  jwt:
+    header: Authorization
+    header.prefix: Bearer
+    secret: abcdefghijklmnopqrstuvwxyz
+    expiration: 5184000000
+  token:
+    email:
+      verification:
+        duration: 5184000000
+    password:
+      reset:
+        duration: 5184000000
+    refresh:
+      duration: 5184000000 # 1달
+  velocity:
+    templates:
+      location: C:\\WAS_DATA\\velocity\\templates
+  cache: #Logged out token cache
+    logoutToken:
+      maxSize: 1000
+jasypt:
+  encryptor:
+    bean: jasyptStringEncryptor
+
+upload:
+  path: C:\\WAS_DATA\\upload
+
+logging:
+  file:
+    name: C:\\WAS_DATA\\application_log\\log.txt
+    append: true
+  level:
+    org.springframework.web: OFF
+    java.sql: INFO
+    jdbc: OFF
+    jdbc.sqlonly: INFO
+    jdbc.sqltiming: OFF
+    jdbc.audit: OFF
+    jdbc.resultset: OFF
+    jdbc.resultsettable: INFO
+    jdbc.connection: OFF
+    com.zaxxer.hikari: INFO
+    com.zaxxer.hikari.HikariConfig: INFO
+    root: INFO
+    catalina: INFO
+  logback:
+    rollingpolicy:
+      file-name-pattern: C:\\WAS_DATA\\application_log\\old\\log-%d{yyyy-MM-dd}.%i.txt
+      clean-history-on-start: true
+      total-size-cap: 100MB
+      max-history: 30
+      max-file-size: 100MB
+  pattern:
+    console: "%clr(%d{HH:mm:ss.SSS}){faint} %clr(${LOG_LEVEL_PATTERN:-%5p}) %clr(${PID:- }){magenta} %clr(---){faint} %clr([%15.15t]){faint} %clr(%-40.40logger{39}){cyan} %clr([행번호]: %line){red} %clr(:){faint} %m%n${LOG_EXCEPTION_CONVERSION_WORD:-%wEx}"
+    file: "%d{yyyy-MM-dd HH:mm:ss.SSS} ${LOG_LEVEL_PATTERN:-%5p} ${PID:- } --- [%15.15t] %-40.40logger{39} : [행번호] : %line  %m%n${LOG_EXCEPTION_CONVERSION_WORD:-%wEx}"

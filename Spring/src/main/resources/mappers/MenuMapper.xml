@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="kr.co.kh.mapper.MenuMapper">
+
+    <!-- depth 1 메뉴 목록 -->
+    <select id="getListByParentIdIsNull" parameterType="MenuVO" resultType="MenuVO">
+        SELECT
+        id, depth, role_id, menu_icon, menu_link, menu_name, parent_id, is_active
+        FROM MENU
+        WHERE is_active = 1 AND parent_id IS NULL AND depth = 1
+        <if test="roleUser == true">
+            AND role_user = 1
+        </if>
+        <if test="roleAdmin == true">
+            AND role_admin = 1
+        </if>
+        <if test="roleSystem == true">
+            AND role_system = 1
+        </if>
+        ORDER BY seq ASC
+    </select>
+
+    <!-- depth n 메뉴 목록 -->
+    <select id="getListByParentIdAndDepth" parameterType="MenuVO" resultType="MenuVO">
+        SELECT
+        id, depth, role_id, menu_icon, menu_link, menu_name, parent_id, is_active
+        FROM MENU
+        WHERE is_active = 1 AND parent_id = #{parentId} AND depth = #{depth}
+        <if test="roleUser == true">
+            AND role_user = 1
+        </if>
+        <if test="roleAdmin == true">
+            AND role_admin = 1
+        </if>
+        <if test="roleSystem == true">
+            AND role_system = 1
+        </if>
+        ORDER BY seq ASC
+    </select>
+
+</mapper>

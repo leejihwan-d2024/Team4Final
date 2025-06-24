@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="kr.co.kh.mapper.UploadFileMapper">
+
+    <!-- 파일 조회 -->
+    <select id="selectFileById" parameterType="Long" resultType="UploadFile">
+        SELECT
+            id,
+            file_name,
+            file_path,
+            file_dir,
+            content_type,
+            file_size,
+            save_file_name
+        FROM upload_file
+        WHERE id = #{id}
+    </select>
+
+    <!-- 파일 조회 -->
+    <select id="selectFileByIdAndFileTarget" parameterType="UploadFile" resultType="UploadFile">
+        SELECT
+            id,
+            file_name,
+            file_path,
+            file_dir,
+            content_type,
+            file_size,
+            save_file_name
+        FROM upload_file
+        WHERE id = #{id}
+            AND file_target = #{fileTarget}
+    </select>
+
+    <!-- save_file_name으로 파일 조회 -->
+    <select id="selectFileAsSaveFileName" parameterType="String" resultType="UploadFile">
+        SELECT
+            id,
+            file_name,
+            file_path,
+            file_dir,
+            content_type,
+            file_size,
+            save_file_name
+        FROM upload_file
+        WHERE save_file_name = #{saveFileName}
+    </select>
+
+     <!-- board_id로 파일 조회 -->
+    <select id="selectFileByBoardId" parameterType="Long" resultType="UploadFile">
+        SELECT
+            u.id,
+            u.file_target,
+            u.file_name,
+            u.file_path,
+            u.file_dir,
+            u.content_type,
+            u.file_size,
+            u.save_file_name,
+            u.created_at
+        FROM file_map f
+            LEFT JOIN upload_file u ON f.file_id = u.id
+        WHERE f.board_id = #{id}
+            ORDER BY u.id ASC
+    </select>
+
+    <!-- 파일 저장 -->
+    <insert id="insertFile" parameterType="UploadFile" useGeneratedKeys="true" keyProperty="id" keyColumn="ID">
+        INSERT INTO upload_file (
+            file_target,
+            file_name,
+            file_path,
+            file_dir,
+            content_type,
+            save_file_name,
+            file_size,
+            created_at
+        ) VALUES (
+             #{fileTarget},
+             #{fileName},
+             #{filePath},
+             #{fileDir},
+             #{contentType},
+             #{saveFileName},
+             #{fileSize},
+             SYSDATE
+         )
+    </insert>
+
+    <!-- 첨부파일 삭제 -->
+    <delete id="deleteByFileByIdAndFileTarget" parameterType="UploadFile" statementType="CALLABLE">
+        BEGIN
+            DELETE FROM file_map WHERE file_id = #{id};
+            DELETE FROM upload_file WHERE id = #{id};
+        END;
+    </delete>
+
+</mapper>
