@@ -1,0 +1,62 @@
+.container {
+  padding: 20px;
+  font-family: sans-serif;
+  position: relative;
+}
+
+.banner {
+  height: 150px;
+  background-color: #f0f0f0;
+  font-weight: bold;
+  font-size: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 20px;
+}
+
+.crewList {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.crewItem {
+  border: 1px solid #ddd;
+  padding: 12px;
+  border-radius: 6px;
+  cursor: pointer;
+  background-color: #fff;
+}
+
+.crewItem:hover {
+  background-color: #f5f5f5;
+}
+
+.crewTitle {
+  font-size: 16px;
+  font-weight: bold;
+}
+
+.crewInfo {
+  font-size: 14px;
+  color: #777;
+  margin-top: 4px;
+}
+
+.createButton {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  padding: 12px 20px;
+  background-color: #4caf50;
+  color: white;
+  border: none;
+  border-radius: 999px;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+.createButton:hover {
+  background-color: #43a047;
+}
