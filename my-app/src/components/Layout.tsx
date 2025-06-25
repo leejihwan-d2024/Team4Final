@@ -11,7 +11,7 @@ function Layout({ children }: LayoutProps) {
 
   return (
     <div>
-      <div className="layout-header" onClick={() => navigate("/")}>
+      <div className="layout-header" onClick={() => navigate("/posts")}>
         RUNNING <br /> CREW
       </div>
       <div className="search-area">
@@ -41,7 +41,7 @@ function Layout({ children }: LayoutProps) {
               <li>대회정보확인</li>
             </ul>
           </li>
-          <li className="menu-item">
+          <li className="menu-item" onClick={() => navigate("/posts")}>
             게시판
             <ul className="submenu">
               <li></li>

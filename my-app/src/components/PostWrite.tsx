@@ -27,8 +27,11 @@ function PostWrite({ onSubmit }: PostWriteInt) {
     onSubmit({
       title,
       content,
-      category,
-      author: "",
+      author: "user001", // login안만들어서 걍임의로넣음
+      postId: 0,
+      createdAt: "",
+      viewCount: 0,
+      likeCount: 0,
     });
 
     // 초기화
