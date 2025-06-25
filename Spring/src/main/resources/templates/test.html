@@ -1709,47 +1709,63 @@
 <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAP7arQ_vNpQbZZJWuC_fLCGFkKYeSIgFw&callback=initMap&libraries=places,geometry&solution_channel=GMP_QB_commutes_v3_c" async defer></script>
 <h1>현재 위치 전송</h1>
 <button onclick="sendLocation()">좌표 보내기</button>
+<p>현재 위치: <span id="location">불러오는 중...</span></p>
+<p>현재 날씨: <span id="weather">불러오는 중...</span></p>
 </body>
 <script>
     function sendLocation() {
-      if (!navigator.geolocation) {
-        alert("이 브라우저에서는 위치 정보를 지원하지 않습니다.");
-        return;
-      }
+     if (!navigator.geolocation) {
+       alert("이 브라우저에서는 위치 정보를 지원하지 않습니다.");
+       return;
+     }
 
-      navigator.geolocation.getCurrentPosition(function (position) {
-        const lat = position.coords.latitude;
-        const lng = position.coords.longitude;
-        console.log("좌표:"+lat+""+lng);
-        // Kakao API 호출
-        fetch(`https://dapi.kakao.com/v2/local/geo/coord2regioncode.json?x=${lng}&y=${lat}`, {
-          method: "GET",
-          headers: {
-            Authorization: "KakaoAK 940ad44b82d7651f1eafdd0d4758cc07" // 여기에 실제 키 입력
-          }
-        })
-        .then(response => response.json())
-        .then(data => {
-          const location = data.documents[0].region_3depth_name;
+     navigator.geolocation.getCurrentPosition(function (position) {
+       const lat = position.coords.latitude;
+       const lng = position.coords.longitude;
+       console.log("좌표:", lat, lng);
 
-          // 백엔드에 3개 값 전송
-          return fetch("https://200.200.200.62:8080/geo/receive-location", {
-            method: "POST",
-            headers: { "Content-Type": "application/x-www-form-urlencoded" },
-            body: `lat=${lat}&lng=${lng}&location=${encodeURIComponent(location)}`
-          });
-        })
-        .then(response => response.text())
-        .then(msg => alert(msg))
-        .catch(error => {
-          console.error("오류 발생:", error);
-          alert("위치 전송 중 오류가 발생했습니다.");
-        });
+       // Kakao API 호출 (주소 변환)
+       fetch(`https://dapi.kakao.com/v2/local/geo/coord2regioncode.json?x=${lng}&y=${lat}`, {
+         method: "GET",
+         headers: {
+           Authorization: "KakaoAK 940ad44b82d7651f1eafdd0d4758cc07" // ← REST API 키
+         }
+       })
+       .then(response => response.json())
+       .then(data => {
+         if (!data.documents || data.documents.length === 0) {
+           document.getElementById("location").textContent = "주소 정보 없음";
+           return;
+         }
 
-      }, function () {
-        alert("위치 정보를 가져오는 데 실패했습니다.");
-      });
-    }
+         const location = `${data.documents[0].region_1depth_name} ${data.documents[0].region_2depth_name} ${data.documents[0].region_3depth_name}`;
+         document.getElementById("location").textContent = location;
+
+         // ① 위치 정보를 백엔드로 전송
+         fetch("https://200.200.200.62:8080/geo/receive-location", {
+           method: "POST",
+           headers: { "Content-Type": "application/x-www-form-urlencoded" },
+           body: `lat=${lat}&lng=${lng}&location=${encodeURIComponent(location)}`
+         }).then(res => res.text()).then(msg => console.log("백엔드 응답:", msg));
+
+         // ② 날씨 정보 가져오기 (OpenWeatherMap API)
+         const weatherUrl = `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lng}&appid=f6f397103ad6f93b8d6d2d37fc6d5f67&units=metric&lang=kr`;
+         return fetch(weatherUrl);
+       })
+       .then(response => response.json())
+       .then(weather => {
+         const temp = weather.main?.temp;
+         const desc = weather.weather?.[0]?.description;
+         document.getElementById("weather").textContent = `${temp}도, ${desc}`;
+       })
+       .catch(error => {
+         console.error("오류 발생:", error);
+         alert("위치 또는 날씨 정보를 불러오는 데 실패했습니다.");
+       });
+     }, function () {
+       alert("위치 정보를 가져오는 데 실패했습니다.");
+     });
+   }
 </script>
 
 </html>
