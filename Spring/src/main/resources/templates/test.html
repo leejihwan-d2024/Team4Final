@@ -1730,7 +1730,7 @@
         })
         .then(response => response.json())
         .then(data => {
-          const location = data.documents[0].region_3depth_name;
+          const location = data.documents[0].region_1depth_name+data.documents[0].region_2depth_name+data.documents[0].region_3depth_name;
 
           // 백엔드에 3개 값 전송
           return fetch("https://200.200.200.62:8080/geo/receive-location", {
