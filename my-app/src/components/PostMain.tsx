@@ -1,19 +1,49 @@
-import { useNavigate } from "react-router-dom";
-import "../styles/PostMain.css";
+import { useEffect, useState } from "react";
 import { Post } from "../types/post";
+import { fetchPosts } from "../api/api";
 import PostDetail from "./PostDetail";
-import { useState } from "react";
 import Layout from "./Layout";
+import { useNavigate } from "react-router-dom";
 
 interface PostMainProps {
   posts: Post[];
+  onDelete: (id: number) => Promise<void>;
+  onEdit: (post: Post) => Promise<void>;
+  onSelect: (id: number) => Promise<void>;
 }
 
-function PostMain({ posts }: PostMainProps) {
-  const navigate = useNavigate();
+function PostMain({ posts, onDelete, onEdit, onSelect }: PostMainProps) {
+  const [post, setPosts] = useState<Post[]>([]);
   const [selectedPost, setSelectedPost] = useState<Post | null>(null);
+  const navigate = useNavigate();
 
-  const categories = ["전체", "러닝", "스포츠", "잡담", "이슈"];
+  // 게시글 전체 불러오기
+  useEffect(() => {
+    fetchPosts().then((data) => setPosts(data));
+  }, []);
+
+  // 삭제 기능
+  const handleDelete = async (id: number) => {
+    const confirmed = window.confirm("정말 삭제하시겠습니까?");
+    if (!confirmed) return;
+
+    const res = await fetch(`https://localhost:8080/api/posts/${id}`, {
+      method: "DELETE",
+    });
+
+    if (res.ok) {
+      alert("삭제 완료");
+      setSelectedPost(null);
+      fetchPosts().then((data) => setPosts(data)); // 새로고침
+    } else {
+      alert("삭제 실패");
+    }
+  };
+
+  // 수정 버튼 → /write로 이동 (post 데이터 넘기기 위해 state 전달)
+  const handleEdit = (post: Post) => {
+    navigate("/write", { state: post });
+  };
 
   return (
     <div className="main-container">
@@ -21,47 +51,22 @@ function PostMain({ posts }: PostMainProps) {
         <div className="center-group">러닝 크루 게시판</div>
       </Layout>
 
-      <div className="category-buttons">
-        {categories.map((cat) => (
-          <button
-            key={cat}
-            className="category-button"
-            onClick={() => navigate(`/posts/${cat}`)}
-          >
-            {cat}
-          </button>
-        ))}
-      </div>
-
-      {/* 게시글 리스트 (샘플) */}
       <h2>전체 게시글</h2>
-      <div className="post-list">
-        <div className="post-item">
-          <ul className="postUl">
-            {posts.map((post) => (
-              <li
-                key={post.id}
-                style={{ cursor: "pointer" }}
-                onClick={() => setSelectedPost(post)}
-              >
-                <strong>{post.title}</strong> - {post.author} ({post.category})
-              </li>
-            ))}
-          </ul>
-        </div>
-      </div>
-      <div className="post-detail-box">
-        <PostDetail post={selectedPost} />
-      </div>
-      {/* 페이지네이션 + 작성 버튼 */}
-      <div className="bottom-bar">
-        <div className="pagination">
-          &lt;&lt; 1 . 2 . 3 . 4 . 5 . 6 &gt;&gt;
-        </div>
-        <button className="write-button" onClick={() => navigate("/write")}>
-          글쓰기
-        </button>
-      </div>
+      <ul className="postUl">
+        {posts.map((post) => (
+          <li key={post.postId}>
+            <span onClick={() => setSelectedPost(post)}>
+              {post.title} - {post.author}
+            </span>
+            <button onClick={() => handleEdit(post)}>수정</button>
+            <button onClick={() => handleDelete(post.postId)}>삭제</button>
+          </li>
+        ))}
+      </ul>
+
+      <PostDetail post={selectedPost} />
+
+      <button onClick={() => navigate("/write")}>글쓰기</button>
     </div>
   );
 }

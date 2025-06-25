@@ -1,4 +1,4 @@
-package kr.co.kh.service.impl;
+package kr.co.kh.impl;
 
 import kr.co.kh.mapper.FileMapMapper;
 import kr.co.kh.model.vo.FileMap;
