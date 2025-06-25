@@ -1720,19 +1720,38 @@
       navigator.geolocation.getCurrentPosition(function (position) {
         const lat = position.coords.latitude;
         const lng = position.coords.longitude;
+        console.log("좌표:"+lat+""+lng);
+        // Kakao API 호출
+        fetch(`https://dapi.kakao.com/v2/local/geo/coord2regioncode.json?x=${lng}&y=${lat}`, {
+          method: "GET",
+          headers: {
+            Authorization: "KakaoAK 940ad44b82d7651f1eafdd0d4758cc07" // 여기에 실제 키 입력
+          }
+        })
+        .then(response => response.json())
+        .then(data => {
+          const location = data.documents[0].region_3depth_name;
 
-        fetch("https://200.200.200.62:8080/geo", {
-          method: "POST",
-          headers: { "Content-Type": "application/x-www-form-urlencoded" },
-          body: `lat=${lat}&lng=${lng}`
+          // 백엔드에 3개 값 전송
+          return fetch("https://200.200.200.62:8080/geo/receive-location", {
+            method: "POST",
+            headers: { "Content-Type": "application/x-www-form-urlencoded" },
+            body: `lat=${lat}&lng=${lng}&location=${encodeURIComponent(location)}`
+          });
         })
         .then(response => response.text())
-        .then(msg => alert(msg));
+        .then(msg => alert(msg))
+        .catch(error => {
+          console.error("오류 발생:", error);
+          alert("위치 전송 중 오류가 발생했습니다.");
+        });
+
       }, function () {
         alert("위치 정보를 가져오는 데 실패했습니다.");
       });
     }
 </script>
+
 </html>
 
 
