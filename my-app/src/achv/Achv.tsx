@@ -1,6 +1,6 @@
-import React, { useState } from "react";
-import "./achv.css";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import "./achv.css";
 
 interface Achievement {
   id: number;
@@ -13,34 +13,26 @@ interface Achievement {
 function Achv() {
   const navigate = useNavigate();
 
-  const [achievements, setAchievements] = useState<Achievement[]>([
-    {
-      id: 1,
-      title: "🚶 걷기 10,000보",
-      progress: 100,
-      claimed: false,
-      description:
-        "하루에 10,000보 이상 걸으면 달성됩니다. 꾸준한 걷기는 건강에 좋아요!",
-    },
-    {
-      id: 2,
-      title: "🏃 러닝 30일 연속",
-      progress: 45,
-      claimed: false,
-      description: "30일 동안 하루도 빠짐없이 러닝하면 달성돼요. 도전해보세요!",
-    },
-    {
-      id: 3,
-      title: "🌍 누적 거리 500km",
-      progress: 90,
-      claimed: true,
-      description: "지구 반 바퀴를 돌 만큼 달린 당신! 대단해요.",
-    },
-  ]);
-
+  // 업적 상태 관리
+  const [achievements, setAchievements] = useState<Achievement[]>([]);
+  // 메뉴 오픈 상태
   const [menuOpen, setMenuOpen] = useState(false);
+  // 상세 설명 확장 아이디 관리
   const [expandedId, setExpandedId] = useState<number | null>(null);
 
+  // 백엔드에서 업적 데이터 받아오기
+  useEffect(() => {
+    fetch("https://localhost:8080/api/achievements")
+      .then((res) => res.json())
+      .then((data: Achievement[]) => {
+        setAchievements(data);
+      })
+      .catch((err) => {
+        console.error("업적 데이터 로드 실패:", err);
+      });
+  }, []);
+
+  // 보상 받기 처리
   const handleClaim = (id: number) => {
     setAchievements((prev) =>
       prev.map((achv) => (achv.id === id ? { ...achv, claimed: true } : achv))
@@ -63,7 +55,6 @@ function Achv() {
         </button>
       </div>
 
-      {/* ✅ 여기 메뉴 클릭 동작 추가됨 */}
       {menuOpen && (
         <div className="menu-bar">
           <ul>

@@ -107,22 +107,21 @@
 
 .progress-bar-container {
   width: 100%;
-  background-color: #e5e7eb;
-  border-radius: 9999px;
+  height: 20px;
+  background-color: #ddd;
+  border-radius: 10px;
   overflow: hidden;
-  height: 24px;
+  margin-top: 8px;
 }
 
 .progress-bar-fill {
   height: 100%;
-  background: linear-gradient(to right, #4ade80, #22c55e);
-  text-align: right;
-  padding-right: 12px;
+  background-color: #4caf50;
+  text-align: center;
   color: white;
   font-weight: bold;
-  line-height: 24px;
-  transition: width 0.4s ease;
-  border-radius: 9999px;
+  line-height: 20px; /* 높이와 같게 해서 텍스트 세로 중앙정렬 */
+  transition: width 0.3s ease;
 }
 
 .achievement-description {
