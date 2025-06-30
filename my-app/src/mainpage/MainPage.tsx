@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 import "../App.css";
+import LocationTracker from "./LocationTracker";
 
 function MainPage() {
   const [getRunning, setRunning] = useState(-1);
@@ -109,6 +110,7 @@ function MainPage() {
       >
         (커뮤니티버튼)
       </button>
+      <LocationTracker />
     </div>
   );
 }
