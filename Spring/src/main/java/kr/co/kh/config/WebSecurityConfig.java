@@ -41,11 +41,11 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
         prePostEnabled = true)
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
-    private static final String[] DOC_URLS = {
+    private static final String[] DOC_URLS = new String[]{
             "/swagger-resources/configuration/ui",
             "/swagger-resources",
             "/swagger-resources/configuration/security",
-            "/swagger-ui.html",
+            "/`swagger-ui.html`",
             "/swagger-ui/**",
             "/v3/api-docs/**",
             "/swagger",
@@ -121,6 +121,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/**/api/file/view/**").permitAll()
                 .antMatchers("/**/api/test/**").permitAll()
                 .antMatchers("/geo").permitAll()
+                .antMatchers("/api/crews/**").permitAll()
+                .antMatchers("/api/crew-members/**").permitAll()
                 .anyRequest().authenticated();
 
         http.addFilterBefore(jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);

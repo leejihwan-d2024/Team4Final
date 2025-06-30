@@ -1,0 +1,43 @@
+package kr.co.kh.service;
+
+import kr.co.kh.mapper.RunningCrewMapper;
+import kr.co.kh.model.vo.RunningCrewVO;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
+
+import java.util.List;
+
+@Service
+@RequiredArgsConstructor
+public class RunningCrewService {
+
+    private final RunningCrewMapper crewMapper;
+
+    public void createCrew(RunningCrewVO crew) {
+        crewMapper.insertCrew(crew);
+    }
+
+    public List<RunningCrewVO> getAllCrews() {
+        return crewMapper.selectAllCrews();
+    }
+
+    public RunningCrewVO getCrewById(Long id) {
+        return crewMapper.selectCrewById(id);
+    }
+
+    public boolean isLeader(Long crewId, String userId) {
+        RunningCrewVO crew = crewMapper.selectCrewById(crewId);
+        return crew != null && crew.getLeaderId().equals(userId);
+    }
+
+    public void updateCrew(RunningCrewVO crew) {
+        crewMapper.updateCrew(crew);
+    }
+
+    public void deleteCrew(Long crewId) {
+        crewMapper.deleteCrew(crewId);
+    }
+
+
+}
+

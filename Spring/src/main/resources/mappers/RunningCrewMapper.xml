@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="kr.co.kh.mapper.RunningCrewMapper">
+
+    <insert id="insertCrew" parameterType="RunningCrewVO">
+        INSERT INTO RUNNING_CREW (
+        CREW_TITLE,
+        START_TIME,
+        START_LOCATION,
+        START_LOCATION_MAP_POINT,
+        END_LOCATION,
+        END_LOCATION_MAP_POINT,
+        DISTRICT,
+        CREATED_AT,
+        IS_OVER_15,
+        LEADER_ID
+        LEADER_NN
+        ) VALUES (
+        #{crewTitle},
+        #{startTime},
+        #{startLocation},
+        #{startLocationMapPoint},
+        #{endLocation},
+        #{endLocationMapPoint},
+        #{district},
+        SYSDATE,
+        #{isOver15},
+        '1',
+        #{leaderNn)
+        )
+    </insert>
+
+    <!--  currentCount 포함 전체 목록 조회 -->
+    <select id="selectAllCrews" resultType="RunningCrewVO">
+        SELECT
+        rc.CREW_ID                AS crewId,
+        rc.CREW_TITLE             AS crewTitle,
+        rc.START_LOCATION         AS startLocation,
+        rc.END_LOCATION           AS endLocation,
+        rc.START_LOCATION_MAP_POINT AS startLocationMapPoint,
+        rc.END_LOCATION_MAP_POINT   AS endLocationMapPoint,
+        rc.DISTRICT               AS district,
+        rc.CREATED_AT             AS createdAt,
+        rc.IS_OVER_15             AS isOver15,
+        rc.LEADER_NN             AS leaderNn,
+        (SELECT COUNT(*)
+        FROM CREW_MEMBER cm
+        WHERE cm.CREW_ID = rc.CREW_ID) AS currentCount
+        FROM RUNNING_CREW rc
+        ORDER BY rc.CREW_ID DESC
+    </select>
+
+    <!-- 디테일 조회 -->
+    <select id="selectCrewById" resultType="RunningCrewVO" parameterType="long">
+        SELECT
+        rc.CREW_ID                AS crewId,
+        rc.CREW_TITLE             AS crewTitle,
+        rc.START_LOCATION         AS startLocation,
+        rc.END_LOCATION           AS endLocation,
+        rc.START_LOCATION_MAP_POINT AS startLocationMapPoint,
+        rc.END_LOCATION_MAP_POINT   AS endLocationMapPoint,
+        rc.DISTRICT               AS district,
+        rc.CREATED_AT             AS createdAt,
+        rc.IS_OVER_15             AS isOver15,
+        rc.LEADER_ID              AS leaderId,
+        (SELECT COUNT(*)
+        FROM CREW_MEMBER cm
+        WHERE cm.CREW_ID = rc.CREW_ID) AS currentCount
+        FROM RUNNING_CREW rc
+        WHERE rc.CREW_ID = #{crewId}
+    </select>
+
+    <!--크루 참가-->
+    <insert id="insertCrewMember" parameterType="CrewMemberVO">
+        INSERT INTO CREW_MEMBER (
+        CREW_ID,
+        USER_ID,
+        STATUS,
+        JOINED_AT
+        ) VALUES (
+        #{crewId},
+        #{userId},
+        #{status},
+        SYSDATE
+        )
+    </insert>
+
+    <update id="updateCrew" parameterType="RunningCrewVO">
+        UPDATE RUNNING_CREW
+        SET
+        CREW_TITLE = #{crewTitle},
+        START_LOCATION = #{startLocation},
+        END_LOCATION = #{endLocation},
+        START_LOCATION_MAP_POINT = #{startLocationMapPoint},
+        END_LOCATION_MAP_POINT = #{endLocationMapPoint},
+        DISTRICT = #{district},
+        IS_OVER_15 = #{isOver15}
+        WHERE CREW_ID = #{crewId}
+    </update>
+
+    <delete id="deleteCrew" parameterType="long">
+        DELETE FROM RUNNING_CREW WHERE CREW_ID = #{crewId}
+    </delete>
+
+</mapper>
