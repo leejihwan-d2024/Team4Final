@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="kr.co.kh.mapper.CommentMapper">
+
+    <select id="getCommentsByPostId" resultType="kr.co.kh.vo.CommentVO">
+        SELECT * FROM BOARD_COMMENT
+        WHERE POST_ID = #{postId}
+        ORDER BY COMMENT_DATE DESC
+    </select>
+
+    <insert id="insertComment">
+        INSERT INTO BOARD_COMMENT (
+
+        COMMENT_AUTHOR,
+        COMMENT_DATE,
+        COMMENT_COMMENT,
+        COMMENT_FIXED_DATE,
+        POST_ID
+        )
+        VALUES (
+
+        #{commentAuthor},
+        SYSDATE,
+        #{commentComment},
+        NULL,
+        #{postId}
+        )
+    </insert>
+
+    <update id="updateComment">
+        UPDATE BOARD_COMMENT
+        SET COMMENT_COMMENT = #{commentComment},
+        COMMENT_FIXED_DATE = SYSDATE
+        WHERE COMMENT_ID = #{commentId}
+    </update>
+
+    <delete id="deleteComment">
+        DELETE FROM BOARD_COMMENT
+        WHERE COMMENT_ID = #{commentId}
+    </delete>
+
+    <delete id="deleteCommentsByPostId">
+        DELETE FROM BOARD_COMMENT WHERE POST_ID = #{postId}
+    </delete>
+
+
+</mapper>

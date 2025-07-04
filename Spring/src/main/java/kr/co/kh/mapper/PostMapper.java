@@ -12,4 +12,7 @@ public interface PostMapper {
     void insertPost(PostVO postVO);
     void updatePost(PostVO postVO);
     void deletePost(Long postId);
+
+    void increaseLike(Long postId);
+    void decreaseLike(Long postId);
 }

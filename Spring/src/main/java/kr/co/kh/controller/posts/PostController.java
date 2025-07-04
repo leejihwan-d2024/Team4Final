@@ -22,9 +22,14 @@ public class PostController {
     }
 
     @GetMapping("/{id}")
-    public PostVO getPost(@PathVariable Long id) {
-        return postService.getPostById(id);
+    public ResponseEntity<PostVO> getPost(@PathVariable Long id) {
+        PostVO post = postService.getPostById(id);
+        if (post == null) {
+            return ResponseEntity.notFound().build(); // 404 응답
+        }
+        return ResponseEntity.ok(post); // 정상 응답
     }
+
 
     @PostMapping
     public void createPost(@RequestBody PostVO postVO) {
@@ -36,9 +41,27 @@ public class PostController {
         postService.updatePost(postVO);
     }
 
-    @DeleteMapping("/{id}")
-    public void deletePost(@PathVariable Long id) {
-        postService.deletePost(id);
+
+
+    @PostMapping("/{id}/like")
+    public ResponseEntity<?> increaseLike(@PathVariable Long id) {
+        postService.increaseLike(id);
+        return ResponseEntity.ok().build();
     }
+
+    @DeleteMapping("/{id}/like")
+    public ResponseEntity<?> decreaseLike(@PathVariable Long id) {
+        postService.decreaseLike(id);
+        return ResponseEntity.ok().build();
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deletePost(@PathVariable("id") Long postId) {
+        postService.deletePostWithComments(postId);  // ← 기존 deletePost() 대신
+        return ResponseEntity.noContent().build();
+    }
+
+
+
 }
 

@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="kr.co.kh.mapper.ProductLikeMapper">
+
+    <insert id="insertProductLike">
+        INSERT INTO PRODUCT_LIKES (LIKE_ID, USER_ID, PRODUCT_ID, LIKE_DATE)
+        VALUES (PRODUCT_LIKES_SEQ.NEXTVAL, #{userId}, #{productId}, SYSDATE)
+    </insert>
+
+    <delete id="deleteProductLike">
+        DELETE FROM PRODUCT_LIKES
+        WHERE USER_ID = #{userId} AND PRODUCT_ID = #{productId}
+    </delete>
+
+    <select id="isProductLiked" resultType="int">
+        SELECT COUNT(*) FROM PRODUCT_LIKES
+        WHERE USER_ID = #{userId} AND PRODUCT_ID = #{productId}
+    </select>
+
+    <select id="getLikedProducts" resultType="kr.co.kh.vo.ProductVO">
+        SELECT P.PRODUCT_ID, P.TITLE, P.LINK, P.IMAGE, P.LPRICE
+        FROM PRODUCTS P
+        JOIN PRODUCT_LIKES L ON P.PRODUCT_ID = L.PRODUCT_ID
+        WHERE L.USER_ID = #{userId}
+        ORDER BY L.LIKE_DATE DESC
+    </select>
+
+</mapper>
