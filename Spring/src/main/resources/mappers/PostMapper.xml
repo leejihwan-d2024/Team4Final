@@ -16,7 +16,8 @@
         VIEW_COUNT,
         ATTACHMENT_URL,
         LIKE_COUNT,
-        UPDATED_AT
+        UPDATED_AT,
+        CATEGORY
         FROM BOARD_POSTS
         ORDER BY CREATED_AT DESC
     </select>
@@ -32,15 +33,16 @@
         VIEW_COUNT,
         ATTACHMENT_URL,
         LIKE_COUNT,
-        UPDATED_AT
+        UPDATED_AT,
+        CATEGORY
         FROM BOARD_POSTS
         WHERE POST_ID = #{postId}
     </select>
 
     <!-- 게시글 등록 -->
     <insert id="insertPost" parameterType="kr.co.kh.vo.PostVO">
-        INSERT INTO BOARD_POSTS(
-        POST_ID,
+        INSERT INTO BOARD_POSTS (
+
         TITLE,
         AUTHOR,
         CONTENT_TEXT,
@@ -48,9 +50,10 @@
         VIEW_COUNT,
         ATTACHMENT_URL,
         LIKE_COUNT,
-        UPDATED_AT
+        UPDATED_AT,
+        CATEGORY
         ) VALUES (
-        POSTS_SEQ.NEXTVAL,
+
         #{title},
         #{author},
         #{contentText},
@@ -58,9 +61,11 @@
         0,
         #{attachmentUrl},
         0,
-        SYSDATE
+        SYSDATE,
+        #{category}
         )
     </insert>
+
 
     <!-- 게시글 수정 -->
     <update id="updatePost" parameterType="kr.co.kh.vo.PostVO">
@@ -69,7 +74,8 @@
         TITLE = #{title},
         CONTENT_TEXT = #{contentText},
         ATTACHMENT_URL = #{attachmentUrl},
-        UPDATED_AT = SYSDATE
+        UPDATED_AT = SYSDATE,
+        CATEGORY = #{category}
         WHERE POST_ID = #{postId}
     </update>
 
@@ -78,5 +84,18 @@
         DELETE FROM BOARD_POSTS
         WHERE POST_ID = #{postId}
     </delete>
+
+
+    <update id="increaseLike">
+        UPDATE BOARD_POSTS
+        SET like_count = like_count + 1
+        WHERE post_id = #{postId}
+    </update>
+
+    <update id="decreaseLike">
+        UPDATE BOARD_POSTS
+        SET like_count = like_count - 1
+        WHERE post_id = #{postId}
+    </update>
 
 </mapper>

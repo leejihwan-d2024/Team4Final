@@ -14,6 +14,7 @@ public class PostVO {
     private String attachmentUrl;
     private int likeCount;
     private Date updatedAt;
+    private String category;
 
 
 

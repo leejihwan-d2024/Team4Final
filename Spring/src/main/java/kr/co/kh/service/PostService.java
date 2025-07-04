@@ -13,4 +13,10 @@ public interface PostService {
     void createPost(PostVO postVO);
     void updatePost(PostVO postVO);
     void deletePost(Long postId);
+    void increaseLike(Long postId);
+    void decreaseLike(Long postId);
+
+    void deletePostWithComments(Long postId);
+
+
 }

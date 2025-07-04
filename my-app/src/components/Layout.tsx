@@ -1,6 +1,7 @@
 import { useNavigate } from "react-router-dom";
 import "../styles/Layout.css";
-import { ReactNode } from "react";
+import { ReactNode, useState } from "react";
+import NaverProductList from "./NaverProductList";
 
 interface LayoutProps {
   children: ReactNode;
@@ -9,8 +10,10 @@ interface LayoutProps {
 function Layout({ children }: LayoutProps) {
   const navigate = useNavigate();
 
+  const [showProduct, setShowProduct] = useState(false);
+
   return (
-    <div>
+    <div className="layout">
       <div className="layout-header" onClick={() => navigate("/posts")}>
         RUNNING <br /> CREW
       </div>
@@ -37,7 +40,8 @@ function Layout({ children }: LayoutProps) {
             러닝정보
             <ul className="submenu">
               <li>러닝관련정보</li>
-              <li>러닝관련상품</li>
+              <li onClick={() => navigate("/shop")}>러닝관련상품</li>
+              {showProduct && <NaverProductList />}
               <li>대회정보확인</li>
             </ul>
           </li>
