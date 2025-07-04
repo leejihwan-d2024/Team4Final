@@ -6,7 +6,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-
+import org.springframework.transaction.annotation.Transactional;
 @Service
 @RequiredArgsConstructor
 public class RunningCrewService {
@@ -34,10 +34,11 @@ public class RunningCrewService {
         crewMapper.updateCrew(crew);
     }
 
+    @Transactional
     public void deleteCrew(Long crewId) {
-        crewMapper.deleteCrew(crewId);
+        crewMapper.deleteCrewMembersByCrewId(crewId); //  자식 먼저 삭제
+        crewMapper.deleteCrew(crewId);                //  부모 삭제
     }
-
 
 }
 

@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="kr.co.kh.mapper.RunningEventMapper">
+
+    <!-- 이벤트 등록 (eventId 자동 생성) -->
+    <insert id="insertEvent" parameterType="RunningEventVO">
+        <selectKey keyProperty="eventId" resultType="Long" order="BEFORE">
+            SELECT SEQ_EVENT_ID.NEXTVAL FROM DUAL
+        </selectKey>
+        INSERT INTO RUNNING_EVENT (
+        EVENT_ID,
+        EVENT_TITLE,
+        EVENT_CONTENT,
+        START_TIME,
+        END_TIME,
+        START_LOCATION,
+        END_LOCATION,
+        CREATED_AT
+        ) VALUES (
+        #{eventId},
+        #{eventTitle},
+        #{eventContent},
+        #{startTime},
+        #{endTime},
+        #{startLocation},
+        #{endLocation},
+        SYSDATE
+        )
+    </insert>
+
+    <!-- 전체 이벤트 목록 -->
+    <select id="selectAllEvents" resultType="RunningEventVO">
+        SELECT * FROM RUNNING_EVENT ORDER BY START_TIME DESC
+    </select>
+
+    <!-- 단일 이벤트 조회 -->
+    <select id="selectEventById" resultType="RunningEventVO" parameterType="Long">
+        SELECT * FROM RUNNING_EVENT WHERE EVENT_ID = #{eventId}
+    </select>
+
+    <!-- 이벤트 수정 -->
+    <update id="updateEvent" parameterType="RunningEventVO">
+        UPDATE RUNNING_EVENT
+        SET
+        EVENT_TITLE = #{eventTitle},
+        EVENT_CONTENT = #{eventContent},
+        START_TIME = #{startTime},
+        END_TIME = #{endTime},
+        START_LOCATION = #{startLocation},
+        END_LOCATION = #{endLocation}
+        WHERE EVENT_ID = #{eventId}
+    </update>
+
+    <!-- 이벤트 삭제 -->
+    <delete id="deleteEvent" parameterType="Long">
+        DELETE FROM RUNNING_EVENT WHERE EVENT_ID = #{eventId}
+    </delete>
+
+    <!-- 참가자 등록 -->
+    <insert id="insertEventParticipant" parameterType="EventParticipantVO">
+        INSERT INTO EVENT_PARTICIPANT (
+        EVENT_ID,
+        USER_ID,
+        STATUS,
+        PARTICIPATED_AT
+        ) VALUES (
+        #{eventId},
+        #{userId},
+        #{status},
+        SYSDATE
+        )
+    </insert>
+
+    <!-- 이미 참가했는지 확인 -->
+    <select id="isEventParticipantExists" resultType="boolean" parameterType="map">
+        SELECT CASE WHEN COUNT(*) > 0 THEN 1 ELSE 0 END AS EXISTS_FLAG
+        FROM EVENT_PARTICIPANT
+        WHERE EVENT_ID = #{eventId} AND USER_ID = #{userId}
+    </select>
+
+</mapper>

@@ -25,4 +25,6 @@ public interface RunningCrewMapper {
 
     //  크루 삭제
     void deleteCrew(Long crewId);
+    // 참가 크루 선삭제
+    void deleteCrewMembersByCrewId(Long crewId);
 }

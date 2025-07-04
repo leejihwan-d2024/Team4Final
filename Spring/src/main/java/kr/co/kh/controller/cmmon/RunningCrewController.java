@@ -41,7 +41,7 @@ public class RunningCrewController {
         return ResponseEntity.ok(crewService.getCrewById(id));
     }
 
-    // ✅ 크루 수정
+    //  크루 수정
     @PutMapping("/{id}")
     @ApiOperation(value = "크루 수정", notes = "개설자만 해당 크루를 수정할 수 있습니다.")
     @ApiImplicitParams({
@@ -59,7 +59,7 @@ public class RunningCrewController {
         return ResponseEntity.ok("수정 완료");
     }
 
-    // ✅ 크루 삭제
+    //  크루 삭제
     @DeleteMapping("/{id}")
     @ApiOperation(value = "크루 삭제", notes = "개설자만 해당 크루를 삭제할 수 있습니다.")
     @ApiImplicitParams({

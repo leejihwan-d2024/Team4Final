@@ -123,6 +123,9 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/geo").permitAll()
                 .antMatchers("/api/crews/**").permitAll()
                 .antMatchers("/api/crew-members/**").permitAll()
+                .antMatchers("/api/events/**").permitAll()
+                .antMatchers("/api/chat/**").permitAll()
+                .antMatchers("/ws-chat/**").permitAll()
                 .anyRequest().authenticated();
 
         http.addFilterBefore(jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);

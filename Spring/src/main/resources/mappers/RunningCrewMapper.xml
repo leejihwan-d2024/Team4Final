@@ -105,4 +105,10 @@
         DELETE FROM RUNNING_CREW WHERE CREW_ID = #{crewId}
     </delete>
 
+    <delete id="deleteCrewMembersByCrewId" parameterType="long">
+        DELETE FROM crew_member WHERE crew_id = #{crewId}
+    </delete>
+
+
+
 </mapper>

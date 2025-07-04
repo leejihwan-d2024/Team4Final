@@ -28,7 +28,7 @@ export default function CrewDetailPage() {
     const fetchCrew = async () => {
       try {
         const response = await axios.get(
-          `https://localhost:8080/api/crews/${id}`
+          `http://localhost:8080/api/crews/${id}`
         );
         setCrew(response.data);
       } catch (error) {
@@ -49,7 +49,7 @@ export default function CrewDetailPage() {
         status: 1,
       };
 
-      await axios.post("https://localhost:8080/api/crew-members", payload);
+      await axios.post("http://localhost:8080/api/crew-members", payload);
       alert(`"${crew.crewTitle}"에 참가했습니다!`);
     } catch (error) {
       console.error("❌ 참가 요청 실패:", error);
@@ -65,7 +65,7 @@ export default function CrewDetailPage() {
 
     try {
       await axios.delete(
-        `https://localhost:8080/api/crews/${crew.crewId}?userId=${currentUserId}`
+        `http://localhost:8080/api/crews/${crew.crewId}?userId=${currentUserId}`
       );
       alert("삭제 완료되었습니다.");
       navigate("/MainPage2"); // 삭제 후 메인으로 이동
@@ -76,7 +76,7 @@ export default function CrewDetailPage() {
   };
 
   const handleEdit = () => {
-    alert("✏ 수정 페이지로 이동합니다 (아직 미구현)");
+    alert("수정 페이지로 이동합니다 (아직 미구현)");
     // 예: navigate(`/crews/${crew.crewId}/edit`);
   };
 
