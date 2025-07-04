@@ -8,6 +8,7 @@ import kr.co.kh.measure_tmp.PathDataRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.stream.Collectors;
 
 @RestController
@@ -39,5 +40,13 @@ public class MeasureController {
         );
 
         return "Saved successfully";
+    }
+
+    @GetMapping("/getpath/{id}")
+    public List<PathDTO> getPathByMeasurementId(@PathVariable Long id) {
+        id=7L;
+        return pathRepo.findByMeasurementData_MeasurementId(id).stream()
+                .map(path -> new PathDTO(path.getLocationY(), path.getLocationX()))
+                .collect(Collectors.toList());
     }
 }
