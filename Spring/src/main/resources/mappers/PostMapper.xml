@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="kr.co.kh.mapper.PostMapper">
+
+    <!-- 전체 게시글 조회 -->
+    <select id="getAllPosts" resultType="kr.co.kh.vo.PostVO">
+        SELECT
+        POST_ID,
+        TITLE,
+        AUTHOR,
+        CONTENT_TEXT,
+        CREATED_AT,
+        VIEW_COUNT,
+        ATTACHMENT_URL,
+        LIKE_COUNT,
+        UPDATED_AT,
+        CATEGORY
+        FROM BOARD_POSTS
+        ORDER BY CREATED_AT DESC
+    </select>
+
+    <!-- 게시글 상세 조회 -->
+    <select id="getPostById" parameterType="long" resultType="kr.co.kh.vo.PostVO">
+        SELECT
+        POST_ID,
+        TITLE,
+        AUTHOR,
+        CONTENT_TEXT,
+        CREATED_AT,
+        VIEW_COUNT,
+        ATTACHMENT_URL,
+        LIKE_COUNT,
+        UPDATED_AT,
+        CATEGORY
+        FROM BOARD_POSTS
+        WHERE POST_ID = #{postId}
+    </select>
+
+    <!-- 게시글 등록 -->
+    <insert id="insertPost" parameterType="kr.co.kh.vo.PostVO">
+        INSERT INTO BOARD_POSTS (
+
+        TITLE,
+        AUTHOR,
+        CONTENT_TEXT,
+        CREATED_AT,
+        VIEW_COUNT,
+        ATTACHMENT_URL,
+        LIKE_COUNT,
+        UPDATED_AT,
+        CATEGORY
+        ) VALUES (
+
+        #{title},
+        #{author},
+        #{contentText},
+        SYSDATE,
+        0,
+        #{attachmentUrl},
+        0,
+        SYSDATE,
+        #{category}
+        )
+    </insert>
+
+
+    <!-- 게시글 수정 -->
+    <update id="updatePost" parameterType="kr.co.kh.vo.PostVO">
+        UPDATE BOARD_POSTS
+        SET
+        TITLE = #{title},
+        CONTENT_TEXT = #{contentText},
+        ATTACHMENT_URL = #{attachmentUrl},
+        UPDATED_AT = SYSDATE,
+        CATEGORY = #{category}
+        WHERE POST_ID = #{postId}
+    </update>
+
+    <!-- 게시글 삭제 -->
+    <delete id="deletePost" parameterType="long">
+        DELETE FROM BOARD_POSTS
+        WHERE POST_ID = #{postId}
+    </delete>
+
+
+    <update id="increaseLike">
+        UPDATE BOARD_POSTS
+        SET like_count = like_count + 1
+        WHERE post_id = #{postId}
+    </update>
+
+    <update id="decreaseLike">
+        UPDATE BOARD_POSTS
+        SET like_count = like_count - 1
+        WHERE post_id = #{postId}
+    </update>
+
+</mapper>

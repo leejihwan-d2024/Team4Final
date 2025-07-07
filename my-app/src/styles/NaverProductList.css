@@ -1,0 +1,56 @@
+.product-wrapper {
+  width: 100%;
+  max-width: 360px; /* 또는 100%로도 가능 */
+  margin: 0 auto;
+  padding: 16px;
+  background-color: #f7f9f3;
+  border: 2px solid #bad546;
+  border-radius: 12px;
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+}
+.product-title {
+  font-size: 24px;
+  margin-bottom: 25px;
+  color: #333;
+  text-align: center;
+}
+
+.product-title span {
+  color: #bad546;
+  font-weight: bold;
+}
+
+.product-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 10px;
+  padding: 0;
+  list-style: none;
+}
+
+.product-card {
+  padding: 8px;
+  font-size: 12px;
+}
+
+.product-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 4px 8px rgba(186, 213, 70, 0.5);
+}
+
+.product-img {
+  width: 100%;
+  height: auto;
+  object-fit: cover;
+}
+.product-name {
+  font-size: 14px;
+  color: #333;
+  margin-bottom: 8px;
+}
+
+.product-price {
+  font-size: 16px;
+  font-weight: bold;
+  color: #bad546;
+}

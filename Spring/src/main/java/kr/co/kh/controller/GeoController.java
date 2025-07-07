@@ -19,6 +19,6 @@ public class GeoController  {
     ) {
         System.out.println("📍 좌표 수신됨: 위도 = " + lat + ", 경도 = " + lng);
         System.out.println("📌 위치명(법정동): " + location);
-        return "위치 수신 완료";
+        return location;
     }
 }

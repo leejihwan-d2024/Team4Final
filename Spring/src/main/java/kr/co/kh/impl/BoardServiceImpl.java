@@ -1,4 +1,4 @@
-package kr.co.kh.service.impl;
+package kr.co.kh.impl;
 
 import kr.co.kh.exception.BadRequestException;
 import kr.co.kh.exception.NotFoundException;
@@ -158,5 +158,7 @@ public class BoardServiceImpl implements BoardService {
             }
         }
     }
+
+
 
 }

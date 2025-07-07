@@ -11,7 +11,7 @@ function PostList({ posts, onSelect }: PostList) {
       <h2>게시글 목록</h2>
       <ul>
         {posts.map((post) => (
-          <li key={post.id} onClick={() => onSelect(post)}>
+          <li key={post.postId} onClick={() => onSelect(post)}>
             <strong>{post.title}</strong> - {post.author}
           </li>
         ))}

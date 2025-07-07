@@ -1,7 +1,11 @@
 export interface Post {
-  id: number;
+  postId: number;
   title: string;
-  content: string;
   author: string;
+  createdAt: string;
+  viewCount: number;
+  likeCount: number;
+  contentText: string;
+  attachmentUrl: string;
   category: string;
 }

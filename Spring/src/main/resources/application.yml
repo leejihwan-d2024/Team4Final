@@ -1,11 +1,16 @@
+naver:
+  client:
+    id: 4c0CkBv4RhU2lEqmfShJ
+    secret: Gjo8p14OZV
+
 server:
   port: 8080
-#  ssl:
-#    enabled: true
-#    key-store: classpath:keystore.p12
-#    key-store-password: 123456
-#    key-store-type: PKCS12
-#    key-alias: myssl
+  #  ssl:
+  #    enabled: true
+  #    key-store: classpath:keystore.p12
+  #    key-store-password: 123456
+  #    key-store-type: PKCS12
+  #    key-alias: myssl
   compression:
     enabled: true
   tomcat:
@@ -72,8 +77,6 @@ mybatis:
   #        SQL: DEBUG
   file:
     path: C:\\WAS_DATA\\mybatis\\mybatis-log.txt
-
-
 
 #JWT properties
 app:
