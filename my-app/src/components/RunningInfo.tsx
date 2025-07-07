@@ -42,7 +42,7 @@ function RunningInfo() {
   return (
     <div className="running-info-container">
       <Layout>📚러닝관련정보</Layout>
-      <h2>🏃 러닝 정보 검색</h2>
+      <h2>🏃 러닝정보 검색</h2>
       <div className="search-box">
         <input
           className="search-input"

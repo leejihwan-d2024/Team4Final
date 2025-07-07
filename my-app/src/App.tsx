@@ -1,6 +1,12 @@
 import React, { useEffect, useState } from "react";
 import "./App.css";
-import { BrowserRouter, Route, Routes, useNavigate } from "react-router-dom";
+import {
+  BrowserRouter,
+  Link,
+  Route,
+  Routes,
+  useNavigate,
+} from "react-router-dom";
 import MainPage from "./mainpage/MainPage";
 import Achv from "./achv/Achv";
 import PostMain from "./components/PostMain";
@@ -11,6 +17,7 @@ import axios from "axios";
 import NaverProductList from "./components/NaverProductList";
 import LikedProductList from "./components/LikedProductList";
 import RunningInfo from "./components/RunningInfo";
+import Marathon from "./components/Marathon";
 
 function App() {
   const [posts, setPosts] = useState<Post[]>([]);
@@ -101,10 +108,21 @@ function App() {
           path="/write"
           element={<PostWrite onSubmit={handlePostSubmit} />}
         />
-        <Route path="" element={"None"} />
+        <Route
+          path=""
+          element={
+            <>
+              <Link to="/posts">게시판으로이동</Link>
+              <Link to="/shop">러닝관련상품으로 이동</Link>
+              <Link to="/info">러닝관련정보로 이동</Link>
+            </>
+          }
+        />
+
         <Route path="/shop" element={<NaverProductList />} />
         <Route path="/liked" element={<LikedProductList />} />
         <Route path="/info" element={<RunningInfo />} />
+        <Route path="/Marathon" element={<Marathon />} />
       </Routes>
     </BrowserRouter>
   );
