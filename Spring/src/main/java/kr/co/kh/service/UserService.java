@@ -16,6 +16,7 @@ import kr.co.kh.model.payload.response.UserResponse;
 import kr.co.kh.repository.UserRepository;
 import kr.co.kh.util.ModelMapper;
 import kr.co.kh.util.ValidatePageNumberAndSize;
+import kr.co.kh.vo.UserVO;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -26,6 +27,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 @Slf4j
@@ -50,6 +52,8 @@ public class UserService {
     public Optional<User> findByUsername(String username) {
         return userRepository.findByUsername(username);
     }
+    
+
 
     /**
      * email로 찾기
@@ -312,5 +316,112 @@ public class UserService {
         } else {
             throw new BadRequestException("잘못된 요청입니다.");
         }
+    }
+
+    // UserVO 기반 사용자 등록
+    public void registerUser(UserVO userVO) {
+        // UserVO를 User 엔티티로 변환하여 저장
+        User user = new User();
+        user.setUsername(userVO.getUserId());
+        user.setPassword(passwordEncoder.encode(userVO.getUserPw()));
+        user.setEmail(userVO.getUserEmail());
+        user.setName(userVO.getUserNn());
+        user.setActive(true);
+        user.setEmailVerified(true);
+        
+        // 기본 USER 권한 부여
+        user.addRoles(getUserRoles("USER"));
+        userRepository.save(user);
+    }
+    
+    // UserVO 기반 사용자 조회 (아이디로)
+    public Optional<UserVO> getUserById(String userId) {
+        Optional<User> userOpt = userRepository.findByUsername(userId);
+        return userOpt.map(this::convertToUserVO);
+    }
+    
+    // UserVO 기반 사용자 조회 (이메일로)
+    public Optional<UserVO> getUserByEmail(String userEmail) {
+        Optional<User> userOpt = userRepository.findByEmail(userEmail);
+        return userOpt.map(this::convertToUserVO);
+    }
+    
+    // UserVO 기반 사용자 목록 조회
+    public List<UserVO> getAllUsers() {
+        List<User> users = userRepository.findAll();
+        return users.stream()
+                .map(this::convertToUserVO)
+                .collect(Collectors.toList());
+    }
+    
+    // UserVO 기반 사용자 수정
+    public void updateUser(UserVO userVO) {
+        Optional<User> userOpt = userRepository.findByUsername(userVO.getUserId());
+        if (userOpt.isPresent()) {
+            User user = userOpt.get();
+            user.setEmail(userVO.getUserEmail());
+            user.setName(userVO.getUserNn());
+            if (userVO.getUserPw() != null && !userVO.getUserPw().isEmpty()) {
+                user.setPassword(passwordEncoder.encode(userVO.getUserPw()));
+            }
+            userRepository.save(user);
+        }
+    }
+    
+    // UserVO 기반 사용자 삭제
+    public void deleteUser(String userId) {
+        Optional<User> userOpt = userRepository.findByUsername(userId);
+        userOpt.ifPresent(userRepository::delete);
+    }
+    
+    // UserVO 기반 아이디 중복 확인
+    public boolean existsByUserId(String userId) {
+        return userRepository.existsByUsername(userId);
+    }
+    
+    // UserVO 기반 이메일 중복 확인
+    public boolean existsByUserEmail(String userEmail) {
+        return userRepository.existsByEmail(userEmail);
+    }
+    
+    // UserVO 기반 비밀번호 검증
+    public boolean validatePassword(String userId, String rawPassword) {
+        Optional<User> userOpt = userRepository.findByUsername(userId);
+        if (userOpt.isPresent()) {
+            User user = userOpt.get();
+            return passwordEncoder.matches(rawPassword, user.getPassword());
+        }
+        return false;
+    }
+    
+    // UserVO 기반 로그인 시도 횟수 업데이트
+    public void updateLoginAttempts(String userId, int attempts) {
+        // User 엔티티에 로그인 시도 횟수 필드가 있다면 업데이트
+        // 현재 User 엔티티에는 해당 필드가 없으므로 로그만 남김
+        log.info("로그인 시도 횟수 업데이트: userId={}, attempts={}", userId, attempts);
+    }
+    
+    // UserVO 기반 마지막 로그인 시간 업데이트
+    public void updateLastLoginTime(String userId) {
+        // User 엔티티에 마지막 로그인 시간 필드가 있다면 업데이트
+        // 현재 User 엔티티에는 해당 필드가 없으므로 로그만 남김
+        log.info("마지막 로그인 시간 업데이트: userId={}", userId);
+    }
+    
+    // User 엔티티를 UserVO로 변환하는 헬퍼 메서드
+    private UserVO convertToUserVO(User user) {
+        UserVO userVO = new UserVO();
+        userVO.setUserId(user.getUsername());
+        userVO.setUserEmail(user.getEmail());
+        userVO.setUserNn(user.getName());
+        userVO.setUserStatus(user.getActive() ? 1 : 0);
+        // 기타 필드들은 User 엔티티에 해당 필드가 없으므로 기본값 설정
+        userVO.setUserPw(""); // 보안상 비밀번호는 반환하지 않음
+        userVO.setUserDefloc("");
+        userVO.setUserPhoneno("");
+        userVO.setUserProfileImageUrl("");
+        userVO.setUserPoint(0);
+        userVO.setUserActivePoint(0);
+        return userVO;
     }
 }

@@ -1,11 +1,11 @@
 server:
   port: 3000
   ssl:
-    enabled: true
-    key-store: classpath:keystore.p12
-    key-store-password: 123456
-    key-store-type: PKCS12
-    key-alias: myssl
+    enabled: false
+    # key-store: classpath:keystore.p12
+    # key-store-password: 123456
+    # key-store-type: PKCS12
+    # key-alias: myssl
   compression:
     enabled: true
   tomcat:
@@ -45,12 +45,14 @@ spring:
   #    init:
   #      mode: always
   jpa:
-    .hibernate:
-      ddl-auto: none
-    .generate-ddl: false
-    .show-sql: true
-    .database-platform: org.hibernate.dialect.Oracle12cDialect
-    .properties.hibernate.format_sql: true
+    hibernate:
+      ddl-auto: create-drop
+    generate-ddl: true
+    show-sql: true
+    database-platform: org.hibernate.dialect.Oracle12cDialect
+    properties:
+      hibernate:
+        format_sql: true
   jackson:
     serialization:
       WRITE_DATES_AS_TIMESTAMPS: false
@@ -59,7 +61,7 @@ spring:
     jpa-date-time-format: yyyy-MM-dd HH:mm:ss
 mybatis:
   mapper-locations: classpath:mappers/*.xml
-  type-aliases-package: kr.co.kh.model.vo
+  type-aliases-package: kr.co.kh.model.vo,kr.co.kh.vo
   configuration:
     map-underscore-to-camel-case: true
   # config-location: classpath:mybatis-config.xml
@@ -72,8 +74,6 @@ mybatis:
   #        SQL: DEBUG
   file:
     path: C:\\WAS_DATA\\mybatis\\mybatis-log.txt
-
-
 
 #JWT properties
 app:
@@ -100,6 +100,14 @@ app:
 jasypt:
   encryptor:
     bean: jasyptStringEncryptor
+
+# 카카오 API 설정
+kakao:
+  client-id: ${KAKAO_CLIENT_ID:your_kakao_client_id}
+  client-secret: ${KAKAO_CLIENT_SECRET:your_kakao_client_secret}
+  redirect-uri: ${KAKAO_REDIRECT_URI:http://localhost:3000/auth/kakao/callback}
+  app-key: ${KAKAO_APP_KEY:your_kakao_app_key}
+  admin-key: ${KAKAO_ADMIN_KEY:your_kakao_admin_key}
 
 upload:
   path: C:\\WAS_DATA\\upload

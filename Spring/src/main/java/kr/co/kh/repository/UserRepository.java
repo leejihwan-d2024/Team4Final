@@ -13,6 +13,8 @@ import java.util.Optional;
 public interface UserRepository extends JpaRepository<User, Long> {
 
     Optional<User> findByUsername(String username);
+    
+
 
     Boolean existsByEmail(String email);
 
@@ -30,5 +32,8 @@ public interface UserRepository extends JpaRepository<User, Long> {
     List<User> findByEmailIsContaining(String searchKeyword);
     List<User> findByUsernameIsContaining(String searchKeyword);
     List<User> findByNameIsContaining(String searchKeyword);
+
+    Optional<User> findByKakaoId(String kakaoId);
+    Boolean existsByKakaoId(String kakaoId);
 
 }

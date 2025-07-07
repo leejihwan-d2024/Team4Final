@@ -31,6 +31,7 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.cors.CorsConfiguration;
 
 @Configuration
 @EnableWebSecurity(debug = true)
@@ -86,7 +87,6 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-        // http.cors().configurationSource(request -> new CorsConfiguration().applyPermitDefaultValues());
         http.cors()
                 .and()
                 .csrf().disable()
@@ -96,7 +96,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .and()
                 .authorizeRequests()
                 .antMatchers("/",
-                		"/favicon.ico",
+//                		"/favicon.ico",
                         "/**/*.json",
                         "/**/*.xml",
                         "/**/*.woff2",

@@ -49,6 +49,12 @@ public class User extends DateAudit {
     @Column(name = "IS_EMAIL_VERIFIED", nullable = false)
     private Boolean isEmailVerified;
 
+    @Column(name = "KAKAO_ID", unique = true)
+    private String kakaoId;
+
+    @Column(name = "PROVIDER")
+    private String provider;
+
     public User() {
         super();
     }
@@ -97,6 +103,10 @@ public class User extends DateAudit {
     public void setUsername(String username) {
         this.username = username;
     }
+    
+    public String getUserId() {
+        return username; // username 필드가 실제로는 userId 역할
+    }
 
     public String getPassword() {
         return password;
@@ -144,6 +154,22 @@ public class User extends DateAudit {
 
     public void setEmailVerified(Boolean emailVerified) {
         isEmailVerified = emailVerified;
+    }
+
+    public String getKakaoId() {
+        return kakaoId;
+    }
+
+    public void setKakaoId(String kakaoId) {
+        this.kakaoId = kakaoId;
+    }
+
+    public String getProvider() {
+        return provider;
+    }
+
+    public void setProvider(String provider) {
+        this.provider = provider;
     }
 
 }
