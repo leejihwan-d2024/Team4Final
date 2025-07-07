@@ -8,6 +8,12 @@ import kr.co.kh.measure_tmp.PathDataRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
+import kr.co.kh.measure_tmp.PathDataCustom;
+import kr.co.kh.measure_tmp.PathDataCustomId;
+
+import kr.co.kh.measure_tmp.PathDataCustomRepository;
+
+import javax.transaction.Transactional;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -49,4 +55,34 @@ public class MeasureController {
                 .map(path -> new PathDTO(path.getLocationY(), path.getLocationX()))
                 .collect(Collectors.toList());
     }
+
+    private final PathDataCustomRepository repository;
+
+    private final String USERNAME = "testuser";
+
+    // 1️⃣ path_id 자동 생성용
+    @GetMapping("/nextpathid")
+    public PathIdResponse getNextPathId(@RequestParam String username) {
+        int suffix = 0;
+        while (repository.existsById(new PathDataCustomId(username + "_" + suffix, 0))) {
+            suffix++;
+        }
+        return new PathIdResponse(username + "_" + suffix);
+    }
+
+    // 2️⃣ 경로 저장
+    @Transactional
+    @PostMapping("/savecustompath")
+    public String saveCustomPath(@RequestBody List<PathDataCustom> pathDataList) {
+        if (pathDataList.isEmpty()) return "empty";
+
+        String pathId = pathDataList.get(0).getPathId();
+
+        // 삭제 후 저장
+        repository.deleteByPathId(pathId);
+        repository.saveAll(pathDataList);
+
+        return "saved: " + pathId;
+    }
+
 }
