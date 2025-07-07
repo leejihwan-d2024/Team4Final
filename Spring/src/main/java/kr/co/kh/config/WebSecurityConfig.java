@@ -87,8 +87,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         // http.cors().configurationSource(request -> new CorsConfiguration().applyPermitDefaultValues());
-        http.cors()
-                .and()
+        http
                 .csrf().disable()
                 .exceptionHandling().authenticationEntryPoint(jwtEntryPoint)
                 .and()
@@ -113,6 +112,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                         "/**/*.html",
                         "/**/*.css",
                         "/**/*.js").permitAll()
+
+
                 .antMatchers("/**/api/user/**").permitAll()
                 .antMatchers("/**/api/cmmn/**").permitAll()
                 .antMatchers("/**/api/auth/**").permitAll()
@@ -132,6 +133,15 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/api/events/**").permitAll()
                 .antMatchers("/api/chat/**").permitAll()
                 .antMatchers("/ws-chat/**").permitAll()
+                .antMatchers("/api/shop/**").permitAll()
+                .antMatchers("/api/info/**").permitAll()
+                .antMatchers("/info/**").permitAll()
+                .antMatchers("/api/comments/**").permitAll()
+                .antMatchers("/api/products/**").permitAll()
+                .antMatchers("/api/marathon/**").permitAll()
+
+
+
                 .anyRequest().authenticated();
 
         http.addFilterBefore(jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);
@@ -141,4 +151,6 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
+
+
 }

@@ -7,7 +7,6 @@ import {
   Route,
   Routes,
   useNavigate,
-  Link,
 } from "react-router-dom";
 import MainPage from "./mainpage/MainPage";
 import Achv from "./achv/Achv";
@@ -26,6 +25,8 @@ import RunningEventCreatePage from "./pages/RunningEventCreatePage"; //  추가
 import RunningEventDetailPage from "./pages/RunningEventDetailPage";
 import ChatRoom from "./pages/ChatRoom";
 import ChatRoomPage from "./pages/ChatRoomPage";
+import RunningInfo from "./components/RunningInfo";
+import Marathon from "./components/Marathon";
 
 function App() {
   const [posts, setPosts] = useState<Post[]>([]);
@@ -105,6 +106,9 @@ function App() {
               <Link to="/events/detail/:id">이벤트 상세</Link>
               <Link to="/chat/:crewId">채팅방</Link>
               <Link to="/achv">achv</Link>
+              <Link to="/posts">게시판으로이동</Link>
+              <Link to="/shop">러닝관련상품으로 이동</Link>
+              <Link to="/info">러닝관련정보로 이동</Link>
             </>
           }
         />
@@ -146,6 +150,8 @@ function App() {
         <Route path="/chat/:crewId" element={<ChatRoomPage />} />
         <Route path="/shop" element={<NaverProductList />} />
         <Route path="/liked" element={<LikedProductList />} />
+        <Route path="/info" element={<RunningInfo />} />
+        <Route path="/Marathon" element={<Marathon />} />
       </Routes>
     </BrowserRouter>
   );
