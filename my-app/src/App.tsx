@@ -17,8 +17,19 @@ function App() {
     <BrowserRouter>
       <Routes>
         <Route path="/main" element={<MainPage />} />
-        <Route path="" element={<Link to="/MainPage2">2번째 매인</Link>} />
-        <Route path="" element={<Link to="/crew/:id">크루 상세페이지</Link>} />
+        <Route
+          path=""
+          element={
+            <>
+              <Link to="/MainPage2">2번째 매인</Link>
+              <Link to="/crew/:id">크루 상세페이지</Link>
+              <Link to="/CrewCreate">크루 생성</Link>
+              <Link to="/events/create">이벤트 생성</Link>
+              <Link to="/events/detail/:id">이벤트 상세</Link>
+              <Link to="/chat/:crewId">채팅방</Link>
+            </>
+          }
+        />
         <Route path="" element={<Link to="/CrewCreate">크루 생성</Link>} />
         <Route path="" element={<Link to="/crews/:id/edit">크루 수정</Link>} />
         <Route path="" element={<Link to="/events/create">이벤트 생성</Link>} />
