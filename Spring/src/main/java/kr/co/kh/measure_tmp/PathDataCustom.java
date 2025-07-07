@@ -20,11 +20,11 @@ public class PathDataCustom {
     @JsonProperty("path_order")
     private Integer pathOrder;
 
-    @Column(name = "LOCATION_X", precision = 10, scale = 6)
+    @Column(name = "LOCATION_X", precision = 20, scale = 10)
     @JsonProperty("location_x")
     private Double locationX;
 
-    @Column(name = "LOCATION_Y", precision = 10, scale = 6)
+    @Column(name = "LOCATION_Y", precision = 20, scale = 10)
     @JsonProperty("location_y")
     private Double locationY;
 }
