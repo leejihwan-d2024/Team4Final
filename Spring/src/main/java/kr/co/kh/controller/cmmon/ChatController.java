@@ -26,8 +26,8 @@ public class ChatController {
 
         // 🔥 직접 브로드캐스트
         String topic = "/topic/crew/" + crewId;
-        log.info("📡 브로드캐스트 시도 - {}", topic);
+        log.info(" 브로드캐스트 시도 - {}", topic);
         messagingTemplate.convertAndSend(topic, message);
-        log.info("📤 브로드캐스트 완료 - {}", message);
+        log.info(" 브로드캐스트 완료 - {}", message);
     }
 }
