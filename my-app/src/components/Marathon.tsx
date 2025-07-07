@@ -35,7 +35,15 @@ function Marathon() {
   const [result, setResult] = useState<Mara[]>([]);
 
   const OnClick = () => {
-    axiosApi(input);
+    //axiosApi(input);
+    axios
+      .get(
+        "https://api.odcloud.kr/api/15138980/v1/uddi:eedc77c5-a56b-4e77-9c1d-9396fa9cc1d3?page=1&perPage=10&serviceKey=%2BnOCaVW%2B1JSsryrxWSMuqK1a3sTxauT6IW8hPQ%2BtWOJH2HTN6Z7yLuZhe%2B8jljUjMejMViqk64VFryfg4C4oHQ%3D%3D"
+      )
+      .then((res) => {
+        console.log(res);
+        setResult(res.data.data);
+      });
   };
   return (
     <div>
