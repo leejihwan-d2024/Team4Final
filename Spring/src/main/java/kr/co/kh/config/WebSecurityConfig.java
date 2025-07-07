@@ -128,6 +128,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/savecustompath/**").permitAll()
                 .antMatchers("/savecustompath").permitAll()
                 .antMatchers("/nextpathid").permitAll()
+                .antMatchers("/getcustompath/**").permitAll()
                 .anyRequest().authenticated();
 
         http.addFilterBefore(jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);

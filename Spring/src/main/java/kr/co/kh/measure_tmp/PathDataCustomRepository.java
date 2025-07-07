@@ -14,4 +14,5 @@ public interface PathDataCustomRepository extends JpaRepository<PathDataCustom,P
     @Modifying
     @Query("delete from PathDataCustom p where p.pathId = :pathId")
     void deleteByPathId(String pathId);
+    List<PathDataCustom> findByPathIdOrderByPathOrderAsc(String pathId);
 }

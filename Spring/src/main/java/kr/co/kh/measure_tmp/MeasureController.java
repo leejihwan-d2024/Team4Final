@@ -84,5 +84,11 @@ public class MeasureController {
 
         return "saved: " + pathId;
     }
-
+    @GetMapping("/getcustompath/{pathId}")
+    public List<PathDTO> getCustomPath(@PathVariable String pathId) {
+        List<PathDataCustom> pathList = repository.findByPathIdOrderByPathOrderAsc(pathId);
+        return pathList.stream()
+                .map(p -> new PathDTO(p.getLocationY(), p.getLocationX()))
+                .collect(Collectors.toList());
+    }
 }

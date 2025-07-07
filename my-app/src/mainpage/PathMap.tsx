@@ -34,6 +34,17 @@ const PathMap: React.FC<PathMapProps> = ({ measurementId }) => {
   const [currentPathId, setCurrentPathId] = useState<string | null>(null);
 
   const username = "testuser";
+  const [customPathIndex, setCustomPathIndex] = useState(0);
+
+  const colors = [
+    "#FF0000", // 빨강
+    "#FF7F00", // 주황
+    "#FFFF00", // 노랑
+    "#00FF00", // 초록
+    "#0000FF", // 파랑
+    "#000080", // 남색
+    "#8B00FF", // 보라
+  ];
 
   useEffect(() => {
     const script = document.createElement("script");
@@ -186,7 +197,53 @@ const PathMap: React.FC<PathMapProps> = ({ measurementId }) => {
       alert("경로 저장에 실패했습니다.");
     }
   };
+  const handleLoadCustomPath = async () => {
+    const pathId = `testuser_${customPathIndex}`;
+    const color = colors[customPathIndex % colors.length]; // 색 순환
 
+    try {
+      const response = await axios.get<LatLngPoint[]>(
+        `https://200.200.200.62:8080/getcustompath/${pathId}`
+      );
+
+      const kakao = window.kakao;
+      const pathData = response.data;
+      if (!mapInstanceRef.current || pathData.length === 0) return;
+
+      const linePath = pathData.map(
+        (point) => new kakao.maps.LatLng(point.y, point.x)
+      );
+
+      mapInstanceRef.current.setCenter(linePath[0]);
+
+      const polyline = new kakao.maps.Polyline({
+        path: linePath,
+        strokeWeight: 4,
+        strokeColor: color,
+        strokeOpacity: 0.9,
+        strokeStyle: "solid",
+      });
+
+      polyline.setMap(mapInstanceRef.current);
+
+      new kakao.maps.Marker({
+        position: linePath[0],
+        title: `경로 ${customPathIndex} 시작점`,
+        map: mapInstanceRef.current,
+      });
+
+      new kakao.maps.Marker({
+        position: linePath[linePath.length - 1],
+        title: `경로 ${customPathIndex} 종료점`,
+        map: mapInstanceRef.current,
+      });
+
+      setCustomPathIndex((prev) => prev + 1); // 다음 클릭을 위해 증가
+    } catch (err) {
+      console.error("커스텀 경로 불러오기 실패:", err);
+      alert("경로 불러오기 실패");
+    }
+  };
   return (
     <>
       <div ref={mapRef} style={{ width: "600px", height: "400px" }} />
@@ -261,6 +318,20 @@ const PathMap: React.FC<PathMapProps> = ({ measurementId }) => {
           onClick={handleSavePath}
         >
           💾 저장하기
+        </button>
+        <button
+          style={{
+            padding: "8px 16px",
+            backgroundColor: "#28a745",
+            color: "#fff",
+            border: "none",
+            borderRadius: "4px",
+            cursor: "pointer",
+            marginLeft: "8px",
+          }}
+          onClick={handleLoadCustomPath}
+        >
+          📂 불러오기
         </button>
       </div>
     </>

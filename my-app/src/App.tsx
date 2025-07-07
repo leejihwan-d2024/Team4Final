@@ -1,6 +1,12 @@
 import React, { useEffect, useState } from "react";
 import "./App.css";
-import { BrowserRouter, Route, Routes, useNavigate } from "react-router-dom";
+import {
+  BrowserRouter,
+  Link,
+  Route,
+  Routes,
+  useNavigate,
+} from "react-router-dom";
 import MainPage from "./mainpage/MainPage";
 import Achv from "./achv/Achv";
 import PostMain from "./components/PostMain";
@@ -99,7 +105,7 @@ function App() {
           path="/write"
           element={<PostWrite onSubmit={handlePostSubmit} />}
         />
-        <Route path="" element={"None"} />
+        <Route path="" element={<Link to="/main">메인으로 이동</Link>} />
         <Route path="/profile" element={<Profile />} />
         <Route path="/settings" element={<Settings />} />
         <Route path="/" element={"MainPage"} />
