@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="kr.co.kh.mapper.BooksMapper">
+
+    <!-- 조회 -->
+    <select id="selectList" parameterType="BooksVO" resultType="BooksVO">
+        SELECT * FROM BOOKS
+        ORDER BY BOOK_ID DESC
+    </select>
+
+    <!-- 데이터 삽입 -->
+    <insert id="insert" parameterType="BooksVO">
+        INSERT INTO BOOKS (
+        TITLE, AUTHOR, CATEGORY,
+        ISBN, PRICE, PUBLISHED_DATE,
+        CREATED_BY, UPDATED_BY
+        ) VALUES (
+            #{title}, #{author}, #{category},
+            #{isbn}, #{price}, #{publishedDate},
+            #{createdBy},#{updatedBy},
+        '제목', '저자', '소설',
+        '443223', 10000, '2025-01-01',
+        'aaa', 'aaa'
+        )
+    </insert>
+
+    <!-- 수정 -->
+    <update id="update" parameterType="BooksVO">
+        UPDATE BOOKS SET
+            TITLE = #{title},
+            AUTHOR = #{author},
+            CATEGORY = #{category},
+            ISBN = #{isbn},
+            PRICE = #{price},
+            PUBLISHED_DATE = #{publishedDate},
+            UPDATED_BY = #{updatedBy},
+            UPDATED_AT = SYSDATE
+        WHERE BOOK_ID = #{bookId}
+    </update>
+
+    <!-- 삭제 -->
+    <delete id="delete" parameterType="Long">
+        DELETE FROM BOOKS WHERE bookId = 1
+
+    </delete>
+
+    <insert id="insert2" statementType="CALLABLE" >
+        {
+            CALL SCOTT.INSERT_BOOK (
+                #{title, mode=IN, jdbcType=VARCHAR},
+                #{author, mode=IN, jdbcType=VARCHAR},
+                #{category, mode=IN, jdbcType=VARCHAR},
+                #{isbn, mode=IN, jdbcType=VARCHAR},
+                #{price, mode=IN, jdbcType=NUMERIC},
+                #{publishedDate, mode=IN, jdbcType=DATE},
+                #{createdBy, mode=IN, jdbcType=VARCHAR},
+                #{updatedBy, mode=IN, jdbcType=VARCHAR}
+            )
+        }
+
+    </insert>
+
+    <resultMap id="bookResultMap" type="BooksVO">
+        <result property="bookId" column="BOOK_ID"/>
+        <result property="title" column="TITLE"/>
+        <result property="author" column="AUTHOR"/>
+        <result property="category" column="CATEGORY"/>
+        <result property="isbn" column="ISBN"/>
+        <result property="price" column="PRICE"/>
+        <result property="publishedDate" column="PUBLISHED_DATE"/>
+        <result property="createdBy" column="CREATED_BY"/>
+        <result property="createdAt" column="CREATED_AT"/>
+        <result property="updatedBy" column="UPDATED_BY"/>
+        <result property="updatedAt" column="UPDATED_AT"/>
+
+    </resultMap>
+
+    <select id="selectBookList" statementType="CALLABLE" parameterType="java.util.Map">
+        {
+        CALL SCOTT.SELECT_BOOKS (
+        #{p_title, mode=IN, jdbcType=VARCHAR},
+        #{p_author, mode=IN, jdbcType=VARCHAR},
+        #{p_result, mode=OUT, jdbcType=CURSOR,
+        javaType=java.sql.ResultSet,
+        resultMap=bookResultMap}
+        )
+
+        }
+    </select>
+</mapper>

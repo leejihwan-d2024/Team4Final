@@ -92,6 +92,7 @@
     <delete id="deleteBoard" parameterType="Long">
         DELETE FROM board
         WHERE id = #{id}
+        WHERE BOOK_ID = #{bookId}
     </delete>
 
 </mapper>
