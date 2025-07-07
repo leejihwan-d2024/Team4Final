@@ -10,6 +10,7 @@ import PostDetail from "./components/PostDetail";
 import axios from "axios";
 import NaverProductList from "./components/NaverProductList";
 import LikedProductList from "./components/LikedProductList";
+import RunningInfo from "./components/RunningInfo";
 
 function App() {
   const [posts, setPosts] = useState<Post[]>([]);
@@ -103,6 +104,7 @@ function App() {
         <Route path="" element={"None"} />
         <Route path="/shop" element={<NaverProductList />} />
         <Route path="/liked" element={<LikedProductList />} />
+        <Route path="/info" element={<RunningInfo />} />
       </Routes>
     </BrowserRouter>
   );

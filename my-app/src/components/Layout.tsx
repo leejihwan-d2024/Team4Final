@@ -2,6 +2,7 @@ import { useNavigate } from "react-router-dom";
 import "../styles/Layout.css";
 import { ReactNode, useState } from "react";
 import NaverProductList from "./NaverProductList";
+import RunningInfo from "./RunningInfo";
 
 interface LayoutProps {
   children: ReactNode;
@@ -39,7 +40,8 @@ function Layout({ children }: LayoutProps) {
           <li className="menu-item">
             러닝정보
             <ul className="submenu">
-              <li>러닝관련정보</li>
+              <li onClick={() => navigate("/info")}>러닝관련정보</li>
+              {showProduct && <RunningInfo />}
               <li onClick={() => navigate("/shop")}>러닝관련상품</li>
               {showProduct && <NaverProductList />}
               <li>대회정보확인</li>
