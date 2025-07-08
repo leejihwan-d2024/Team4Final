@@ -10,7 +10,7 @@ function LikedProductList() {
   // 🔹 찜 목록 불러오기
   const fetchLikedProducts = async () => {
     try {
-      const res = await axios.get("http://localhost:8080/api/products/liked", {
+      const res = await axios.get("https://localhost:8080/api/products/liked", {
         params: { userId },
       });
       setLikedProducts(res.data);
@@ -26,7 +26,7 @@ function LikedProductList() {
   // 🔸 찜 취소 기능
   const handleUnlike = async (product: Product) => {
     try {
-      await axios.post("http://localhost:8080/api/products/like", product, {
+      await axios.post("https://localhost:8080/api/products/like", product, {
         params: { userId },
         headers: {
           "Content-Type": "application/json",

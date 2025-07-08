@@ -20,7 +20,7 @@ function RunningInfo() {
     if (!keyword.trim()) return;
     try {
       setLoading(true);
-      const res = await axios.get(`http://localhost:8080/api/info/search`, {
+      const res = await axios.get(`https://localhost:8080/api/info/search`, {
         params: { query: keyword },
       });
       setResults(res.data.documents);

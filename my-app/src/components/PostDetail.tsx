@@ -12,7 +12,7 @@ function PostDetail() {
   useEffect(() => {
     const fetchDetail = async () => {
       try {
-        const res = await fetch(`http://localhost:8080/api/posts/${id}`);
+        const res = await fetch(`https://localhost:8080/api/posts/${id}`);
         if (!res.ok) {
           throw new Error(`HTTP error! status: ${res.status}`);
         }

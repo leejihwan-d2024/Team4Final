@@ -20,7 +20,7 @@ function NaverProductList() {
   useEffect(() => {
     const fetchProducts = async () => {
       try {
-        const res = await axios.get("http://localhost:8080/api/shop/search", {
+        const res = await axios.get("https://localhost:8080/api/shop/search", {
           params: { query },
         });
         setProducts(res.data.items);

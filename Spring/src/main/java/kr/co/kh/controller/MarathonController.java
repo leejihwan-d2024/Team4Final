@@ -10,7 +10,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 import java.net.URI;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
-
+@CrossOrigin(origins = "*")
 @RestController
 @RequestMapping("/api/marathon")
 @Slf4j
