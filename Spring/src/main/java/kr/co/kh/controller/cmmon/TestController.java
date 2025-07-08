@@ -49,4 +49,31 @@ public class TestController {
         memberService.delete(id);
         return ResponseEntity.ok().build();
     }
+
+    /**
+     * 인증 테스트용 엔드포인트
+     */
+    @GetMapping("/auth-test")
+    public ResponseEntity<?> authTest() {
+        return ResponseEntity.ok("인증이 성공적으로 작동하고 있습니다!");
+    }
+
+    /**
+     * 서버 상태 확인
+     */
+    @GetMapping("/health")
+    public ResponseEntity<?> healthCheck() {
+        return ResponseEntity.ok("서버가 정상적으로 실행 중입니다.");
+    }
+
+
+
+    /**
+     * 카카오 설정 확인용 엔드포인트
+     */
+    @GetMapping("/kakao-config")
+    public ResponseEntity<?> getKakaoConfig() {
+        return ResponseEntity.ok()
+                .body("카카오 설정이 로드되었습니다. (환경변수에서 읽어옴)");
+    }
 }

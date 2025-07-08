@@ -49,6 +49,15 @@ public class UserDeviceService {
         }
     }
 
+    /**
+     * deviceId로 디바이스 찾기
+     * @param deviceId
+     * @return
+     */
+    public Optional<UserDevice> findByDeviceId(String deviceId) {
+        return userDeviceRepository.findByDeviceId(deviceId);
+    }
+
     public List<UserDevice> findAllByUserId(Long userId) {
         return userDeviceRepository.findAllByUserId(userId);
     }
@@ -91,5 +100,9 @@ public class UserDeviceService {
 
     public void save(UserDevice userDevice) {
         userDeviceRepository.save(userDevice);
+    }
+    
+    public void deleteById(Long id) {
+        userDeviceRepository.deleteById(id);
     }
 }

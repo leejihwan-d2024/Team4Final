@@ -19,4 +19,6 @@ public interface UserDeviceRepository extends JpaRepository<UserDevice, Long> {
     List<UserDevice> findAllByUserId(Long userId);
 
     Optional<UserDevice> findByUserIdAndDeviceId(Long userId, String deviceId);
+    
+    Optional<UserDevice> findByDeviceId(String deviceId);
 }

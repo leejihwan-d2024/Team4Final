@@ -28,6 +28,11 @@ import ChatRoomPage from "./pages/ChatRoomPage";
 import RunningInfo from "./components/RunningInfo";
 import Marathon from "./components/Marathon";
 import ExcelTmp from "./excel/ExcelTmp";
+import Login from "./pages/login";
+import Join from "./pages/join";
+import FirstPage from "./pages/FirstPage";
+import Main from "./pages/main";
+import "./auth.css";
 
 function App() {
   const [posts, setPosts] = useState<Post[]>([]);
@@ -110,6 +115,7 @@ function App() {
               <Link to="/posts">게시판으로이동</Link>
               <Link to="/shop">러닝관련상품으로 이동</Link>
               <Link to="/info">러닝관련정보로 이동</Link>
+              <Link to="FirstPage">첫페이지로</Link>
             </>
           }
         />
@@ -154,6 +160,9 @@ function App() {
         <Route path="/info" element={<RunningInfo />} />
         <Route path="/Marathon" element={<Marathon />} />
         <Route path="/ExcelTmp" element={<ExcelTmp />} />
+        <Route path="/FirstPage" element={<FirstPage />} />
+        <Route path="/login" element={<Login />} />
+         <Route path="/join" element={<Join />} />
       </Routes>
     </BrowserRouter>
   );

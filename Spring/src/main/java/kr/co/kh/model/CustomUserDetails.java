@@ -32,6 +32,10 @@ public class CustomUserDetails extends User implements UserDetails {
     public String getUsername() {
         return super.getUsername();
     }
+    
+    public String getUserId() {
+        return super.getUsername(); // User 엔티티의 username 필드가 실제로는 userId 역할
+    }
 
     @Override
     public boolean isAccountNonExpired() {

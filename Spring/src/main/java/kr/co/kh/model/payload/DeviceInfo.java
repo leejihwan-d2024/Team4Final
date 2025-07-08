@@ -1,5 +1,6 @@
 package kr.co.kh.model.payload;
 
+import com.fasterxml.jackson.annotation.JsonValue;
 import kr.co.kh.model.vo.DeviceType;
 import kr.co.kh.validation.annotation.NullOrNotBlank;
 
