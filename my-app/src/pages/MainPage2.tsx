@@ -28,7 +28,7 @@ export default function MainPage2() {
   useEffect(() => {
     const fetchCrews = async () => {
       try {
-        const response = await axios.get("http://localhost:8080/api/crews");
+        const response = await axios.get("https://localhost:8080/api/crews");
         setCrewList(response.data);
       } catch (error) {
         console.error("❌ 크루 목록 불러오기 실패:", error);
@@ -38,7 +38,7 @@ export default function MainPage2() {
 
     const fetchTodayEvent = async () => {
       try {
-        const res = await axios.get("http://localhost:8080/api/events");
+        const res = await axios.get("https://localhost:8080/api/events");
         if (Array.isArray(res.data) && res.data.length > 0) {
           setTodayEvent(res.data[0]); // 첫 번째 이벤트만 상태에 저장
         }

@@ -16,8 +16,8 @@ import java.util.List;
 @Slf4j
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/crews")
 @CrossOrigin(origins = "http://localhost:3000")
+@RequestMapping("/api/crews")
 public class RunningCrewController {
 
     private final RunningCrewService crewService;
@@ -29,6 +29,7 @@ public class RunningCrewController {
         return ResponseEntity.ok("CREW CREATED");
     }
 
+    @CrossOrigin(origins = "http://localhost:3000")
     @GetMapping
     @ApiOperation(value = "전체 크루 목록 조회", notes = "모든 크루 목록을 가져옵니다.")
     public List<RunningCrewVO> getAllCrews() {

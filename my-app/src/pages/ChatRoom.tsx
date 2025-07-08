@@ -12,7 +12,7 @@ const ChatRoom = ({ userId, crewId }: { userId: string; crewId: number }) => {
 
   const fetchOldMessages = async () => {
     try {
-      const res = await fetch(`http://localhost:8080/api/chat/${crewId}`);
+      const res = await fetch(`https://localhost:8080/api/chat/${crewId}`);
       if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
       const text = await res.text();
       if (!text) {
@@ -29,7 +29,7 @@ const ChatRoom = ({ userId, crewId }: { userId: string; crewId: number }) => {
   useEffect(() => {
     fetchOldMessages();
 
-    const socket = new SockJS("http://localhost:8080/ws-chat");
+    const socket = new SockJS("https://localhost:8080/ws-chat");
     const client = new Client({
       webSocketFactory: () => socket,
       reconnectDelay: 5000,
