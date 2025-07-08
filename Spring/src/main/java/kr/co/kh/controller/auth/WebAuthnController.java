@@ -11,6 +11,7 @@ import javax.servlet.http.HttpSession;
 
 @RestController
 @RequestMapping("/api/webauthn")
+@CrossOrigin(origins = "http://localhost:3000")
 @RequiredArgsConstructor
 public class WebAuthnController {
 

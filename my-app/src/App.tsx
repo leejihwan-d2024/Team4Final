@@ -1,22 +1,31 @@
 import React from "react";
-
-import "./App.css";
-import { BrowserRouter, Route, Routes } from "react-router-dom";
-import MainPage from "./mainpage/MainPage";
-import Achv from "./achv/Achv";
-import Profile from "./page/Profile";
-import Settings from "./page/Settings";
+import {
+  BrowserRouter,
+  Routes,
+  Route,
+  useNavigate,
+  Link,
+} from "react-router-dom";
+import Login from "./pages/login";
+import Join from "./pages/join";
+import FirstPage from "./pages/FirstPage";
+import Main from "./pages/main";
+import "./auth.css";
+import ExcelTmp from "./excel/excel";
 
 function App() {
   return (
     <BrowserRouter>
-      <Routes>
-        <Route path="/main" element={<MainPage />} />
-        <Route path="/achv" element={<Achv />} />
-        <Route path="/profile" element={<Profile />} />
-        <Route path="/settings" element={<Settings />} />
-        <Route path="/" element={"MainPage"} />
-      </Routes>
+      <div className="auth">
+        <Routes>
+          <Route path="" element={<Link to="FirstPage">첫페이지로</Link>} />
+          <Route path="/FirstPage" element={<FirstPage />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/join" element={<Join />} />
+          <Route path="/main" element={<Main />} />
+          <Route path="/excel" element={<ExcelTmp />} />
+        </Routes>
+      </div>
     </BrowserRouter>
   );
 }
