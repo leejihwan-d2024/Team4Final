@@ -3,6 +3,7 @@ import "../styles/Layout.css";
 import { ReactNode, useState } from "react";
 import NaverProductList from "./NaverProductList";
 import RunningInfo from "./RunningInfo";
+import Marathon from "./Marathon";
 
 interface LayoutProps {
   children: ReactNode;
@@ -44,7 +45,8 @@ function Layout({ children }: LayoutProps) {
               {showProduct && <RunningInfo />}
               <li onClick={() => navigate("/shop")}>러닝관련상품</li>
               {showProduct && <NaverProductList />}
-              <li>대회정보확인</li>
+              <li onClick={() => navigate("/marathon")}>대회정보확인</li>
+              {showProduct && <Marathon />}
             </ul>
           </li>
           <li className="menu-item" onClick={() => navigate("/posts")}>

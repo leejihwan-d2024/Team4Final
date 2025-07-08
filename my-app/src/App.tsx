@@ -117,6 +117,7 @@ function App() {
               <Link to="/info">러닝관련정보로 이동</Link>
               <Link to="FirstPage">첫페이지로</Link>
               <Link to="/main">메인으로 이동</Link>
+              <Link to="/marathon">러닝대회정보로 이동</Link>
             </>
           }
         />
