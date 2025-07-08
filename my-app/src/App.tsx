@@ -116,6 +116,7 @@ function App() {
               <Link to="/shop">러닝관련상품으로 이동</Link>
               <Link to="/info">러닝관련정보로 이동</Link>
               <Link to="FirstPage">첫페이지로</Link>
+              <Link to="/main">메인으로 이동</Link>
             </>
           }
         />
@@ -162,7 +163,7 @@ function App() {
         <Route path="/ExcelTmp" element={<ExcelTmp />} />
         <Route path="/FirstPage" element={<FirstPage />} />
         <Route path="/login" element={<Login />} />
-         <Route path="/join" element={<Join />} />
+        <Route path="/join" element={<Join />} />
       </Routes>
     </BrowserRouter>
   );
