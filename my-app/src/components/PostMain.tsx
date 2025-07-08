@@ -32,7 +32,7 @@ function PostMain({ posts, onDelete, onEdit, onSelect }: PostMainProps) {
     const confirmed = window.confirm("정말 삭제하시겠습니까?");
     if (!confirmed) return;
 
-    const res = await fetch(`http://localhost:8080/api/posts/${id}`, {
+    const res = await fetch(`https://localhost:8080/api/posts/${id}`, {
       method: "DELETE",
     });
 
@@ -68,7 +68,7 @@ function PostMain({ posts, onDelete, onEdit, onSelect }: PostMainProps) {
   // 👍 좋아요 토글 함수
   const toggleLike = async (post: Post) => {
     const alreadyLiked = likedPosts.includes(post.postId);
-    const url = `http://localhost:8080/api/posts/${post.postId}/like`;
+    const url = `https://localhost:8080/api/posts/${post.postId}/like`;
 
     const res = await fetch(url, {
       method: alreadyLiked ? "DELETE" : "POST",

@@ -19,7 +19,7 @@ function PostWrite({ onSubmit }: PostWriteProps) {
   // 수정 시 기존 게시글
   useEffect(() => {
     if (id) {
-      fetch(`http://localhost:8080/api/posts/${id}`)
+      fetch(`https://localhost:8080/api/posts/${id}`)
         .then((res) => res.json())
         .then((data) => {
           setTitle(data.title);

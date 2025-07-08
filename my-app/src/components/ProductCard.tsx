@@ -15,7 +15,7 @@ function ProductCard({
     const checkIfLiked = async () => {
       try {
         const res = await axios.get(
-          "http://localhost:8080/api/products/liked",
+          "https://localhost:8080/api/products/liked",
           {
             params: { userId },
           }
@@ -34,7 +34,7 @@ function ProductCard({
   // 찜 , 찜 해제 요청
   const handleLike = async () => {
     try {
-      await axios.post(`http://localhost:8080/api/products/like`, product, {
+      await axios.post(`https://localhost:8080/api/products/like`, product, {
         params: { userId },
         headers: {
           "Content-Type": "application/json",
