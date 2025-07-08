@@ -51,8 +51,8 @@ spring:
   #      mode: always
   jpa:
     hibernate:
-      ddl-auto: create-drop
-    generate-ddl: true
+      ddl-auto: none
+    generate-ddl: false
     show-sql: true
     database-platform: org.hibernate.dialect.Oracle12cDialect
     properties:
