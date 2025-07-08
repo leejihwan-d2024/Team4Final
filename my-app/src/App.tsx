@@ -110,6 +110,7 @@ function App() {
               <Link to="/posts">게시판으로이동</Link>
               <Link to="/shop">러닝관련상품으로 이동</Link>
               <Link to="/info">러닝관련정보로 이동</Link>
+              <Link to="/marathon">러닝대회정보로 이동</Link>
             </>
           }
         />
