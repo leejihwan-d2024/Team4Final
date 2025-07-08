@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import styles from "./CrewDetail.module.css";
 import axios from "axios";
+import PathMap from "../mainpage/PathMap";
 
 type Crew = {
   crewId: number;
@@ -92,6 +93,7 @@ export default function CrewDetailPage() {
         <p>
           <strong>출발지:</strong> {crew.startLocation}
         </p>
+        <PathMap measurementId={7} />
         <p>
           <strong>도착지:</strong> {crew.endLocation}
         </p>

@@ -144,6 +144,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/getpath/**").permitAll()
                 .antMatchers("/savecustompath/**").permitAll()
                 .antMatchers("/savecustompath").permitAll()
+                .antMatchers("/savemeasure").permitAll()
                 .antMatchers("/nextpathid").permitAll()
                 .antMatchers("/getcustompath/**").permitAll()
                 .anyRequest().authenticated();

@@ -40,7 +40,7 @@ const LocationTracker = () => {
       console.log(Array.isArray(locationList.current));
       console.log(locationList.current.length);
       // 서버 전송
-      fetch("https://200.200.200.62:8080/savemeasure", {
+      fetch("https://localhost:8080/savemeasure", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

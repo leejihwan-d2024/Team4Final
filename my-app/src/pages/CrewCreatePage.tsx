@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import styles from "./CrewCreate.module.css";
 import axios from "axios";
+import PathMap from "../mainpage/PathMap";
 
 export default function CrewCreatePage() {
   const navigate = useNavigate();
@@ -66,6 +67,7 @@ export default function CrewCreatePage() {
           onChange={handleChange}
           required
         />
+        <PathMap measurementId={7} />
         <input
           name="endLocation"
           placeholder="도착지"

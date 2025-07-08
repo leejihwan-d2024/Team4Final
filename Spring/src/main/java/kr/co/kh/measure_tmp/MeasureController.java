@@ -16,7 +16,8 @@ import kr.co.kh.measure_tmp.PathDataCustomRepository;
 import javax.transaction.Transactional;
 import java.util.List;
 import java.util.stream.Collectors;
-@CrossOrigin(origins = "http://localhost:3000")
+@CrossOrigin(origins = {"http://localhost:3000",
+        "http://200.200.200.62:3000"})
 @RestController
 @RequiredArgsConstructor
 public class MeasureController {
