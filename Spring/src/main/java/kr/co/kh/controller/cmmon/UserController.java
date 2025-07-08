@@ -24,6 +24,7 @@ import javax.validation.Valid;
 @RequestMapping("/api/user")
 @Slf4j
 @AllArgsConstructor
+@CrossOrigin(origins = "http://localhost:3000")
 public class UserController {
 
     private final UserService userService;

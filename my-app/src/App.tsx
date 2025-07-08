@@ -35,7 +35,7 @@ function App() {
   // 전체 게시글 불러오기
   const fetchPosts = async () => {
     try {
-      const res = await axios.get("http://localhost:8080/api/posts");
+      const res = await axios.get("https://localhost:8080/api/posts");
       setPosts(res.data);
     } catch (error) {
       console.error("게시글 불러오기 실패:", error);
@@ -45,7 +45,7 @@ function App() {
   //  게시글 등록
   const handlePostSubmit = async (post: Omit<Post, "id">) => {
     try {
-      await axios.post("http://localhost:8080/api/posts", post);
+      await axios.post("https://localhost:8080/api/posts", post);
       alert("등록 완료!");
       fetchPosts();
     } catch (error) {
@@ -57,7 +57,7 @@ function App() {
   //  게시글 상세 조회
   const fetchPostById = async (id: number) => {
     try {
-      const res = await axios.get(`http://localhost:8080/api/posts/${id}`);
+      const res = await axios.get(`https://localhost:8080/api/posts/${id}`);
       setSelectedPost(res.data);
     } catch (error) {
       console.error("게시글 조회 실패:", error);
@@ -66,7 +66,7 @@ function App() {
   // 게시글 수정
   const updatePost = async (post: Post) => {
     try {
-      await axios.put("http://localhost:8080/api/posts", post);
+      await axios.put("https://localhost:8080/api/posts", post);
       alert("수정 완료");
       fetchPosts();
     } catch (error) {
@@ -78,7 +78,7 @@ function App() {
   //  게시글 삭제
   const deletePost = async (id: number) => {
     try {
-      await axios.delete(`http://localhost:8080/api/posts/${id}`);
+      await axios.delete(`https://localhost:8080/api/posts/${id}`);
       alert("삭제 완료");
       fetchPosts();
     } catch (error) {

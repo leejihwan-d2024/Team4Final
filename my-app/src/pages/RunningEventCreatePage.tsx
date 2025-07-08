@@ -25,7 +25,7 @@ export default function RunningEventCreatePage() {
     e.preventDefault();
 
     try {
-      const response = await axios.post("http://localhost:8080/api/events", {
+      const response = await axios.post("https://localhost:8080/api/events", {
         ...form,
         startTime: new Date(form.startTime),
         endTime: new Date(form.endTime),
