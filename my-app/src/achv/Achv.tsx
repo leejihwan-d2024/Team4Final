@@ -25,7 +25,7 @@ function Achv() {
     const fetchAchievements = async () => {
       try {
         const response = await fetch(
-          `http://localhost:8080/api/achievements/user/${userId}`
+          `https://localhost:8080/api/achievements/user/${userId}`
         );
         if (!response.ok) throw new Error("서버 응답 실패");
 
@@ -63,7 +63,7 @@ function Achv() {
     setClaimingId(achvId);
     try {
       const response = await fetch(
-        `http://localhost:8080/api/achievements/reward?userId=${userId}&achvId=${achvId}`, // 변경됨
+        `https://localhost:8080/api/achievements/reward?userId=${userId}&achvId=${achvId}`, // 변경됨
         { method: "GET" }
       );
       if (!response.ok) throw new Error("보상 요청 실패");
