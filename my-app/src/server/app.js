@@ -54,7 +54,7 @@ app.use(
 
 // CORS 설정 추가
 app.use((req, res, next) => {
-  res.header("Access-Control-Allow-Origin", "https://localhost:3000");
+  res.header("Access-Control-Allow-Origin", "http://localhost:3000");
   res.header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
   res.header(
     "Access-Control-Allow-Headers",
@@ -140,7 +140,7 @@ app.post("/api/auth/registerResponse", async (req, res) => {
     const verification = await verifyRegistrationResponse({
       response: body,
       expectedChallenge,
-      expectedOrigin: process.env.FRONTEND_URL || "https://localhost:3000",
+      expectedOrigin: process.env.FRONTEND_URL || "http://localhost:3000",
       expectedRPID: process.env.RP_ID || "localhost",
       requireUserVerification: false,
     });
@@ -308,7 +308,7 @@ app.post("/auth/signinResponse", async (req, res) => {
   }
 });
 
-// 일반 회원가입 API
+// 일반 회원가입 API (기존 엔드포인트)
 app.post("/users/register", (req, res) => {
   try {
     const { userId, userPw, userNn, userEmail, userPhoneno } = req.body;
@@ -330,6 +330,47 @@ app.post("/users/register", (req, res) => {
       userNn: userNn,
       userEmail: userEmail,
       userPhoneno: userPhoneno,
+      credentials: [],
+      counter: {},
+      createdAt: new Date().toISOString(),
+    };
+
+    users.set(userId, newUser);
+
+    res.status(200).json({
+      message: "회원가입이 완료되었습니다!",
+      user: { userId, userNn, userEmail },
+    });
+  } catch (error) {
+    console.error("회원가입 오류:", error);
+    res.status(500).json({ error: "회원가입에 실패했습니다." });
+  }
+});
+
+// 프론트엔드 호환성을 위한 회원가입 API
+app.post("/api/auth/register", (req, res) => {
+  try {
+    const { userId, userPw, userNn, userEmail } = req.body;
+
+    if (!userId || !userPw || !userNn || !userEmail) {
+      return res
+        .status(400)
+        .json({ error: "ID, 비밀번호, 닉네임, 이메일은 필수 항목입니다." });
+    }
+
+    // 사용자 ID 중복 확인
+    if (users.has(userId)) {
+      return res.status(400).json({ error: "이미 존재하는 사용자 ID입니다." });
+    }
+
+    // 새 사용자 생성
+    const newUser = {
+      id: userId,
+      userId: userId,
+      userPw: userPw, // 실제로는 해시화 필요
+      userNn: userNn,
+      userEmail: userEmail,
+      userPhoneno: "", // 선택사항이므로 빈 문자열로 설정
       credentials: [],
       counter: {},
       createdAt: new Date().toISOString(),

@@ -11,7 +11,6 @@ import Join from "./pages/join";
 import FirstPage from "./pages/FirstPage";
 import Main from "./pages/main";
 import "./auth.css";
-import ExcelTmp from "./excel/excel";
 
 function App() {
   return (
@@ -23,7 +22,6 @@ function App() {
           <Route path="/login" element={<Login />} />
           <Route path="/join" element={<Join />} />
           <Route path="/main" element={<Main />} />
-          <Route path="/excel" element={<ExcelTmp />} />
         </Routes>
       </div>
     </BrowserRouter>

@@ -16,11 +16,7 @@ import kr.co.kh.model.payload.DeviceInfo;
 import kr.co.kh.service.KakaoApiService;
 import kr.co.kh.model.token.RefreshToken;
 import kr.co.kh.model.vo.UserAuthorityVO;
-import kr.co.kh.repository.UserRepository;
-import kr.co.kh.model.Role;
-import kr.co.kh.model.RoleName;
-import java.util.Set;
-import java.util.HashSet;
+import kr.co.kh.vo.UserVO;
 import kr.co.kh.security.JwtTokenProvider;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -37,8 +33,7 @@ import java.util.Optional;
 @AllArgsConstructor
 public class AuthService {
 
-    private final UserService userService;
-    private final UserRepository userRepository;
+    private final UserServiceInterface userServiceInterface;
     private final RoleService roleService;
     private final JwtTokenProvider tokenProvider;
     private final RefreshTokenService refreshTokenService;
@@ -49,69 +44,74 @@ public class AuthService {
     private final KakaoApiService kakaoApiService;
 
     /**
-     * 사용자 등록
-     * 등록되면 user object 생성
+     * 사용자 등록 (MyBatis 기반)
      * @param newRegistrationRequest
      * @return
      */
-    public Optional<User> registerUser(RegistrationRequest newRegistrationRequest) {
+    public Optional<UserVO> registerUser(RegistrationRequest newRegistrationRequest) {
         String newRegistrationRequestEmail = newRegistrationRequest.getEmail();
         String newRegistrationUsername = newRegistrationRequest.getUsername();
+        
         if (emailAlreadyExists(newRegistrationRequestEmail)) {
             log.error("이미 존재하는 이메일: {}", newRegistrationRequestEmail);
             throw new ResourceAlreadyInUseException("Email", "이메일 주소", newRegistrationRequestEmail);
         }
         if (usernameAlreadyExists(newRegistrationUsername)) {
             log.error("이미 존재하는 사용자: {}", newRegistrationUsername);
+            throw new ResourceAlreadyInUseException("Username", "아이디", newRegistrationUsername);
         }
+        
         log.info("신규 사용자 등록 [이메일={}], [아이디={}]", newRegistrationRequestEmail, newRegistrationUsername);
         log.info(newRegistrationRequest.toString());
-        User newUser = userService.createUser(newRegistrationRequest);
-
-        // 신규 사용자 저장
-        User registeredNewUser = userService.save(newUser);
+        
+        // UserVO 생성
+        UserVO newUserVO = new UserVO();
+        newUserVO.setUserId(newRegistrationRequest.getUsername());
+        newUserVO.setUserPw(passwordEncoder.encode(newRegistrationRequest.getPassword()));
+        newUserVO.setUserEmail(newRegistrationRequest.getEmail());
+        newUserVO.setUserNn(newRegistrationRequest.getName());
+        newUserVO.setUserPhoneno(newRegistrationRequest.getPhoneno()); // 폰번호 설정 추가
+        newUserVO.setUserStatus(1); // 활성 상태
+        
+        // 사용자 등록
+        userServiceInterface.registerUser(newUserVO);
+        
         log.info("===================================================");
-        log.info(registeredNewUser.toString());
+        log.info("사용자 등록 완료: {}", newUserVO.getUserId());
         log.info(newRegistrationRequest.toString());
-        /**
-         * 정상적으로 저장되면 권한 테이블에 저장
-         * ROLE_ID가 1이면 일반 사용자, 2면 관리자, 3이면 최고권한 관리자
-         * 회원 가입시 받은 파라미터에서 roleNum값 기준으로 loop를 거꾸로 돌리면서 권한을 넣는다.
-         * 즉, 최고권한 관리자의 경우 USER_AUTHORITY 테이블에 3개의 행이 생겨야한다.
-         * ROLE_ID가 1,2,3과 같이...
-         */
-        // 권한 매핑
-        if (registeredNewUser.getId() != null) {
-            for (int i = newRegistrationRequest.getRoleNum(); i >= 0; i--) {
-                UserAuthorityVO userAuthorityVO = new UserAuthorityVO();
-                userAuthorityVO.setUserId(registeredNewUser.getId());
-                userAuthorityVO.setRoleId((long) i);
-                userAuthorityService.save(userAuthorityVO);
-            }
-
+        
+        // 권한 매핑 (기본 USER 권한)
+        try {
+            UserAuthorityVO userAuthorityVO = new UserAuthorityVO();
+            userAuthorityVO.setUserId(newUserVO.getUserId());
+            userAuthorityVO.setRoleId(1L); // ROLE_USER
+            userAuthorityService.save(userAuthorityVO);
+            log.info("기본 권한 매핑 완료: userId={}, roleId=1", newUserVO.getUserId());
+        } catch (Exception e) {
+            log.error("권한 매핑 중 오류 발생: userId={}", newUserVO.getUserId(), e);
+            // 권한 매핑 실패해도 사용자 등록은 성공으로 처리
         }
+        
         log.info("===================================================");
-        return Optional.of(registeredNewUser);
+        return Optional.of(newUserVO);
     }
 
     /**
      * 회원 가입시 이메일 중복인지 검사
-     * 이메일이 이미 있으면 true 아니면 false
      * @param email
      * @return
      */
     public Boolean emailAlreadyExists(String email) {
-        return userService.existsByEmail(email);
+        return userServiceInterface.existsByUserEmail(email);
     }
 
     /**
      * 회원 가입시 username 중복인지 검사
-     * username이 이미 있으면 true 아니면 false
      * @param username
      * @return
      */
     public Boolean usernameAlreadyExists(String username) {
-        return userService.existsByUsername(username);
+        return userServiceInterface.existsByUserId(username);
     }
 
     /**
@@ -120,20 +120,31 @@ public class AuthService {
      * @return
      */
     public Optional<Authentication> authenticateUser(LoginRequest loginRequest) {
-        return Optional.ofNullable(authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(loginRequest.getUsername(),
-                loginRequest.getPassword())));
+        log.info("=== authenticateUser 호출 ===");
+        log.info("로그인 시도: username={}, password={}", 
+            loginRequest.getUsername(), 
+            loginRequest.getPassword() != null ? "***" : "null");
+        
+        try {
+            Authentication authentication = authenticationManager.authenticate(
+                new UsernamePasswordAuthenticationToken(loginRequest.getUsername(), loginRequest.getPassword())
+            );
+            log.info("인증 성공: {}", authentication);
+            return Optional.ofNullable(authentication);
+        } catch (Exception e) {
+            log.error("인증 실패: {}", e.getMessage(), e);
+            return Optional.empty();
+        }
     }
 
-
-
     /**
-     * 비번 변경시 현재 입력한 비밀번호가 맞는지 확인한다
-     * @param currentUser
+     * 비밀번호 검증 (UserVO 기반)
+     * @param userId
      * @param password
      * @return
      */
-    private Boolean currentPasswordMatches(User currentUser, String password) {
-        return passwordEncoder.matches(password, currentUser.getPassword());
+    public Boolean validatePassword(String userId, String password) {
+        return userServiceInterface.validatePassword(userId, password);
     }
 
     /**
@@ -148,40 +159,38 @@ public class AuthService {
     /**
      * token 발행 by userId
      */
-    private String generateTokenFromUserId(Long userId) {
+    private String generateTokenFromUserId(String userId) {
         return tokenProvider.generateTokenFromUserId(userId);
     }
 
     /**
-     * 사용자 장치에 대한 refresh token 을 만들고 유지
-     * 장치가 이미 존재하면 상관 없음
-     * 만료 된 토큰이있는 사용하지 않는 장치는 크론 작업으로 정리해야함.
-     * 생성 된 토큰은 jwt 내에 캡슐화됨
-     * 이전 토큰은 유효하지 않아야하므로 기존 refresh token 을 제거해야함.
+     * 사용자 장치에 대한 refresh token 을 만들고 유지 (UserVO 기반)
      * @param authentication
      * @param loginRequest
      * @return
      */
     public Optional<RefreshToken> createAndPersistRefreshTokenForDevice(Authentication authentication, LoginRequest loginRequest) {
-        User currentUser = (User) authentication.getPrincipal();
+        CustomUserDetails customUserDetails = (CustomUserDetails) authentication.getPrincipal();
+        String userId = customUserDetails.getUserId();
 
         // deviceInfo가 null인 경우 기본값 생성 (카카오 로그인 등)
         DeviceInfo deviceInfo = loginRequest.getDeviceInfo();
         if (deviceInfo == null) {
             deviceInfo = new DeviceInfo();
-            deviceInfo.setDeviceId("default_device_" + currentUser.getId());
+            deviceInfo.setDeviceId("default_device_" + userId);
             deviceInfo.setDeviceType(kr.co.kh.model.vo.DeviceType.OTHER);
             deviceInfo.setNotificationToken(null);
         }
 
-        userDeviceService.findByUserIDAndDeviceId(currentUser.getId(), deviceInfo.getDeviceId())
+        // 기존 refresh token 삭제
+        userDeviceService.findByUserIDAndDeviceId(userId, deviceInfo.getDeviceId())
                 .map(UserDevice::getRefreshToken)
                 .map(RefreshToken::getId)
                 .ifPresent(refreshTokenService::deleteById);
 
         UserDevice userDevice = userDeviceService.createUserDevice(deviceInfo);
         RefreshToken refreshToken = refreshTokenService.createRefreshToken();
-        userDevice.setUser(currentUser);
+        userDevice.setUserId(userId); // UserVO 기반으로 변경
         userDevice.setRefreshToken(refreshToken);
         refreshToken.setUserDevice(userDevice);
         refreshToken = refreshTokenService.save(refreshToken);
@@ -189,7 +198,7 @@ public class AuthService {
     }
 
     /**
-     * refresh token 을 사용하여 access token 반환
+     * refresh token 을 사용하여 access token 반환 (UserVO 기반)
      * @param tokenRefreshRequest
      * @return
      */
@@ -204,8 +213,8 @@ public class AuthService {
                     return refreshToken;
                 })
                 .map(RefreshToken::getUserDevice)
-                .map(UserDevice::getUser)
-                .map(User::getId).map(this::generateTokenFromUserId))
+                .map(UserDevice::getUserId) // User 엔티티 대신 userId 사용
+                .map(this::generateTokenFromUserId))
                 .orElseThrow(() -> new TokenRefreshException(requestRefreshToken, "갱신 토큰이 데이터베이스에 없습니다. 다시 로그인 해 주세요."));
     }
 
@@ -225,86 +234,90 @@ public class AuthService {
     }
 
     /**
-     * 비밀번호 변경
+     * 비밀번호 변경 (UserVO 기반)
      * @param updatePasswordRequest
-     * @param username
+     * @param userId
      */
     public void updatePassword(UpdatePasswordRequest updatePasswordRequest, String userId) {
-        User currentUser = userService.findByUsername(userId)
-                .orElseThrow(() -> new RuntimeException("사용자를 찾을 수 없습니다."));
-        
-        if (!currentPasswordMatches(currentUser, updatePasswordRequest.getOldPassword())) {
+        if (!validatePassword(userId, updatePasswordRequest.getOldPassword())) {
             throw new RuntimeException("현재 비밀번호가 올바르지 않습니다.");
         }
         
-        currentUser.setPassword(passwordEncoder.encode(updatePasswordRequest.getNewPassword()));
-        userService.save(currentUser);
+        // UserVO 조회 및 비밀번호 업데이트
+        Optional<UserVO> userOpt = userServiceInterface.getUserById(userId);
+        if (userOpt.isPresent()) {
+            UserVO userVO = userOpt.get();
+            userVO.setUserPw(passwordEncoder.encode(updatePasswordRequest.getNewPassword()));
+            userServiceInterface.updateUser(userVO);
+        } else {
+            throw new RuntimeException("사용자를 찾을 수 없습니다.");
+        }
     }
 
     /**
-     * 사용자 정보 조회
-     * @param username
+     * 사용자 정보 조회 (UserVO 기반)
+     * @param userId
      * @return
      */
-    public Optional<User> getUserInfo(String userId) {
-        return userService.findByUsername(userId);
+    public Optional<UserVO> getUserInfo(String userId) {
+        return userServiceInterface.getUserById(userId);
     }
 
     /**
-     * 사용자 프로필 수정
+     * 사용자 프로필 수정 (UserVO 기반)
      * @param updateProfileRequest
-     * @param username
+     * @param userId
      */
     public void updateProfile(UpdateProfileRequest updateProfileRequest, String userId) {
-        User currentUser = userService.findByUsername(userId)
-                .orElseThrow(() -> new RuntimeException("사용자를 찾을 수 없습니다."));
-        
-        if (updateProfileRequest.getEmail() != null && !updateProfileRequest.getEmail().isEmpty()) {
-            currentUser.setEmail(updateProfileRequest.getEmail());
+        Optional<UserVO> userOpt = userServiceInterface.getUserById(userId);
+        if (userOpt.isPresent()) {
+            UserVO userVO = userOpt.get();
+            
+            if (updateProfileRequest.getEmail() != null && !updateProfileRequest.getEmail().isEmpty()) {
+                userVO.setUserEmail(updateProfileRequest.getEmail());
+            }
+            
+            if (updateProfileRequest.getName() != null && !updateProfileRequest.getName().isEmpty()) {
+                userVO.setUserNn(updateProfileRequest.getName());
+            }
+            
+            userServiceInterface.updateUser(userVO);
+        } else {
+            throw new RuntimeException("사용자를 찾을 수 없습니다.");
         }
-        
-        if (updateProfileRequest.getName() != null && !updateProfileRequest.getName().isEmpty()) {
-            currentUser.setName(updateProfileRequest.getName());
-        }
-        
-        userService.save(currentUser);
     }
 
     /**
-     * 계정 삭제
+     * 계정 삭제 (UserVO 기반)
      * @param deleteAccountRequest
-     * @param username
+     * @param userId
      */
     public void deleteAccount(DeleteAccountRequest deleteAccountRequest, String userId) {
-        User currentUser = userService.findByUsername(userId)
-                .orElseThrow(() -> new RuntimeException("사용자를 찾을 수 없습니다."));
-        
-        if (!currentPasswordMatches(currentUser, deleteAccountRequest.getPassword())) {
+        if (!validatePassword(userId, deleteAccountRequest.getPassword())) {
             throw new RuntimeException("비밀번호가 올바르지 않습니다.");
         }
         
-        // UserRepository를 직접 사용
-        userRepository.delete(currentUser);
+        userServiceInterface.deleteUser(userId);
     }
 
     /**
-     * 카카오 로그인 처리
+     * 카카오 로그인 처리 (UserVO 기반)
      * @param kakaoLoginRequest
      * @return
      */
     public Optional<Authentication> kakaoLogin(KakaoLoginRequest kakaoLoginRequest) {
         try {
-            // 카카오 토큰 검증 (실제 구현에서는 카카오 API 호출)
+            // 카카오 토큰 검증
             if (!validateKakaoToken(kakaoLoginRequest.getAccessToken())) {
                 log.error("유효하지 않은 카카오 토큰: {}", kakaoLoginRequest.getAccessToken());
                 return Optional.empty();
             }
 
             // 카카오 사용자 정보로 기존 사용자 찾기 또는 새로 생성
-            User user = findOrCreateKakaoUser(kakaoLoginRequest.getUserInfo());
+            UserVO userVO = findOrCreateKakaoUser(kakaoLoginRequest.getUserInfo());
             
-            // CustomUserDetails 생성
-            CustomUserDetails customUserDetails = new CustomUserDetails(user);
+            // CustomUserDetails 생성 (UserVO 기반)
+            CustomUserDetails customUserDetails = new CustomUserDetails(userVO);
             
             // Authentication 객체 생성
             UsernamePasswordAuthenticationToken authentication = 
@@ -328,38 +341,30 @@ public class AuthService {
     }
 
     /**
-     * 카카오 사용자 정보로 기존 사용자 찾기 또는 새로 생성
+     * 카카오 사용자 정보로 기존 사용자 찾기 또는 새로 생성 (UserVO 기반)
      * @param kakaoUserInfo
      * @return
      */
-    private User findOrCreateKakaoUser(KakaoUserInfo kakaoUserInfo) {
-        // 카카오 ID로 기존 사용자 찾기
-        Optional<User> existingUser = userRepository.findByKakaoId(kakaoUserInfo.getId());
+    private UserVO findOrCreateKakaoUser(KakaoUserInfo kakaoUserInfo) {
+        // 카카오 ID로 기존 사용자 찾기 (이메일로 검색)
+        Optional<UserVO> existingUser = userServiceInterface.getUserByEmail(kakaoUserInfo.getEmail());
         
         if (existingUser.isPresent()) {
-            log.info("기존 카카오 사용자 로그인: {}", existingUser.get().getUsername());
+            log.info("기존 카카오 사용자 로그인: {}", existingUser.get().getUserId());
             return existingUser.get();
         }
         
         // 새 카카오 사용자 생성
-        User newUser = new User();
-        newUser.setUsername("kakao_" + kakaoUserInfo.getId());
-        newUser.setEmail(kakaoUserInfo.getEmail());
-        newUser.setName(kakaoUserInfo.getNickname());
-        newUser.setKakaoId(kakaoUserInfo.getId());
-        newUser.setActive(true);
-        newUser.setEmailVerified(true);
+        UserVO newUserVO = new UserVO();
+        newUserVO.setUserId("kakao_" + kakaoUserInfo.getId());
+        newUserVO.setUserEmail(kakaoUserInfo.getEmail());
+        newUserVO.setUserNn(kakaoUserInfo.getNickname());
+        newUserVO.setUserStatus(1); // 활성 상태
         
-        // 기본 USER 권한 부여
-        Set<Role> userRoles = new HashSet<>();
-        Role userRole = new Role(RoleName.ROLE_USER);
-        userRoles.add(userRole);
-        newUser.setRoles(userRoles);
+        userServiceInterface.registerUser(newUserVO);
+        log.info("새 카카오 사용자 생성: {}", newUserVO.getUserId());
         
-        User savedUser = userRepository.save(newUser);
-        log.info("새 카카오 사용자 생성: {}", savedUser.getUsername());
-        
-        return savedUser;
+        return newUserVO;
     }
 
 }

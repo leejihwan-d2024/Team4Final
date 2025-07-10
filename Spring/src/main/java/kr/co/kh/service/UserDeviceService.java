@@ -25,7 +25,7 @@ public class UserDeviceService {
      * @param userId
      * @return
      */
-    public Optional<UserDevice> findByUserId(Long userId) {
+    public Optional<UserDevice> findByUserId(String userId) {
         return userDeviceRepository.findByUserId(userId);
     }
 
@@ -35,11 +35,11 @@ public class UserDeviceService {
      * @param deviceId
      * @return
      */
-    public Optional<UserDevice> findByUserIdAndDeviceId(Long userId, String deviceId) {
+    public Optional<UserDevice> findByUserIdAndDeviceId(String userId, String deviceId) {
         return userDeviceRepository.findByUserIdAndDeviceId(userId, deviceId);
     }
 
-    public Optional<UserDevice> findByUserIDAndDeviceId(Long userId, String deviceId) {
+    public Optional<UserDevice> findByUserIDAndDeviceId(String userId, String deviceId) {
         Optional<UserDevice> result = userDeviceRepository.findByUserIdAndDeviceId(userId, deviceId);
         if (result.isPresent()) {
             refreshTokenService.increaseCount(result.get().getRefreshToken());
@@ -58,7 +58,7 @@ public class UserDeviceService {
         return userDeviceRepository.findByDeviceId(deviceId);
     }
 
-    public List<UserDevice> findAllByUserId(Long userId) {
+    public List<UserDevice> findAllByUserId(String userId) {
         return userDeviceRepository.findAllByUserId(userId);
     }
 

@@ -3,9 +3,12 @@ package kr.co.kh.controller.cmmon;
 import kr.co.kh.exception.BadRequestException;
 import kr.co.kh.model.Member;
 import kr.co.kh.service.MemberService;
+import kr.co.kh.vo.UserVO;
+import kr.co.kh.service.UserServiceInterface;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -15,6 +18,9 @@ import org.springframework.web.bind.annotation.*;
 public class TestController {
 
     private final MemberService memberService;
+    private final UserServiceInterface userServiceInterface;
+    private final PasswordEncoder passwordEncoder;
+
     @GetMapping("/list")
     public ResponseEntity<?> testList(){
 

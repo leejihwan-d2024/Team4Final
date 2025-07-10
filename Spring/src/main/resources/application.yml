@@ -1,7 +1,7 @@
 server:
   port: 8080
   ssl:
-    enabled: false
+    enabled: true
     key-store: classpath:keystore.p12
     key-store-password: 123456
     key-store-type: PKCS12
@@ -46,8 +46,8 @@ spring:
   #      mode: always
   jpa:
     hibernate:
-      ddl-auto: create-drop
-    generate-ddl: true
+      ddl-auto: none
+    generate-ddl: false
     show-sql: true
     database-platform: org.hibernate.dialect.Oracle12cDialect
     properties:
@@ -140,3 +140,10 @@ logging:
   pattern:
     console: "%clr(%d{HH:mm:ss.SSS}){faint} %clr(${LOG_LEVEL_PATTERN:-%5p}) %clr(${PID:- }){magenta} %clr(---){faint} %clr([%15.15t]){faint} %clr(%-40.40logger{39}){cyan} %clr([행번호]: %line){red} %clr(:){faint} %m%n${LOG_EXCEPTION_CONVERSION_WORD:-%wEx}"
     file: "%d{yyyy-MM-dd HH:mm:ss.SSS} ${LOG_LEVEL_PATTERN:-%5p} ${PID:- } --- [%15.15t] %-40.40logger{39} : [행번호] : %line  %m%n${LOG_EXCEPTION_CONVERSION_WORD:-%wEx}"
+cors:
+  allowed-origins:
+    - "http://localhost:3000"
+    - "http://localhost:8080"
+    - "http://127.0.0.1:3000"
+    - "http://127.0.0.1:8080"
+  allow-credentials: true

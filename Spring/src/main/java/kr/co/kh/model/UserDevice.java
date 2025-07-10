@@ -16,9 +16,8 @@ public class UserDevice extends DateAudit {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "USER_ID", nullable = false)
-    private User user;
+    @Column(name = "USER_ID", nullable = false)
+    private String userId;
 
     @Column(name = "DEVICE_TYPE")
     @Enumerated(value = EnumType.STRING)
@@ -39,10 +38,10 @@ public class UserDevice extends DateAudit {
     public UserDevice() {
     }
 
-    public UserDevice(Long id, User user, DeviceType deviceType, String notificationToken, String deviceId,
+    public UserDevice(Long id, String userId, DeviceType deviceType, String notificationToken, String deviceId,
                       RefreshToken refreshToken, Boolean isRefreshActive) {
         this.id = id;
-        this.user = user;
+        this.userId = userId;
         this.deviceType = deviceType;
         this.notificationToken = notificationToken;
         this.deviceId = deviceId;
@@ -58,12 +57,12 @@ public class UserDevice extends DateAudit {
         this.id = id;
     }
 
-    public User getUser() {
-        return user;
+    public String getUserId() {
+        return userId;
     }
 
-    public void setUser(User user) {
-        this.user = user;
+    public void setUserId(String userId) {
+        this.userId = userId;
     }
 
     public DeviceType getDeviceType() {

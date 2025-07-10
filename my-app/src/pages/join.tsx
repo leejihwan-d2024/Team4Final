@@ -19,6 +19,7 @@ interface JoinRequest {
   userEmail: string;
   userPw: string;
   userNn: string;
+  userPhoneno: string;
 }
 
 interface JoinResponse {
@@ -80,6 +81,7 @@ const Join: React.FC = () => {
         userEmail: form.userEmail,
         userPw: form.userPw,
         userNn: form.userNn,
+        userPhoneno: form.userPhoneno,
       };
 
       // 요청 데이터 로깅

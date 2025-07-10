@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.Collection;
+import java.util.Optional;
 
 @Service
 public class RoleService {
@@ -25,4 +26,13 @@ public class RoleService {
         return roleRepository.findAll();
     }
 
+    /**
+     * ID로 Role 조회
+     * @param id
+     * @return
+     */
+    public Role findById(Long id) {
+        Optional<Role> role = roleRepository.findById(id);
+        return role.orElse(null);
+    }
 }

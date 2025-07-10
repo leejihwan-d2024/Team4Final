@@ -29,7 +29,7 @@ public class JwtTokenProvider {
     public String generateToken(CustomUserDetails customUserDetails) {
         Instant expiryDate = Instant.now().plusMillis(jwtExpirationInMs);
         return Jwts.builder()
-                .setSubject(Long.toString(customUserDetails.getId()))
+                .setSubject(customUserDetails.getUserId())
                 .setIssuedAt(Date.from(Instant.now()))
                 .setExpiration(Date.from(expiryDate))
                 .signWith(SignatureAlgorithm.HS512, jwtSecret)
@@ -41,10 +41,10 @@ public class JwtTokenProvider {
      * @param userId
      * @return
      */
-    public String generateTokenFromUserId(Long userId) {
+    public String generateTokenFromUserId(String userId) {
         Instant expiryDate = Instant.now().plusMillis(jwtExpirationInMs);
         return Jwts.builder()
-                .setSubject(Long.toString(userId))
+                .setSubject(userId)
                 .setIssuedAt(Date.from(Instant.now()))
                 .setExpiration(Date.from(expiryDate))
                 .signWith(SignatureAlgorithm.HS512, jwtSecret)
@@ -56,13 +56,13 @@ public class JwtTokenProvider {
      * @param token
      * @return
      */
-    public Long getUserIdFromJWT(String token) {
+    public String getUserIdFromJWT(String token) {
         Claims claims = Jwts.parser()
                 .setSigningKey(jwtSecret)
                 .parseClaimsJws(token)
                 .getBody();
 
-        return Long.parseLong(claims.getSubject());
+        return claims.getSubject();
     }
 
     /**
