@@ -27,7 +27,6 @@ import ChatRoom from "./pages/ChatRoom";
 import ChatRoomPage from "./pages/ChatRoomPage";
 import RunningInfo from "./components/RunningInfo";
 import Marathon from "./components/Marathon";
-import ExcelTmp from "./excel/ExcelTmp";
 import Login from "./pages/login";
 import Join from "./pages/join";
 import FirstPage from "./pages/FirstPage";
@@ -161,7 +160,6 @@ function App() {
         <Route path="/liked" element={<LikedProductList />} />
         <Route path="/info" element={<RunningInfo />} />
         <Route path="/Marathon" element={<Marathon />} />
-        <Route path="/ExcelTmp" element={<ExcelTmp />} />
         <Route path="/FirstPage" element={<FirstPage />} />
         <Route path="/login" element={<Login />} />
         <Route path="/join" element={<Join />} />

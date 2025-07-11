@@ -10,6 +10,8 @@ public class RewardVO {
     private String achvId;        // 업적 ID
     private String rewardType;    // 보상명
     private String rewardValue;   // 설명
+    private String badgeName;
+    private String badgeImage;
     // 기본 생성자
     public RewardVO() {}
 

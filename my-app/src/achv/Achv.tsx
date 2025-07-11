@@ -11,6 +11,12 @@ interface Achievement {
   description: string;
 }
 
+interface BadgeRewardResponse {
+  result: "SUCCESS" | "ALREADY_CLAIMED" | "NO_REWARD_MAPPING";
+  badgeName?: string;
+  badgeImage?: string;
+}
+
 function Achv() {
   const navigate = useNavigate();
   const [achievements, setAchievements] = useState<Achievement[]>([]);
@@ -35,7 +41,7 @@ function Achv() {
         const mappedData = data.map((item: any) => ({
           id: item.achvId?.toString() ?? item.achv_id ?? "없음",
           title: item.achvTitle ?? item.achv_title ?? "제목 없음",
-          description: item.achv_content ?? "",
+          description: item.achvContent ?? "",
           currentValue: parseInt(item.currentValue) || 0,
           maxPoint: parseInt(item.achvMaxPoint) || 1,
           claimed: item.isCompleted === "Y",
@@ -63,20 +69,37 @@ function Achv() {
     setClaimingId(achvId);
     try {
       const response = await fetch(
-        `https://localhost:8080/api/achievements/reward?userId=${userId}&achvId=${achvId}`, // 변경됨
+        `https://localhost:8080/api/achievements/reward?userId=${userId}&achvId=${achvId}`,
         { method: "GET" }
       );
+
       if (!response.ok) throw new Error("보상 요청 실패");
 
-      const resultText = await response.text();
-      console.log("🎁 서버 응답:", resultText);
+      const result: BadgeRewardResponse = await response.json();
 
-      setAchievements((prev) =>
-        prev.map((achv) =>
-          achv.id === achvId ? { ...achv, claimed: true } : achv
-        )
-      );
-      alert(resultText);
+      if (result.result === "SUCCESS") {
+        alert(`🎉 ${result.badgeName} 뱃지를 획득했습니다!`);
+        if (result.badgeImage) {
+          const img = new Image();
+          img.src = result.badgeImage;
+          img.alt = result.badgeName ?? "뱃지";
+          img.style.maxWidth = "150px";
+          const w = window.open("", "_blank", "width=300,height=300");
+          if (w) {
+            w.document.write(`<h2>${result.badgeName}</h2>`);
+            w.document.body.appendChild(img);
+          }
+        }
+        setAchievements((prev) =>
+          prev.map((achv) =>
+            achv.id === achvId ? { ...achv, claimed: true } : achv
+          )
+        );
+      } else if (result.result === "ALREADY_CLAIMED") {
+        alert("이미 보상을 받았습니다.");
+      } else {
+        alert("보상 정보가 없습니다.");
+      }
     } catch (error) {
       alert("보상 처리 중 오류가 발생했습니다.");
       console.error(error);
@@ -177,7 +200,9 @@ function Achv() {
 
                 {expandedId === achv.id && (
                   <div className="achievement-description">
-                    {achv.description}
+                    {achv.description?.trim() !== ""
+                      ? achv.description
+                      : "설명이 준비되지 않았습니다."}
                   </div>
                 )}
               </div>

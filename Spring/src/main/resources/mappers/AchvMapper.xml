@@ -12,23 +12,40 @@
         AND REWARD_ID = #{rewardId}
     </select>
 
-
     <!-- 보상 지급 기록 삽입 -->
     <insert id="insertUserReward" parameterType="map">
         INSERT INTO USER_ACHV_REWARD (USER_ID, REWARD_ID, RECEIVED_DATE)
         VALUES (#{userId, jdbcType=VARCHAR}, #{rewardId, jdbcType=VARCHAR}, SYSDATE)
     </insert>
 
+    <insert id="insertUserAchvList">
+        INSERT INTO USER_ACHV_LIST (
+        USER_ID, ACHV_ID, ACHIEVED_DATE, IS_REWARDED, REWARD_ID, BADGE_NAME, BADGE_IMAGE_URL
+        ) VALUES (
+        #{userId}, #{achvId}, SYSDATE, 'Y', #{rewardId}, #{badgeName}, #{badgeImageUrl}
+        )
+    </insert>
+
     <!-- 업적 ID로 보상 조회 -->
     <select id="findRewardByAchvId" parameterType="string" resultType="kr.co.kh.model.vo.RewardVO">
         SELECT
-        REWARD_ID     AS rewardId,
-        ACHV_ID       AS achvId,
-        REWARD_TYPE   AS rewardType,
-        REWARD_VALUE  AS rewardValue
+        REWARD_ID       AS rewardId,
+        ACHV_ID         AS achvId,
+        REWARD_TYPE     AS rewardType,
+        REWARD_VALUE    AS rewardValue,
+        BADGE_NAME      AS badgeName,
+        BADGE_IMAGE_URL AS badgeImage
         FROM ACHV_REWARD
-        WHERE ACHV_ID = #{achvId, jdbcType=VARCHAR}
+        WHERE ACHV_ID = #{achvId}
     </select>
 
+    <!-- 보상 ID로 뱃지 정보 조회 -->
+    <select id="findBadgeByRewardId" parameterType="long" resultType="map">
+        SELECT
+        BADGE_NAME AS badgeName,
+        BADGE_IMAGE_URL AS badgeImageUrl
+        FROM ACHV_REWARD
+        WHERE REWARD_ID = #{rewardId}
+    </select>
 
 </mapper>
