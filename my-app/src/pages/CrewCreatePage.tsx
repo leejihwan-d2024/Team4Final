@@ -49,6 +49,8 @@ export default function CrewCreatePage() {
     }
   };
 
+  const [st, setSt] = useState<number[]>([]);
+
   return (
     <div className={styles.container}>
       <h2 className={styles.title}>크루 만들기</h2>
@@ -63,15 +65,15 @@ export default function CrewCreatePage() {
         <input
           name="startLocation"
           placeholder="출발지"
-          value={form.startLocation}
+          value={st[0] + "," + st[1]}
           onChange={handleChange}
           required
         />
-        <PathMap measurementId={7} />
+        <PathMap measurementId={7} setSt={setSt} />
         <input
           name="endLocation"
           placeholder="도착지"
-          value={form.endLocation}
+          value={st[2] + "," + st[3]}
           onChange={handleChange}
           required
         />

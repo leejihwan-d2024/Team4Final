@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { SetStateAction, useEffect, useRef, useState } from "react";
 import axios from "axios";
 
 declare global {
@@ -21,9 +21,10 @@ interface PathDataItem {
 
 interface PathMapProps {
   measurementId: number; // 측정 ID
+  setSt?: React.Dispatch<SetStateAction<number[]>>;
 }
 
-const PathMap: React.FC<PathMapProps> = ({ measurementId }) => {
+const PathMap: React.FC<PathMapProps> = ({ measurementId, setSt }) => {
   const mapRef = useRef<HTMLDivElement | null>(null);
   const clickedPathRef = useRef<any[]>([]);
   const polylineRef = useRef<any>(null);
@@ -151,6 +152,21 @@ const PathMap: React.FC<PathMapProps> = ({ measurementId }) => {
             title: "종료점",
             map: map,
           });
+
+          // ✅ 외부 상태 전달
+          if (typeof setSt === "function") {
+            const first = clickedPathRef.current[0];
+            const last =
+              clickedPathRef.current[clickedPathRef.current.length - 1] ||
+              first;
+
+            setSt([
+              first.getLat(),
+              first.getLng(),
+              last.getLat(),
+              last.getLng(),
+            ]);
+          }
         });
       });
     };
