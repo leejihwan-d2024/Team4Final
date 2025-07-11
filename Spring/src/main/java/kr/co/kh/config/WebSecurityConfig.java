@@ -19,6 +19,7 @@ import kr.co.kh.service.CustomUserDetailsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
@@ -59,7 +60,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     private final JwtAuthenticationEntryPoint jwtEntryPoint;
 
     @Autowired
-    public WebSecurityConfig(CustomUserDetailsService userDetailsService, JwtAuthenticationEntryPoint jwtEntryPoint) {
+    public WebSecurityConfig(@Lazy CustomUserDetailsService userDetailsService, JwtAuthenticationEntryPoint jwtEntryPoint) {
         this.userDetailsService = userDetailsService;
         this.jwtEntryPoint = jwtEntryPoint;
     }

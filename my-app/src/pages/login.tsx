@@ -5,8 +5,8 @@ import "./login.css";
 
 // 타입 정의
 interface LoginRequest {
-  userId: string;
-  userPw: string;
+  username: string;
+  password: string;
   deviceInfo: {
     deviceId: string;
     deviceType: string;
@@ -122,14 +122,16 @@ const Login: React.FC = () => {
 
       // 요청 데이터 로깅
       const requestData = {
-        userId: userId,
-        userPw: userPw,
+        username: userId,
+        password: userPw,
         deviceInfo: {
           deviceId: "web-" + Date.now(),
           deviceType: "web",
         },
       };
-      console.log("로그인 요청 데이터:", requestData);
+      console.log("로그인 요청 데이터:", JSON.stringify(requestData, null, 2));
+      console.log("username 값:", requestData.username);
+      console.log("password 값:", requestData.password);
 
       // axios로 로그인 요청
       const response = await api.post<LoginResponse>(

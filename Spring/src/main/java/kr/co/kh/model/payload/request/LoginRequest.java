@@ -18,14 +18,13 @@ import javax.validation.constraints.NotNull;
 public class LoginRequest {
 
     @NullOrNotBlank(message = "아이디는 필수 항목입니다.")
-    @JsonProperty("userId")
+    @JsonProperty("username")
     private String username;
 
     @NotNull(message = "비밀번호는 필수 항목입니다.")
-    @JsonProperty("userPw")
+    @JsonProperty("password")
     private String password;
 
     private DeviceInfo deviceInfo;
-
 
 }

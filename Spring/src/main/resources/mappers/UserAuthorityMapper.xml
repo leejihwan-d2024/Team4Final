@@ -7,4 +7,15 @@
         VALUES (#{userId}, #{roleId})
     </insert>
 
+    <select id="findByUserId" parameterType="String" resultType="UserAuthorityVO">
+        SELECT USER_ID as userId, ROLE_ID as roleId
+        FROM USER_AUTHORITY 
+        WHERE USER_ID = #{userId}
+    </select>
+
+    <delete id="deleteByUserId" parameterType="String">
+        DELETE FROM USER_AUTHORITY 
+        WHERE USER_ID = #{userId}
+    </delete>
+
 </mapper>

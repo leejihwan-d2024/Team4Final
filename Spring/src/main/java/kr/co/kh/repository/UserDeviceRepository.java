@@ -14,11 +14,11 @@ public interface UserDeviceRepository extends JpaRepository<UserDevice, Long> {
 
     Optional<UserDevice> findByRefreshToken(RefreshToken refreshToken);
 
-    Optional<UserDevice> findByUserId(Long userId);
+    Optional<UserDevice> findByUserId(String userId);
 
-    List<UserDevice> findAllByUserId(Long userId);
+    List<UserDevice> findAllByUserId(String userId);
 
-    Optional<UserDevice> findByUserIdAndDeviceId(Long userId, String deviceId);
+    Optional<UserDevice> findByUserIdAndDeviceId(String userId, String deviceId);
     
     Optional<UserDevice> findByDeviceId(String deviceId);
 }

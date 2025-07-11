@@ -9,7 +9,7 @@ import lombok.ToString;
 @ToString
 public class UserAuthorityVO {
 
-    private Long userId;
+    private String userId;
     private Long roleId;
 
 

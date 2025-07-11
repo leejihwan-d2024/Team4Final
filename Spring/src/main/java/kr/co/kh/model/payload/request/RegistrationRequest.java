@@ -28,7 +28,9 @@ public class RegistrationRequest {
     @JsonProperty("userNn")
     private String name;
 
-    private int roleNum;
+    @JsonProperty("userPhoneno")
+    private String phoneno;
 
+    private int roleNum;
 
 }

@@ -20,6 +20,7 @@ import kr.co.kh.model.payload.response.JwtAuthenticationResponse;
 import kr.co.kh.model.token.RefreshToken;
 import kr.co.kh.security.JwtTokenProvider;
 import kr.co.kh.service.AuthService;
+import kr.co.kh.vo.UserVO;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -28,6 +29,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.Optional;
 
 @RestController
 @CrossOrigin(origins = "http://localhost:3000")
@@ -73,7 +75,10 @@ public class AuthController {
     })
     @PostMapping("/login")
     public ResponseEntity<?> authenticateUser(@Valid @RequestBody LoginRequest loginRequest) {
-        log.info("로그인 요청 받음: username={}, deviceInfo={}", loginRequest.getUsername(), loginRequest.getDeviceInfo());
+        log.info("로그인 요청 받음: username={}, password={}, deviceInfo={}", 
+            loginRequest.getUsername(), 
+            loginRequest.getPassword() != null ? "***" : "null", 
+            loginRequest.getDeviceInfo());
 
         Authentication authentication = authService.authenticateUser(loginRequest)
                 .orElseThrow(() -> new UserLoginException("아이디 또는 비밀번호가 올바르지 않습니다."));
@@ -128,8 +133,8 @@ public class AuthController {
     @PostMapping("/register")
     public ResponseEntity<?> registerUser(@Valid @RequestBody RegistrationRequest request) {
         log.info("회원가입 요청: {}", request.getUsername());
-        return authService.registerUser(request).map(user -> {
-            log.info("회원가입 성공: {}", user.getUsername());
+        return authService.registerUser(request).map(userVO -> {
+            log.info("회원가입 성공: {}", userVO.getUserId());
             return ResponseEntity.ok(new ApiResponse(true, "회원가입이 완료되었습니다."));
         }).orElseThrow(() -> new UserRegistrationException(request.getUsername(), "회원가입 처리 중 오류가 발생했습니다."));
     }
@@ -250,6 +255,53 @@ public class AuthController {
         loginRequest.setPassword("kakao_password"); // 카카오 사용자는 비밀번호가 없으므로 더미 값
         loginRequest.setDeviceInfo(kakaoLoginRequest.getDeviceInfo());
         return loginRequest;
+    }
+
+    /**
+     * 테스트용 사용자 생성 (개발용)
+     */
+    @ApiOperation(value = "테스트용 사용자 생성")
+    @PostMapping("/create-test-user")
+    public ResponseEntity<?> createTestUser() {
+        try {
+            RegistrationRequest testUser = new RegistrationRequest();
+            testUser.setUsername("333");
+            testUser.setPassword("333");
+            testUser.setEmail("test@test.com");
+            testUser.setName("테스트 사용자");
+            
+            log.info("테스트 사용자 생성 시작: username={}", testUser.getUsername());
+            authService.registerUser(testUser);
+            log.info("테스트 사용자 생성 완료");
+            return ResponseEntity.ok(new ApiResponse(true, "테스트 사용자가 생성되었습니다."));
+        } catch (Exception e) {
+            log.error("테스트 사용자 생성 실패", e);
+            return ResponseEntity.badRequest().body(new ApiResponse(false, "테스트 사용자 생성에 실패했습니다: " + e.getMessage()));
+        }
+    }
+
+    /**
+     * 사용자 조회 테스트 (개발용)
+     */
+    @ApiOperation(value = "사용자 조회 테스트")
+    @GetMapping("/test-user/{username}")
+    public ResponseEntity<?> getTestUser(@PathVariable String username) {
+        try {
+            log.info("사용자 조회 테스트: username={}", username);
+            Optional<UserVO> user = authService.getUserInfo(username);
+            if (user.isPresent()) {
+                UserVO userVO = user.get();
+                log.info("사용자 조회 성공: userId={}, userNn={}, userEmail={}", 
+                    userVO.getUserId(), userVO.getUserNn(), userVO.getUserEmail());
+                return ResponseEntity.ok(userVO);
+            } else {
+                log.warn("사용자를 찾을 수 없음: username={}", username);
+                return ResponseEntity.notFound().build();
+            }
+        } catch (Exception e) {
+            log.error("사용자 조회 테스트 실패", e);
+            return ResponseEntity.badRequest().body(new ApiResponse(false, "사용자 조회에 실패했습니다: " + e.getMessage()));
+        }
     }
 
 }
