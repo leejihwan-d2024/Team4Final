@@ -1,6 +1,7 @@
 package kr.co.kh.controller.cmmon;
 
 import kr.co.kh.achv.entity.Achv;
+import kr.co.kh.model.dto.RewardResponse;
 import kr.co.kh.service.AchievementService;
 import kr.co.kh.service.RewardService;
 import kr.co.kh.service.RewardService.RewardResult;
@@ -75,27 +76,29 @@ public class AchvController {
     }
 
     // ✅ 보상 요청 처리 (파라미터명 통일: achvId 사용)
+    // ✅ 보상 요청 처리 - JSON 형태의 RewardResponse 반환
     @GetMapping("/reward")
-    public ResponseEntity<String> claimReward(
+    public ResponseEntity<RewardResponse> claimReward(
             @RequestParam String userId,
             @RequestParam String achvId
     ) {
         try {
-            RewardResult result = rewardService.claimReward(userId, achvId);
+            RewardResponse response = rewardService.claimReward(userId, achvId);
 
-            switch (result) {
+            switch (response.getResult()) {
                 case SUCCESS:
-                    return ResponseEntity.ok("🎉 보상 지급 완료!");
                 case ALREADY_CLAIMED:
-                    return ResponseEntity.ok("이미 보상을 받았습니다.");
+                    return ResponseEntity.ok(response);
                 case NO_REWARD_MAPPING:
-                    return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("보상 정보가 존재하지 않습니다.");
+                    return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
                 default:
-                    return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("알 수 없는 오류가 발생했습니다.");
+                    return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
             }
         } catch (Exception e) {
             e.printStackTrace();
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("서버 오류 발생: " + e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(
+                    new RewardResponse(RewardService.RewardResult.NO_REWARD_MAPPING, null, null)
+            );
         }
     }
 }
