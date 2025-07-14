@@ -506,7 +506,7 @@ app.get("/auth/status", (req, res) => {
 });
 
 // 카카오 로그인 API
-app.post("/auth/kakao/login", async (req, res) => {
+app.post("/api/auth/kakao/login", async (req, res) => {
   try {
     const { accessToken, userInfo } = req.body;
 

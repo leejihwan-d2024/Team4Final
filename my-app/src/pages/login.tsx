@@ -51,8 +51,12 @@ interface KakaoLoginRequest {
 }
 
 interface KakaoLoginResponse {
-  user: any;
-  token?: string;
+  userId?: string;
+  username?: string;
+  name?: string;
+  email?: string;
+  accessToken?: string;
+  refreshToken?: string;
   message?: string;
 }
 
@@ -61,8 +65,10 @@ declare global {
   interface Window {
     Kakao: {
       init: (key: string) => void;
+      isInitialized: () => boolean;
       Auth: {
         login: (options: {
+          throughTalk?: boolean;
           success: (response: KakaoAuthResponse) => void;
           fail: (error: any) => void;
         }) => void;
@@ -192,17 +198,33 @@ const Login: React.FC = () => {
 
   const handleKakaoLogin = async (): Promise<void> => {
     try {
+      console.log("=== 카카오 로그인 시작 ===");
+      console.log("카카오 SDK 초기화 상태:", window.Kakao?.isInitialized());
+      console.log("브라우저 정보:", navigator.userAgent);
+
       if (!window.Kakao) {
         setError("카카오 SDK가 로드되지 않았습니다.");
         return;
       }
 
-      // 카카오 로그인 실행
+      if (!window.Kakao.isInitialized()) {
+        setError("카카오 SDK가 초기화되지 않았습니다.");
+        return;
+      }
+
+      // 카카오 로그인 실행 (웹 로그인만 사용)
       const response: KakaoAuthResponse = await new Promise(
         (resolve, reject) => {
           window.Kakao.Auth.login({
-            success: resolve,
-            fail: reject,
+            throughTalk: false, // 카카오톡 앱 로그인 강제 비활성화
+            success: (authResponse) => {
+              console.log("카카오 로그인 성공:", authResponse);
+              resolve(authResponse);
+            },
+            fail: (error) => {
+              console.error("카카오 로그인 실패:", error);
+              reject(error);
+            },
           });
         }
       );
@@ -218,7 +240,7 @@ const Login: React.FC = () => {
 
       // 백엔드로 카카오 로그인 요청
       const loginResponse = await api.post<KakaoLoginResponse>(
-        "/auth/kakao/login",
+        "/api/auth/kakao/login",
         {
           accessToken: response.access_token,
           userInfo: {
@@ -227,21 +249,42 @@ const Login: React.FC = () => {
             nickname: userInfo.properties?.nickname,
             profileImage: userInfo.properties?.profile_image,
           },
+          deviceInfo: {
+            deviceId: "web-" + Date.now(),
+            deviceType: "web",
+          },
         } as KakaoLoginRequest
       );
 
       if (loginResponse.status === 200) {
         const result = loginResponse.data;
-        localStorage.setItem("user", JSON.stringify(result.user));
-        if (result.token) localStorage.setItem("token", result.token);
+
+        // 사용자 정보를 올바른 형식으로 저장
+        const savedUserInfo = {
+          userId: result.userId || result.username || `kakao_${userInfo.id}`,
+          userNn: result.name || userInfo.properties?.nickname,
+          userEmail: result.email || userInfo.kakao_account?.email,
+        };
+
+        console.log("=== 카카오 로그인 성공 - 사용자 정보 저장 ===");
+        console.log("저장할 사용자 정보:", savedUserInfo);
+        console.log("================================");
+
+        localStorage.setItem("user", JSON.stringify(savedUserInfo));
+        if (result.accessToken)
+          localStorage.setItem("token", result.accessToken);
         alert("카카오 로그인 성공!");
-        navigate("/main");
+        navigate("/testmain"); // testmain 페이지로 이동
       } else {
         setError(loginResponse.data.message || "카카오 로그인에 실패했습니다.");
       }
     } catch (error: any) {
-      console.error("카카오 로그인 오류:", error);
-      setError("카카오 로그인에 실패했습니다.");
+      console.error("=== 카카오 로그인 오류 상세 ===");
+      console.error("오류 타입:", error.constructor.name);
+      console.error("오류 메시지:", error.message);
+      console.error("오류 스택:", error.stack);
+      console.error("================================");
+      setError("카카오 로그인에 실패했습니다: " + error.message);
     }
   };
 
@@ -304,7 +347,7 @@ const Login: React.FC = () => {
           disabled={loading}
           style={{ backgroundColor: "#FEE500", color: "#000" }}
         >
-          카카오톡 로그인
+          카카오 로그인
         </button>
       </div>
     </div>

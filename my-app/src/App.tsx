@@ -8,6 +8,7 @@ import {
   Routes,
   useNavigate,
 } from "react-router-dom";
+import { logTokenInfo, checkAndHandleAutoLogin } from "./api/tokenUtils";
 import MainPage from "./mainpage/MainPage";
 import Achv from "./achv/Achv";
 import PostMain from "./components/PostMain";
@@ -30,12 +31,13 @@ import Marathon from "./components/Marathon";
 import Login from "./pages/login";
 import Join from "./pages/join";
 import FirstPage from "./pages/FirstPage";
-import Main from "./pages/main";
+import TestMain from "./pages/testmain";
 import "./auth.css";
 
 function App() {
   const [posts, setPosts] = useState<Post[]>([]);
   const [selectedPost, setSelectedPost] = useState<Post | null>(null);
+  const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
 
   // 전체 게시글 불러오기
   const fetchPosts = async () => {
@@ -94,6 +96,26 @@ function App() {
 
   useEffect(() => {
     fetchPosts();
+
+    // 앱 시작 시 토큰 정보 로깅 및 자동 로그인 체크
+    console.log("=== 앱 시작 - 토큰 정보 확인 ===");
+    logTokenInfo();
+
+    // 자동 로그인 체크 (체크박스가 체크된 경우에만)
+    const checkAutoLogin = async () => {
+      const savedAutoLogin = localStorage.getItem("autoLoginEnabled");
+      if (savedAutoLogin === "true") {
+        console.log("자동 로그인 기능이 활성화되어 있습니다.");
+        const isAutoLoggedIn = await checkAndHandleAutoLogin();
+        setIsLoggedIn(isAutoLoggedIn);
+      } else {
+        console.log("자동 로그인 기능이 비활성화되어 있습니다.");
+        setIsLoggedIn(false);
+      }
+    };
+
+    checkAutoLogin();
+    console.log("================================");
   }, []);
 
   return (
@@ -115,7 +137,9 @@ function App() {
               <Link to="/posts">게시판으로이동</Link>
               <Link to="/shop">러닝관련상품으로 이동</Link>
               <Link to="/info">러닝관련정보로 이동</Link>
+              <br />
               <Link to="/main">메인으로 이동</Link>
+              <Link to="/testmain">임시 Main 으로 이동</Link>
               <Link to="/marathon">러닝대회정보로 이동</Link>
             </>
           }
@@ -161,6 +185,7 @@ function App() {
         <Route path="/info" element={<RunningInfo />} />
         <Route path="/Marathon" element={<Marathon />} />
         <Route path="/FirstPage" element={<FirstPage />} />
+        <Route path="/testmain" element={<TestMain />} />
         <Route path="/login" element={<Login />} />
         <Route path="/join" element={<Join />} />
       </Routes>
