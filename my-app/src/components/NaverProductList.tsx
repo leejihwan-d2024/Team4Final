@@ -40,11 +40,12 @@ function NaverProductList() {
       <Layout>
         상품검색
         <input
+          className="input"
           placeholder="러닝관련상품을 검색해보세요."
           value={inputValue}
           onChange={(e) => setInputValue(e.target.value)}
         ></input>
-        <button type="submit" onClick={handleSearch}>
+        <button type="submit" className="btn" onClick={handleSearch}>
           검색
         </button>
       </Layout>
