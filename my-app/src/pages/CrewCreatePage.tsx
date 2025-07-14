@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import styles from "./CrewCreate.module.css";
 import axios from "axios";
@@ -48,8 +48,67 @@ export default function CrewCreatePage() {
       alert("크루 생성에 실패했습니다.");
     }
   };
-
+  //경로관련
   const [st, setSt] = useState<number[]>([]);
+  const [startAddress, setStartAddress] = useState("");
+  const [endAddress, setEndAddress] = useState("");
+  // 출발지 주소 처리
+  useEffect(() => {
+    if (st[0] && st[1]) {
+      fetch(
+        `https://dapi.kakao.com/v2/local/geo/coord2regioncode.json?x=${st[1]}&y=${st[0]}`,
+        {
+          method: "GET",
+          headers: {
+            Authorization: "KakaoAK 940ad44b82d7651f1eafdd0d4758cc07",
+          },
+        }
+      )
+        .then((res) => res.json())
+        .then((data) => {
+          if (data.documents && data.documents.length > 0) {
+            const region2 = data.documents[0].region_2depth_name;
+            const region3 = data.documents[0].region_3depth_name;
+            setStartAddress(`${region2} ${region3}`);
+          } else {
+            setStartAddress("주소 정보 없음");
+          }
+        })
+        .catch((err) => {
+          console.error("출발지 주소 가져오기 실패:", err);
+          setStartAddress("오류 발생");
+        });
+    }
+  }, [st[0], st[1]]);
+
+  // 도착지 주소 처리
+  useEffect(() => {
+    if (st[2] && st[3]) {
+      fetch(
+        `https://dapi.kakao.com/v2/local/geo/coord2regioncode.json?x=${st[3]}&y=${st[2]}`,
+        {
+          method: "GET",
+          headers: {
+            Authorization: "KakaoAK 940ad44b82d7651f1eafdd0d4758cc07",
+          },
+        }
+      )
+        .then((res) => res.json())
+        .then((data) => {
+          if (data.documents && data.documents.length > 0) {
+            const region2 = data.documents[0].region_2depth_name;
+            const region3 = data.documents[0].region_3depth_name;
+            setEndAddress(`${region2} ${region3}`);
+          } else {
+            setEndAddress("주소 정보 없음");
+          }
+        })
+        .catch((err) => {
+          console.error("도착지 주소 가져오기 실패:", err);
+          setEndAddress("오류 발생");
+        });
+    }
+  }, [st[2], st[3]]);
 
   return (
     <div className={styles.container}>
@@ -67,7 +126,13 @@ export default function CrewCreatePage() {
           placeholder="출발지"
           value={st[0] + "," + st[1]}
           onChange={handleChange}
-          required
+          hidden
+        />
+        <input
+          name="startLocationString"
+          placeholder="출발지 지역명"
+          value={`${startAddress}`}
+          readOnly
         />
         <PathMap measurementId={7} setSt={setSt} />
         <input
@@ -75,7 +140,13 @@ export default function CrewCreatePage() {
           placeholder="도착지"
           value={st[2] + "," + st[3]}
           onChange={handleChange}
-          required
+          hidden
+        />
+        <input
+          name="endLocationString"
+          placeholder="도착지 지역명"
+          value={`${endAddress}`}
+          readOnly
         />
         <input
           name="distance"
