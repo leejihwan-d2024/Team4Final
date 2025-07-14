@@ -1,4 +1,4 @@
-package kr.co.kh.service.impl;
+package kr.co.kh.impl;
 
 import kr.co.kh.controller.cmmon.UserAchvProgressDto;
 import kr.co.kh.model.vo.RewardVO;
