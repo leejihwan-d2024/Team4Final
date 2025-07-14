@@ -1,8 +1,13 @@
 .marathon-container {
-  max-width: 900px;
+  width: 98%;
+  max-width: 360px;
   margin: 0 auto;
-  padding: 2rem;
-  font-family: "Segoe UI", sans-serif;
+  border: 2px solid #bad546;
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  background-color: #f9f9f9;
+  padding: 3px;
+  border-radius: 16px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 
 .title {
