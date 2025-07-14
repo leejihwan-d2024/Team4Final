@@ -170,6 +170,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/api/**", configuration);
+        source.registerCorsConfiguration("/auth/**", configuration); // 카카오 로그인 엔드포인트 추가
         return source;
     }
 

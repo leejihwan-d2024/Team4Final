@@ -106,13 +106,10 @@ jasypt:
   encryptor:
     bean: jasyptStringEncryptor
 
-# 카카오 API 설정
+# 카카오 API 설정 (웹 로그인 전용)
 kakao:
-  client-id: ${KAKAO_CLIENT_ID:your_kakao_client_id}
-  client-secret: ${KAKAO_CLIENT_SECRET:your_kakao_client_secret}
-  redirect-uri: ${KAKAO_REDIRECT_URI:http://localhost:3000/auth/kakao/callback}
-  app-key: ${KAKAO_APP_KEY:your_kakao_app_key}
-  admin-key: ${KAKAO_ADMIN_KEY:your_kakao_admin_key}
+  client-id: ${KAKAO_CLIENT_ID:6ad0e21f224b767fe674ccc4e6dbb79c}
+  client-secret: ${KAKAO_CLIENT_SECRET:is3zcJXBwohwHnsCuPqMXSrmdE5hDVd7}
 
 upload:
   path: C:\\WAS_DATA\\upload

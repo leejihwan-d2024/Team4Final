@@ -8,7 +8,7 @@ interface User {
   userEmail?: string;
 }
 
-const Main: React.FC = () => {
+const TestMain: React.FC = () => {
   const navigate = useNavigate();
 
   const handleLogout = (): void => {
@@ -32,6 +32,12 @@ const Main: React.FC = () => {
 
   const userString = localStorage.getItem("user");
   const user: User | null = userString ? JSON.parse(userString) : null;
+
+  // 디버깅 로그 추가
+  console.log("=== TestMain 페이지 - 사용자 정보 확인 ===");
+  console.log("localStorage user string:", userString);
+  console.log("파싱된 사용자 정보:", user);
+  console.log("================================");
 
   return (
     <div
@@ -177,4 +183,4 @@ const Main: React.FC = () => {
   );
 };
 
-export default Main;
+export default TestMain;

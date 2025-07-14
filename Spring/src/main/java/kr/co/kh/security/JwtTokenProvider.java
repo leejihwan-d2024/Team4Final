@@ -6,11 +6,13 @@ import io.jsonwebtoken.SignatureAlgorithm;
 import kr.co.kh.model.CustomUserDetails;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
+import lombok.extern.slf4j.Slf4j;
 
 import java.time.Instant;
 import java.util.Date;
 
 @Component
+@Slf4j
 public class JwtTokenProvider {
 
     private final String jwtSecret;
@@ -28,12 +30,20 @@ public class JwtTokenProvider {
      */
     public String generateToken(CustomUserDetails customUserDetails) {
         Instant expiryDate = Instant.now().plusMillis(jwtExpirationInMs);
-        return Jwts.builder()
+        String token = Jwts.builder()
                 .setSubject(customUserDetails.getUserId())
                 .setIssuedAt(Date.from(Instant.now()))
                 .setExpiration(Date.from(expiryDate))
                 .signWith(SignatureAlgorithm.HS512, jwtSecret)
                 .compact();
+        
+        log.info("=== JWT Access Token 발행 ===");
+        log.info("사용자 ID: {}", customUserDetails.getUserId());
+        log.info("토큰 만료 시간: {}", Date.from(expiryDate));
+        log.info("토큰 길이: {} characters", token.length());
+        log.info("================================");
+        
+        return token;
     }
 
     /**
@@ -43,12 +53,20 @@ public class JwtTokenProvider {
      */
     public String generateTokenFromUserId(String userId) {
         Instant expiryDate = Instant.now().plusMillis(jwtExpirationInMs);
-        return Jwts.builder()
+        String token = Jwts.builder()
                 .setSubject(userId)
                 .setIssuedAt(Date.from(Instant.now()))
                 .setExpiration(Date.from(expiryDate))
                 .signWith(SignatureAlgorithm.HS512, jwtSecret)
                 .compact();
+        
+        log.info("=== JWT Access Token 발행 (UserId 기반) ===");
+        log.info("사용자 ID: {}", userId);
+        log.info("토큰 만료 시간: {}", Date.from(expiryDate));
+        log.info("토큰 길이: {} characters", token.length());
+        log.info("==========================================");
+        
+        return token;
     }
 
     /**
@@ -57,12 +75,26 @@ public class JwtTokenProvider {
      * @return
      */
     public String getUserIdFromJWT(String token) {
-        Claims claims = Jwts.parser()
-                .setSigningKey(jwtSecret)
-                .parseClaimsJws(token)
-                .getBody();
+        try {
+            Claims claims = Jwts.parser()
+                    .setSigningKey(jwtSecret)
+                    .parseClaimsJws(token)
+                    .getBody();
 
-        return claims.getSubject();
+            String userId = claims.getSubject();
+            log.info("=== JWT 토큰에서 사용자 ID 추출 ===");
+            log.info("사용자 ID: {}", userId);
+            log.info("토큰 만료 시간: {}", claims.getExpiration());
+            log.info("================================");
+            
+            return userId;
+        } catch (Exception e) {
+            log.error("=== JWT 토큰 파싱 실패 ===");
+            log.error("토큰: {}", token);
+            log.error("오류: {}", e.getMessage());
+            log.error("================================");
+            throw e;
+        }
     }
 
     /**

@@ -13,9 +13,6 @@ public class KakaoConfig {
     
     private String clientId;
     private String clientSecret;
-    private String redirectUri;
-    private String appKey;
-    private String adminKey;
     
     // 카카오 API URL들
     public static final String KAKAO_AUTH_URL = "https://kauth.kakao.com";
