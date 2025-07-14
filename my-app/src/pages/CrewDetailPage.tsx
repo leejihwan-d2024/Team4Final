@@ -23,6 +23,7 @@ const currentUserId = "1"; // 로그인 미구현 상태라 하드코딩
 export default function CrewDetailPage() {
   const { id } = useParams();
   const [crew, setCrew] = useState<Crew | null>(null);
+  const [hasJoined, setHasJoined] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -37,7 +38,19 @@ export default function CrewDetailPage() {
       }
     };
 
+    const checkJoined = async () => {
+      try {
+        const res = await axios.get(
+          `https://localhost:8080/api/crew-members/check?crewId=${id}&userId=${currentUserId}`
+        );
+        setHasJoined(res.data.hasJoined);
+      } catch (error) {
+        console.error("❌ 참가 여부 확인 실패:", error);
+      }
+    };
+
     fetchCrew();
+    checkJoined();
   }, [id]);
 
   const handleJoin = async () => {
@@ -52,6 +65,7 @@ export default function CrewDetailPage() {
 
       await axios.post("https://localhost:8080/api/crew-members", payload);
       alert(`"${crew.crewTitle}"에 참가했습니다!`);
+      setHasJoined(true); // 참가 후 상태 업데이트
     } catch (error) {
       console.error("❌ 참가 요청 실패:", error);
       alert("참가 요청 중 문제가 발생했습니다.");
@@ -69,7 +83,7 @@ export default function CrewDetailPage() {
         `https://localhost:8080/api/crews/${crew.crewId}?userId=${currentUserId}`
       );
       alert("삭제 완료되었습니다.");
-      navigate("/MainPage2"); // 삭제 후 메인으로 이동
+      navigate("/MainPage2");
     } catch (error) {
       console.error("❌ 삭제 실패:", error);
       alert("삭제 중 오류가 발생했습니다.");
@@ -77,8 +91,11 @@ export default function CrewDetailPage() {
   };
 
   const handleEdit = () => {
-    alert("수정 페이지로 이동합니다 (아직 미구현)");
-    // 예: navigate(`/crews/${crew.crewId}/edit`);
+    navigate(`/crews/${crew?.crewId}/edit`);
+  };
+
+  const handleEnterChat = () => {
+    navigate(`/chatroom/${crew?.crewId}`);
   };
 
   if (!crew) return <div>로딩 중...</div>;
@@ -93,18 +110,22 @@ export default function CrewDetailPage() {
         <p>
           <strong>출발지:</strong> {crew.startLocation}
         </p>
-        <PathMap measurementId={7} />
+        <PathMap measurementId={crew.crewId} />
         <p>
           <strong>도착지:</strong> {crew.endLocation}
         </p>
+        {crew.startLocationMapPoint && (
+          <p>
+            <strong>출발 위치 좌표:</strong> {crew.startLocationMapPoint}
+          </p>
+        )}
+        {crew.endLocationMapPoint && (
+          <p>
+            <strong>도착 위치 좌표:</strong> {crew.endLocationMapPoint}
+          </p>
+        )}
         <p>
-          <strong>출발 위치 좌표:</strong> {crew.startLocationMapPoint}
-        </p>
-        <p>
-          <strong>도착 위치 좌표:</strong> {crew.endLocationMapPoint}
-        </p>
-        <p>
-          <strong>지역:</strong> {crew.district}
+          <strong>지역:</strong> {crew.district ?? "미입력"}
         </p>
         <p>
           <strong>15명 이상 여부:</strong>{" "}
@@ -115,9 +136,15 @@ export default function CrewDetailPage() {
         </p>
       </div>
 
-      <button className={styles.joinButton} onClick={handleJoin}>
-        참가하기
-      </button>
+      {hasJoined ? (
+        <button className={styles.chatButton} onClick={handleEnterChat}>
+          💬 채팅방 참가하기
+        </button>
+      ) : (
+        <button className={styles.joinButton} onClick={handleJoin}>
+          참가하기
+        </button>
+      )}
 
       {isLeader && (
         <div className={styles.adminButtons}>

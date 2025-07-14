@@ -3,6 +3,7 @@ package kr.co.kh.mapper;
 import kr.co.kh.model.vo.CrewMemberVO;
 import kr.co.kh.model.vo.RunningCrewVO;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 
@@ -27,4 +28,8 @@ public interface RunningCrewMapper {
     void deleteCrew(Long crewId);
     // 참가 크루 선삭제
     void deleteCrewMembersByCrewId(Long crewId);
+
+   // 참가 크루 존재 확인
+    int countJoinedMember(@Param("crewId") Long crewId, @Param("userId") String userId);
+
 }

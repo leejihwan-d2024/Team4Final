@@ -1,11 +1,12 @@
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import styles from "./CrewCreate.module.css"; // 그대로 재사용
+import styles from "./CrewCreate.module.css";
 import axios from "axios";
 
 export default function CrewEditPage() {
   const { id } = useParams();
   const navigate = useNavigate();
+
   const [form, setForm] = useState({
     title: "",
     startLocation: "",
@@ -27,10 +28,10 @@ export default function CrewEditPage() {
           title: crew.crewTitle,
           startLocation: crew.startLocation,
           endLocation: crew.endLocation,
-          distance: "", //  필요시 백엔드 확장
-          duration: "",
-          pace: "",
-          description: "", //  필요시 백엔드 확장
+          distance: crew.distance ?? "", // 향후 백엔드 확장 대응
+          duration: crew.duration ?? "",
+          pace: crew.pace ?? "",
+          description: crew.description ?? "",
           isOver15: crew.isOver15 === 1,
         });
       } catch (err) {
@@ -45,8 +46,13 @@ export default function CrewEditPage() {
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
-    const { name, value } = e.target;
-    setForm((prev) => ({ ...prev, [name]: value }));
+    const target = e.target as HTMLInputElement;
+    const { name, type, value, checked } = target;
+
+    setForm((prev) => ({
+      ...prev,
+      [name]: type === "checkbox" ? checked : value,
+    }));
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -57,13 +63,17 @@ export default function CrewEditPage() {
         crewTitle: form.title,
         startLocation: form.startLocation,
         endLocation: form.endLocation,
-        startLocationMapPoint: "37.123456,127.123456", // ⚠️ 임시
+        startLocationMapPoint: "37.123456,127.123456", // ⚠️ 추후 동적 처리 필요
         endLocationMapPoint: "37.654321,127.654321",
-        district: "서울시 마포구",
+        district: "서울시 마포구", // ⚠️ 추후 주소 선택에 따라 변경 가능
         isOver15: form.isOver15 ? 1 : 0,
+        distance: form.distance,
+        duration: form.duration,
+        pace: form.pace,
+        description: form.description,
       });
 
-      alert("수정 완료!");
+      alert("수정이 완료되었습니다. 상세 페이지로 이동합니다.");
       navigate(`/crews/${id}`);
     } catch (err) {
       console.error("❌ 수정 실패:", err);
@@ -126,9 +136,7 @@ export default function CrewEditPage() {
             type="checkbox"
             name="isOver15"
             checked={form.isOver15}
-            onChange={(e) =>
-              setForm((prev) => ({ ...prev, isOver15: e.target.checked }))
-            }
+            onChange={handleChange}
           />
           크루원 15명 이상 허용
         </label>

@@ -16,7 +16,7 @@
         DISTRICT,
         CREATED_AT,
         IS_OVER_15,
-        LEADER_ID
+        LEADER_ID,
         LEADER_NN
         ) VALUES (
         #{crewTitle},
@@ -85,6 +85,7 @@
         #{userId},
         #{status},
         SYSDATE
+        
         )
     </insert>
 
@@ -110,5 +111,11 @@
     </delete>
 
 
+    <select id="countJoinedMember" resultType="int">
+        SELECT COUNT(*) FROM CREW_MEMBER
+        WHERE CREW_ID = #{crewId}
+        AND USER_ID = #{userId}
+        AND STATUS = 1
+    </select>
 
 </mapper>

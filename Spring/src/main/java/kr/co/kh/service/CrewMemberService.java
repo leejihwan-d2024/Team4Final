@@ -14,5 +14,8 @@ public class CrewMemberService {
         crewMemberMapper.insertCrewMember(crewMember);
     }
 
-
+    public boolean hasUserJoinedCrew(Long crewId, String userId) {
+        return crewMemberMapper.countJoinedMember
+        (crewId, userId) > 0;
+    }
 }

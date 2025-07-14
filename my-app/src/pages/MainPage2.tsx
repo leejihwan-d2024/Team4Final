@@ -9,6 +9,7 @@ type Crew = {
   crewId: number;
   crewTitle: string;
   currentCount: number;
+  hasJoined: boolean; // 참가 여부 포함
 };
 
 // 러닝 이벤트 타입
@@ -40,7 +41,7 @@ export default function MainPage2() {
       try {
         const res = await axios.get("https://localhost:8080/api/events");
         if (Array.isArray(res.data) && res.data.length > 0) {
-          setTodayEvent(res.data[0]); // 첫 번째 이벤트만 상태에 저장
+          setTodayEvent(res.data[0]);
         }
       } catch (error) {
         console.error("이벤트 불러오기 실패", error);
@@ -70,10 +71,10 @@ export default function MainPage2() {
         className={styles.banner}
         style={{
           backgroundImage: `url("/marathon-3753907_1280.jpg")`,
-          backgroundPositionY: `${offsetY * 0.5}px`, // 패럴랙스 효과
-          cursor: "pointer", // 클릭 가능하다는 시각적 표시
+          backgroundPositionY: `${offsetY * 0.5}px`,
+          cursor: "pointer",
         }}
-        onClick={handleClickTodayEvent} // 배너 전체 클릭시 이동
+        onClick={handleClickTodayEvent}
       >
         <div className={styles.bannerOverlay}>
           <motion.div
@@ -89,7 +90,6 @@ export default function MainPage2() {
           >
             오늘의 xx구 러닝이벤트
           </motion.div>
-          {/* 이벤트 상세 내용은 이제 삭제 */}
         </div>
       </div>
 
@@ -97,7 +97,7 @@ export default function MainPage2() {
         {crewList.map((crew) => (
           <div
             key={crew.crewId}
-            className={styles.crewItem}
+            className={`${styles.crewItem} ${crew.hasJoined ? "myCrew" : ""}`} // ✅ 조건부 class
             onClick={() => navigate(`/crew/${crew.crewId}`)}
           >
             <div className={styles.crewTitle}>{crew.crewTitle}</div>

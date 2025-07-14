@@ -24,7 +24,6 @@ import CrewEditPage from "./pages/CrewEditPage";
 import RunningEventCreatePage from "./pages/RunningEventCreatePage"; //  추가
 import RunningEventDetailPage from "./pages/RunningEventDetailPage";
 import ChatRoom from "./pages/ChatRoom";
-import ChatRoomPage from "./pages/ChatRoomPage";
 import RunningInfo from "./components/RunningInfo";
 import Marathon from "./components/Marathon";
 import ExcelTmp from "./excel/ExcelTmp";
@@ -110,7 +109,7 @@ function App() {
               <Link to="/CrewCreate">크루 생성</Link>
               <Link to="/events/create">이벤트 생성</Link>
               <Link to="/events/detail/:id">이벤트 상세</Link>
-              <Link to="/chat/:crewId">채팅방</Link>
+              <Link to="/chatroom/:crewId">채팅방</Link>
               <Link to="/achv">achv</Link>
               <Link to="/posts">게시판으로이동</Link>
               <Link to="/shop">러닝관련상품으로 이동</Link>
@@ -156,7 +155,7 @@ function App() {
           element={<RunningEventCreatePage />}
         />{" "}
         <Route path="/events/detail/:id" element={<RunningEventDetailPage />} />
-        <Route path="/chat/:crewId" element={<ChatRoomPage />} />
+        <Route path="/chatroom/:crewId" element={<ChatRoom />} />
         <Route path="/shop" element={<NaverProductList />} />
         <Route path="/liked" element={<LikedProductList />} />
         <Route path="/info" element={<RunningInfo />} />
