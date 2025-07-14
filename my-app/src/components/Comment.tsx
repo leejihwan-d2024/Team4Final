@@ -18,11 +18,15 @@ function Comment({ postId }: CommentProps) {
   const [comments, setComments] = useState<Comment[]>([]);
   const [newComment, setNewComment] = useState("");
 
+  // 🔐 로그인 사용자 정보 가져오기
+  const userStr = localStorage.getItem("user");
+  const currentUser = userStr ? JSON.parse(userStr) : null;
+  const currentUserId = currentUser?.userId || "익명";
+
   // 댓글 목록 불러오기
   useEffect(() => {
     axios
       .get(`https://localhost:8080/api/comments/post/${postId}`)
-
       .then((res) => setComments(res.data))
       .catch((err) => console.error("댓글 목록 불러오기 실패", err));
   }, [postId]);
@@ -33,7 +37,7 @@ function Comment({ postId }: CommentProps) {
 
     try {
       await axios.post(`https://localhost:8080/api/comments`, {
-        commentAuthor: "user001",
+        commentAuthor: currentUserId, // ✅ 로그인한 사용자 ID 사용
         commentComment: newComment,
         postId: postId,
       });
@@ -79,9 +83,12 @@ function Comment({ postId }: CommentProps) {
               {comment.commentFixedDate &&
                 ` (수정됨: ${comment.commentFixedDate})`}
             </p>
-            <button onClick={() => handleDelete(comment.commentId)}>
-              삭제
-            </button>
+            {/* 🔐 본인 댓글만 삭제 버튼 노출 */}
+            {comment.commentAuthor === currentUserId && (
+              <button onClick={() => handleDelete(comment.commentId)}>
+                삭제
+              </button>
+            )}
           </li>
         ))}
       </ul>

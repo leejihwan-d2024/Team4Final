@@ -160,7 +160,10 @@ const Login: React.FC = () => {
         if (result.refreshToken)
           localStorage.setItem("refreshToken", result.refreshToken);
         alert("로그인 성공!");
-        navigate("/main");
+        const redirectPath =
+          localStorage.getItem("redirectAfterLogin") || "/main";
+        localStorage.removeItem("redirectAfterLogin");
+        navigate(redirectPath);
       } else {
         setError(response.data.message || "로그인에 실패했습니다.");
       }

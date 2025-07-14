@@ -14,9 +14,15 @@ function PostWrite({ onSubmit }: PostWriteProps) {
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
   const [category, setCategory] = useState("전체");
-  const [author, setAuthor] = useState("user001");
 
-  // 수정 시 기존 게시글
+  // 로그인 사용자 정보 부르기
+  const userStr = localStorage.getItem("user");
+  const currentUser = userStr ? JSON.parse(userStr) : null;
+  const currentUserId = currentUser?.userId || "익명";
+
+  const [author, setAuthor] = useState(currentUserId);
+
+  // 수정 시 기존 게시글 불러오기
   useEffect(() => {
     if (id) {
       fetch(`https://localhost:8080/api/posts/${id}`)
@@ -25,7 +31,7 @@ function PostWrite({ onSubmit }: PostWriteProps) {
           setTitle(data.title);
           setContent(data.contentText);
           setCategory(data.category || "전체");
-          setAuthor(data.author);
+          setAuthor(data.author); // 기존 작성자 유지
         });
     }
   }, [id]);
@@ -35,13 +41,13 @@ function PostWrite({ onSubmit }: PostWriteProps) {
 
     const postData: Post = {
       title,
-      author: "user001", // login안만들어서 걍임의로넣음
+      author: author, // 수정이든 새 글이든 현재 author 상태값 사용
       postId: id ? parseInt(id) : 0,
       createdAt: "",
       viewCount: 0,
       likeCount: 0,
       contentText: content,
-      attachmentUrl: "222",
+      attachmentUrl: "222", // 필요 시 수정
       category: category,
     };
 
@@ -71,6 +77,7 @@ function PostWrite({ onSubmit }: PostWriteProps) {
         <option value="잡담">잡담</option>
         <option value="이슈">이슈</option>
       </select>
+
       <button type="submit">{id ? "수정" : "작성"} 완료</button>
     </form>
   );

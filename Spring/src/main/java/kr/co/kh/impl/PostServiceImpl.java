@@ -66,6 +66,10 @@ public class PostServiceImpl implements PostService {
         postMapper.deletePost(postId);                // 부모(게시글) 삭제
     }
 
+    @Override
+    public void increaseViewCount(Long postId) {
+        postMapper.increaseViewCount(postId);
+    }
 
 }
 
