@@ -15,4 +15,6 @@ public interface PostMapper {
 
     void increaseLike(Long postId);
     void decreaseLike(Long postId);
+    void increaseViewCount(Long postId);
+
 }
