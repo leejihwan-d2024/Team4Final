@@ -1,4 +1,4 @@
-package kr.co.kh.service.impl;
+package kr.co.kh.impl;
 
 import kr.co.kh.mapper.UserMapper;
 import kr.co.kh.service.UserServiceInterface;
