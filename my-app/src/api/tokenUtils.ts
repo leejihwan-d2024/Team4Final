@@ -1,4 +1,4 @@
-import api from "./axiosInstance";
+import api from "./GG_axiosInstance";
 
 // 토큰 갱신 함수
 export const refreshToken = async (): Promise<boolean> => {

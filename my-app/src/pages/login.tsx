@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import api from "../api/axiosInstance";
+import api from "../api/GG_axiosInstance";
 import "./login.css";
 
 // 타입 정의

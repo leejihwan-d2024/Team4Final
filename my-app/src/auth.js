@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import api from "./api/axiosInstance";
+import api from "./api/GG_axiosInstance";
 import "./auth.css";
 
 function auth() {
