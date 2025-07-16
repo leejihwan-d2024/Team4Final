@@ -435,7 +435,19 @@ public class AuthService {
         
         if (existingUserById.isPresent()) {
             log.info("기존 카카오 사용자 로그인 (ID로 찾음): {}", existingUserById.get().getUserId());
-            return existingUserById.get();
+            UserVO existingUser = existingUserById.get();
+            
+            // 기존 사용자의 닉네임이 기본값인 경우 실제 카카오 닉네임으로 업데이트
+            if (existingUser.getUserNn() != null && existingUser.getUserNn().startsWith("카카오사용자_")) {
+                String newNickname = kakaoUserInfo.getNickname();
+                if (newNickname != null && !newNickname.trim().isEmpty()) {
+                    log.info("기존 카카오 사용자 닉네임 업데이트: {} -> {}", existingUser.getUserNn(), newNickname);
+                    existingUser.setUserNn(newNickname);
+                    userServiceInterface.updateUser(existingUser);
+                }
+            }
+            
+            return existingUser;
         }
         
         // 2. 이메일로 기존 사용자 찾기

@@ -32,7 +32,7 @@ import javax.validation.Valid;
 import java.util.Optional;
 
 @RestController
-@CrossOrigin(origins = "http://localhost:3000")
+@CrossOrigin(origins = {"http://localhost:3000", "http://200.200.200.72:3000"})
 @RequestMapping("/api/auth")
 @Slf4j
 @AllArgsConstructor
@@ -40,6 +40,16 @@ public class AuthController {
 
     private final AuthService authService;
     private final JwtTokenProvider tokenProvider;
+
+    /**
+     * 서버 상태 확인
+     */
+    @ApiOperation(value = "서버 상태 확인")
+    @GetMapping("/check")
+    public ResponseEntity<?> checkServerStatus() {
+        log.info("=== 서버 상태 확인 요청 ===");
+        return ResponseEntity.ok(new ApiResponse(true, "서버가 정상 작동 중입니다."));
+    }
 
     /**
      * 이메일 사용여부 확인
@@ -316,7 +326,24 @@ public class AuthController {
                             .map(refreshToken -> {
                                 String jwtToken = authService.generateToken(customUserDetails);
                                 JwtAuthenticationResponse response = new JwtAuthenticationResponse(jwtToken, refreshToken, tokenProvider.getExpiryDuration());
-                                response.setUserInfo(customUserDetails.getUserId(), customUserDetails.getEmail(), customUserDetails.getName());
+                                
+                                // 카카오 사용자의 경우 올바른 정보 설정
+                                String userId = customUserDetails.getUserId();
+                                String email = customUserDetails.getEmail();
+                                String name = customUserDetails.getName();
+                                
+                                // 카카오 사용자인 경우 실제 닉네임 사용
+                                if (userId.startsWith("kakao_")) {
+                                    // 카카오 사용자의 경우 실제 닉네임을 username으로 사용
+                                    log.info("=== 카카오 사용자 응답 정보 설정 ===");
+                                    log.info("userId: {}", userId);
+                                    log.info("email: {}", email);
+                                    log.info("name: {}", name);
+                                    log.info("================================");
+                                    response.setUserInfo(name, email, name);
+                                } else {
+                                    response.setUserInfo(userId, email, name);
+                                }
                                 
                                 log.info("=== 카카오 로그인 완료 ===");
                                 log.info("JWT 토큰 길이: {} characters", jwtToken.length());
