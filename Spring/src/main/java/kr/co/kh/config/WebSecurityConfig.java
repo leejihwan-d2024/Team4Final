@@ -171,8 +171,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
             "https://127.0.0.1:*",
             "http://200.200.200.72:*",
             "https://200.200.200.72:*",
-            "http://200.200.200.62:3000",
-            "https://200.200.200.62:3000"
+            "http://200.200.200.62:*",
+            "https://200.200.200.62:*"
         ));
         
         // 허용된 HTTP 메서드
@@ -181,7 +181,6 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         ));
         
         // 허용된 헤더 (모든 헤더 허용)
-        configuration.setAllowedOriginPatterns(java.util.Arrays.asList("http://localhost:3000", "http://localhost:3001","http://200.200.200.62:3000","https://200.200.200.62:3000"));
         configuration.setAllowedHeaders(java.util.Arrays.asList("*"));
         
         // 노출할 헤더
@@ -200,8 +199,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         configuration.setMaxAge(3600L);
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-        source.registerCorsConfiguration("/api/**", configuration);
-        source.registerCorsConfiguration("/auth/**", configuration); // 카카오 로그인 엔드포인트 추가
+        source.registerCorsConfiguration("/**", configuration); // 모든 경로에 적용
         return source;
     }
 

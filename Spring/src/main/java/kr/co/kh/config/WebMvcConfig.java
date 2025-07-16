@@ -27,6 +27,9 @@ public class WebMvcConfig implements WebMvcConfigurer {
                 .addResourceLocations(CLASSPATH_RESOURCE_LOCATIONS);
     }
 
+    // CORS 설정은 WebSecurityConfig에서 통합 관리
+    // 중복 설정으로 인한 충돌 방지를 위해 주석 처리
+    /*
     @Override
     public void addCorsMappings(CorsRegistry registry) {
         registry.addMapping("/**")
@@ -34,6 +37,7 @@ public class WebMvcConfig implements WebMvcConfigurer {
                 .allowedMethods("HEAD", "OPTIONS", "GET", "POST", "PUT", "PATCH", "DELETE")
                 .maxAge(MAX_AGE_SECS);
     }
+    */
 
 
 
