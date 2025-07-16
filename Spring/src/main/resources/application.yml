@@ -145,7 +145,27 @@ logging:
 cors:
   allowed-origins:
     - "http://localhost:3000"
-    - "http://localhost:8080"
-    - "http://127.0.0.1:3000"
-    - "http://127.0.0.1:8080"
+    - "https://localhost:3000"
+    - "http://200.200.200.72:3000"
+    - "https://200.200.200.72:3000"
+  allowed-methods:
+    - "GET"
+    - "POST"
+    - "PUT"
+    - "DELETE"
+    - "OPTIONS"
+    - "PATCH"
+    - "HEAD"
+  allowed-headers:
+    - "*"
+    - "Authorization"
+    - "Content-Type"
+    - "X-Requested-With"
+    - "Accept"
+    - "Origin"
+  exposed-headers:
+    - "Authorization"
+    - "Access-Control-Allow-Origin"
+    - "Access-Control-Allow-Credentials"
   allow-credentials: true
+  max-age: 3600

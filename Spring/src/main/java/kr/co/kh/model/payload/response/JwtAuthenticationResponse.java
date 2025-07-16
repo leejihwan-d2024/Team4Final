@@ -17,6 +17,10 @@ public class JwtAuthenticationResponse {
     private String email;
     
     private String name;
+    
+    private String userNn; // 닉네임 필드 추가
+    
+    private String userEmail; // 이메일 필드 추가
 
 
     public JwtAuthenticationResponse(String accessToken, String refreshToken, Long expiryDuration) {
@@ -91,10 +95,34 @@ public class JwtAuthenticationResponse {
         this.userId = userId;
     }
     
+    public String getUserNn() {
+        return userNn;
+    }
+
+    public void setUserNn(String userNn) {
+        this.userNn = userNn;
+    }
+
+    public String getUserEmail() {
+        return userEmail;
+    }
+
+    public void setUserEmail(String userEmail) {
+        this.userEmail = userEmail;
+    }
+
     public void setUserInfo(String username, String email, String name) {
+        System.out.println("=== JwtAuthenticationResponse.setUserInfo ===");
+        System.out.println("username: " + username);
+        System.out.println("email: " + email);
+        System.out.println("name: " + name);
+        System.out.println("================================");
+        
         this.username = username;
         this.userId = username; // userId도 함께 설정
         this.email = email;
         this.name = name;
+        this.userNn = name; // 닉네임도 함께 설정
+        this.userEmail = email; // 이메일도 함께 설정
     }
 }
