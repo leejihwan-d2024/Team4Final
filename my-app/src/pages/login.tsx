@@ -160,6 +160,7 @@ const Login: React.FC = () => {
         if (result.refreshToken)
           localStorage.setItem("refreshToken", result.refreshToken);
         alert("로그인 성공!");
+        console.log("겨겨겨결과", JSON.stringify(result, null, 2));
         const redirectPath =
           localStorage.getItem("redirectAfterLogin") || "/main";
         localStorage.removeItem("redirectAfterLogin");
@@ -277,7 +278,10 @@ const Login: React.FC = () => {
         if (result.accessToken)
           localStorage.setItem("token", result.accessToken);
         alert("카카오 로그인 성공!");
-        navigate("/testmain"); // testmain 페이지로 이동
+        const redirectPath =
+          localStorage.getItem("redirectAfterLogin") || "/main";
+        localStorage.removeItem("redirectAfterLogin");
+        navigate(redirectPath);
       } else {
         setError(loginResponse.data.message || "카카오 로그인에 실패했습니다.");
       }

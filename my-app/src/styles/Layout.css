@@ -105,3 +105,10 @@
   cursor: text;
   z-index: 2;
 }
+.layout-header button {
+  background: transparent;
+  border: none;
+  color: white;
+  cursor: pointer;
+  font-weight: bold;
+}
