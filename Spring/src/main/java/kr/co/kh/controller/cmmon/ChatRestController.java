@@ -20,7 +20,7 @@ public class ChatRestController {
 
     // 특정 크루 채팅 메시지 목록 조회 (GET /api/chat/{crewId})
     @GetMapping("/{crewId}")
-    public ResponseEntity<List<ChatMessageVO>> getMessagesByCrewId(@PathVariable Long crewId) {
+    public ResponseEntity<List<ChatMessageVO>> getMessagesByCrewId(@PathVariable String crewId) {
         log.info("채팅 메시지 요청 - 크루ID: {}", crewId);
 
         List<ChatMessageVO> messages = chatService.getMessagesByCrewId(crewId);

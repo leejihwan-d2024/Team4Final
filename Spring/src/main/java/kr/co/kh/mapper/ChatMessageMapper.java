@@ -10,7 +10,7 @@ import java.util.List;
 public interface ChatMessageMapper {
 
     // 특정 크루 채팅 메시지 목록 조회 (최신 순)
-    List<ChatMessageVO> selectMessagesByCrewId(Long crewId);
+    List<ChatMessageVO> selectMessagesByCrewId(String crewId);
 
     // 채팅 메시지 저장
     void insertChatMessage(ChatMessageVO message);

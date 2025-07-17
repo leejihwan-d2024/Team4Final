@@ -19,7 +19,7 @@ public class ChatService {
     }
 
     // 특정 크루 채팅 메시지 목록 조회
-    public List<ChatMessageVO> getMessagesByCrewId(Long crewId) {
+    public List<ChatMessageVO> getMessagesByCrewId(String crewId) {
         return chatMapper.selectMessagesByCrewId(crewId);
     }
 }

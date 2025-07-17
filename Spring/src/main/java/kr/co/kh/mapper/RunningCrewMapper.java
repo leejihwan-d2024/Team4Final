@@ -15,7 +15,7 @@ public interface RunningCrewMapper {
     List<RunningCrewVO> selectAllCrews();
 
     // 크루 ID로 조회
-    RunningCrewVO selectCrewById(Long crewId);
+    RunningCrewVO selectCrewById(String crewId);
 
     // 크루 멤버 등록
     void insertCrewMember(CrewMemberVO crewMember);
@@ -24,7 +24,7 @@ public interface RunningCrewMapper {
     void updateCrew(RunningCrewVO crew);
 
     //  크루 삭제
-    void deleteCrew(Long crewId);
+    void deleteCrew(String crewId);
     // 참가 크루 선삭제
-    void deleteCrewMembersByCrewId(Long crewId);
+    void deleteCrewMembersByCrewId(String crewId);
 }

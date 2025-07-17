@@ -7,6 +7,7 @@ import PathMap from "../mainpage/PathMap";
 export default function CrewCreatePage() {
   const navigate = useNavigate();
   const [form, setForm] = useState({
+    crewId: "", // crewId 추가
     title: "",
     startLocation: "",
     endLocation: "",
@@ -16,6 +17,23 @@ export default function CrewCreatePage() {
     description: "",
     isOver15: false,
   });
+
+  // crewId 먼저 받아오기
+  useEffect(() => {
+    async function fetchCrewId() {
+      try {
+        const response = await fetch(
+          "http://localhost:8080/api/crews/defaultId"
+        );
+        const id = await response.text();
+        setForm((prev) => ({ ...prev, crewId: id }));
+      } catch (error) {
+        console.error("❌ crewId 생성 실패:", error);
+      }
+    }
+
+    fetchCrewId();
+  }, []);
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -29,14 +47,14 @@ export default function CrewCreatePage() {
 
     try {
       const response = await axios.post("https://localhost:8080/api/crews", {
+        crewId: form.crewId, // 여기서 함께 전송
         crewTitle: form.title,
-        //나중에 닉네임관련 인증 필요
         startLocation: form.startLocation,
         endLocation: form.endLocation,
-        startTime: new Date(), // 현재 시간 (나중에 시간 선택 가능)
-        startLocationMapPoint: "37.123456,127.123456", // ⚠️ 임시
-        endLocationMapPoint: "37.654321,127.654321", // ⚠️ 임시
-        district: "서울시 마포구", // ⚠️ 임시
+        startTime: new Date(),
+        startLocationMapPoint: "37.123456,127.123456",
+        endLocationMapPoint: "37.654321,127.654321",
+        district: "서울시 마포구",
         isOver15: form.isOver15 ? 1 : 0,
       });
 
@@ -48,11 +66,11 @@ export default function CrewCreatePage() {
       alert("크루 생성에 실패했습니다.");
     }
   };
-  //경로관련
+
   const [st, setSt] = useState<number[]>([]);
   const [startAddress, setStartAddress] = useState("");
   const [endAddress, setEndAddress] = useState("");
-  // 출발지 주소 처리
+
   useEffect(() => {
     if (st[0] && st[1]) {
       fetch(
@@ -81,7 +99,6 @@ export default function CrewCreatePage() {
     }
   }, [st[0], st[1]]);
 
-  // 도착지 주소 처리
   useEffect(() => {
     if (st[2] && st[3]) {
       fetch(
@@ -123,7 +140,6 @@ export default function CrewCreatePage() {
         />
         <input
           name="startLocation"
-          placeholder="출발지"
           value={st[0] + "," + st[1]}
           onChange={handleChange}
           hidden
@@ -131,13 +147,12 @@ export default function CrewCreatePage() {
         <input
           name="startLocationString"
           placeholder="출발지 지역명"
-          value={`${startAddress}`}
+          value={startAddress}
           readOnly
         />
         <PathMap measurementId={7} setSt={setSt} />
         <input
           name="endLocation"
-          placeholder="도착지"
           value={st[2] + "," + st[3]}
           onChange={handleChange}
           hidden
@@ -145,7 +160,7 @@ export default function CrewCreatePage() {
         <input
           name="endLocationString"
           placeholder="도착지 지역명"
-          value={`${endAddress}`}
+          value={endAddress}
           readOnly
         />
         <input
