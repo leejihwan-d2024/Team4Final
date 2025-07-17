@@ -19,6 +19,15 @@ function PostMain({ posts, onDelete, onEdit, onSelect }: PostMainProps) {
   const [selectedPost, setSelectedPost] = useState<Post | null>(null);
   const [selectedCategory, setSelectedCategory] = useState<string>("전체");
   const [likedPosts, setLikedPosts] = useState<number[]>([]); // 👍 좋아요 상태 저장
+  const [currentPage, setCurrentPage] = useState(1); // 현재 페이지 번호
+  const postsPerPage = 3; // 한 페이지에 보여줄 게시글 수
+  // 페이지 계산
+  const indexOfLastPost = currentPage * postsPerPage;
+  const indexOfFirstPost = indexOfLastPost - postsPerPage;
+  const currentPosts = filteredPosts.slice(indexOfFirstPost, indexOfLastPost);
+
+  const user = JSON.parse(localStorage.getItem("user") || "null");
+  const currentUserId = user?.userId;
 
   const navigate = useNavigate();
 
@@ -125,7 +134,7 @@ function PostMain({ posts, onDelete, onEdit, onSelect }: PostMainProps) {
       <h2>전체 게시글</h2>
       <div className="postWrapperBox">
         <ul className="postUl">
-          {filteredPosts.map((post) => (
+          {currentPosts.map((post) => (
             <li key={post.postId}>
               <span
                 onClick={async () => {
@@ -136,25 +145,54 @@ function PostMain({ posts, onDelete, onEdit, onSelect }: PostMainProps) {
                     navigate(`/detail/${post.postId}`);
                   } catch (err) {
                     console.error("조회수 증가 실패", err);
-                    navigate(`/detail/${post.postId}`); // 실패해도 페이지는 이동
+                    navigate(`/detail/${post.postId}`); // 실패해도 페이지 이동
                   }
                 }}
               >
                 {post.postId} . {post.title} -🖊{post.category}
               </span>
+
               <span>
                 {post.createdAt}
                 👍{post.likeCount}
               </span>
+
               <span>조회수: {post.viewCount}</span>
+
               <button onClick={() => toggleLike(post)}>
                 {likedPosts.includes(post.postId) ? "좋아요 취소" : "좋아요"}
               </button>
-              <button onClick={() => handleEdit(post)}>수정</button>
-              <button onClick={() => handleDelete(post.postId)}>삭제</button>
+
+              {/*  로그인한 사용자만 수정/삭제 가능 */}
+              {post.author === currentUserId && (
+                <>
+                  <button onClick={() => handleEdit(post)}>수정</button>
+                  <button onClick={() => handleDelete(post.postId)}>
+                    삭제
+                  </button>
+                </>
+              )}
             </li>
           ))}
         </ul>
+        <div className="pagination">
+          {Array.from(
+            { length: Math.ceil(filteredPosts.length / postsPerPage) },
+            (_, i) => (
+              <button
+                key={i + 1}
+                onClick={() => setCurrentPage(i + 1)}
+                style={{
+                  margin: "0 5px",
+                  padding: "5px 10px",
+                  backgroundColor: currentPage === i + 1 ? "#c4d92d" : "#eee",
+                }}
+              >
+                {i + 1}
+              </button>
+            )
+          )}
+        </div>
       </div>
 
       <button onClick={() => navigate("/write")}>글쓰기</button>
