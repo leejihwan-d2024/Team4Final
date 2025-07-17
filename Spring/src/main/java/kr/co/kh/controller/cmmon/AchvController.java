@@ -35,7 +35,7 @@ public class AchvController {
 
     // 특정 유저 업적 진행 상태 조회
     @GetMapping("/user/{userId}")
-    public List<UserAchvProgressDto> getUserProgress(@PathVariable String userId) {
+    public List<UserAchievementDto> getUserProgress(@PathVariable String userId) {
         return userProgressService.getUserProgress(userId);
     }
 
@@ -49,8 +49,7 @@ public class AchvController {
                         "achv_content", "앱에 처음 로그인했습니다!",
                         "current_value", 1,
                         "achv_max_point", 1,
-                        "is_completed", "Y",
-                        "is_claimed", "N"
+                        "is_completed", "Y"
                 ),
                 Map.of(
                         "achv_id", "ACHV02",
@@ -58,8 +57,7 @@ public class AchvController {
                         "achv_content", "처음으로 게시글을 작성했습니다!",
                         "current_value", 5,
                         "achv_max_point", 10,
-                        "is_completed", "N",
-                        "is_claimed", "N"
+                        "is_completed", "N"
                 )
         );
     }

@@ -1,6 +1,6 @@
-package kr.co.kh.service.impl;
+package kr.co.kh.impl;
 
-import kr.co.kh.controller.cmmon.UserAchvProgressDto;
+import kr.co.kh.controller.cmmon.UserAchievementDto;
 import kr.co.kh.model.vo.RewardVO;
 import kr.co.kh.repository.UserAchvProgressRepository;
 import kr.co.kh.mapper.RewardMapper;
@@ -24,7 +24,7 @@ public class UserProgressServiceImpl implements UserProgressService {
     private final AchievementService achievementService;
 
     @Override
-    public List<UserAchvProgressDto> getUserProgress(String userId) {
+    public List<UserAchievementDto> getUserProgress(String userId) {
         return progressRepository.findByUserId(userId).stream()
                 .map(p -> {
                     String achvId = p.getAchv().getAchvId();
@@ -38,7 +38,7 @@ public class UserProgressServiceImpl implements UserProgressService {
 
                     log.info(String.valueOf(claimed));
 
-                    return new UserAchvProgressDto(
+                    return new UserAchievementDto(
                             achvId,
                             p.getAchv().getAchvTitle(),
                             p.getAchv().getAchvContent(),

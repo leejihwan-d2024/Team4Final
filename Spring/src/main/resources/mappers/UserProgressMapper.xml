@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="kr.co.kh.mapper.UserProgressMapper">
+    <select id="selectProgressByUserId" parameterType="string" resultType="kr.co.kh.controller.cmmon.UserAchievementDto">
+        SELECT a.ACHV_ID AS achvId,
+        a.ACHV_TITLE AS achvTitle,
+        a.ACHV_CONTENT AS achvContent,
+        a.ACHV_MAX_POINT AS achvMaxPoint,
+        up.CURRENT_VALUE AS currentValue,
+        up.IS_COMPLETED AS isCompleted
+        FROM ACHV a
+        JOIN USER_ACHV_PROGRESS up ON a.ACHV_ID = up.ACHV_ID
+        WHERE up.USER_ID = #{userId}
+    </select>
+    <!-- 사용자 업적 + 진행도 + 보상 + 뱃지 전체 정보 -->
+    <select id="selectFullAchievementByUserId" parameterType="string" resultType="kr.co.kh.controller.cmmon.UserAchievementDto">
+        SELECT
+        A.ACHV_ID        AS achvId,
+        A.ACHV_TITLE     AS achvTitle,
+        A.ACHV_CONTENT   AS achvContent,
+        A.ACHV_MAX_POINT AS achvMaxPoint,
+        UAL.CURRENT_VALUE AS currentValue,
+        UAL.IS_REWARDED   AS isRewarded,
+        TO_CHAR(UAL.ACHIEVED_DATE, 'YYYY-MM-DD') AS achievedDate,
+        R.REWARD_ID       AS rewardId,
+        R.REWARD_TYPE     AS rewardType,
+        R.REWARD_VALUE    AS rewardValue,
+        R.BADGE_NAME      AS badgeName,
+        R.BADGE_IMAGE_URL AS badgeImageUrl,
+        CASE
+        WHEN NVL(UAL.CURRENT_VALUE, 0) >= A.ACHV_MAX_POINT THEN 'Y'
+        ELSE 'N'
+        END AS isComplate
+        FROM ACHV A
+        LEFT JOIN USER_ACHV_LIST UAL ON A.ACHV_ID = UAL.ACHV_ID AND UAL.USER_ID = #{userId}
+        LEFT JOIN ACHV_REWARD R ON A.ACHV_ID = R.ACHV_ID
+    </select>
+
+
+</mapper>
