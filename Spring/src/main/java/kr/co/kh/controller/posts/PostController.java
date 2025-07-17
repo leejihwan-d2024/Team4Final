@@ -2,13 +2,13 @@ package kr.co.kh.controller.posts;
 
 import kr.co.kh.service.PostService;
 import kr.co.kh.vo.PostVO;
+import oracle.jdbc.proxy.annotation.Post;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@CrossOrigin(origins = "http://localhost:3000")
 @RestController
 @RequestMapping("/api/posts")
 public class PostController {
@@ -46,6 +46,12 @@ public class PostController {
     @PostMapping("/{id}/like")
     public ResponseEntity<?> increaseLike(@PathVariable Long id) {
         postService.increaseLike(id);
+        return ResponseEntity.ok().build();
+    }
+
+    @PostMapping("/{postId}/view")
+    public ResponseEntity<?> increaseViewCount(@PathVariable Long postId) {
+        postService.increaseViewCount(postId);
         return ResponseEntity.ok().build();
     }
 

@@ -32,7 +32,7 @@ import javax.validation.Valid;
 import java.util.Optional;
 
 @RestController
-@CrossOrigin(origins = "http://localhost:3000")
+@CrossOrigin(origins = {"http://localhost:3000", "http://200.200.200.72:3000"})
 @RequestMapping("/api/auth")
 @Slf4j
 @AllArgsConstructor
@@ -40,6 +40,16 @@ public class AuthController {
 
     private final AuthService authService;
     private final JwtTokenProvider tokenProvider;
+
+    /**
+     * 서버 상태 확인
+     */
+    @ApiOperation(value = "서버 상태 확인")
+    @GetMapping("/check")
+    public ResponseEntity<?> checkServerStatus() {
+        log.info("=== 서버 상태 확인 요청 ===");
+        return ResponseEntity.ok(new ApiResponse(true, "서버가 정상 작동 중입니다."));
+    }
 
     /**
      * 이메일 사용여부 확인
@@ -75,28 +85,52 @@ public class AuthController {
     })
     @PostMapping("/login")
     public ResponseEntity<?> authenticateUser(@Valid @RequestBody LoginRequest loginRequest) {
-        log.info("로그인 요청 받음: username={}, password={}, deviceInfo={}", 
-            loginRequest.getUsername(), 
-            loginRequest.getPassword() != null ? "***" : "null", 
-            loginRequest.getDeviceInfo());
+        log.info("=== 사용자 로그인 요청 ===");
+        log.info("사용자명: {}", loginRequest.getUsername());
+        log.info("비밀번호: {}", loginRequest.getPassword() != null ? "***" : "null");
+        log.info("장치 정보: {}", loginRequest.getDeviceInfo());
+        log.info("================================");
 
         Authentication authentication = authService.authenticateUser(loginRequest)
-                .orElseThrow(() -> new UserLoginException("아이디 또는 비밀번호가 올바르지 않습니다."));
+                .orElseThrow(() -> {
+                    log.error("=== 로그인 인증 실패 ===");
+                    log.error("사용자명: {}", loginRequest.getUsername());
+                    log.error("================================");
+                    return new UserLoginException("아이디 또는 비밀번호가 올바르지 않습니다.");
+                });
 
         CustomUserDetails customUserDetails = (CustomUserDetails) authentication.getPrincipal();
-        log.info("사용자 로그인 성공: {}", customUserDetails.getUserId());
+        log.info("=== 사용자 인증 성공 ===");
+        log.info("사용자 ID: {}", customUserDetails.getUserId());
+        log.info("사용자 이메일: {}", customUserDetails.getEmail());
+        log.info("사용자 이름: {}", customUserDetails.getName());
+        log.info("================================");
 
         SecurityContextHolder.getContext().setAuthentication(authentication);
 
         return authService.createAndPersistRefreshTokenForDevice(authentication, loginRequest)
                 .map(RefreshToken::getToken)
                 .map(refreshToken -> {
+                    log.info("=== 토큰 생성 시작 ===");
                     String jwtToken = authService.generateToken(customUserDetails);
                     JwtAuthenticationResponse response = new JwtAuthenticationResponse(jwtToken, refreshToken, tokenProvider.getExpiryDuration());
                     response.setUserInfo(customUserDetails.getUserId(), customUserDetails.getEmail(), customUserDetails.getName());
+                    
+                    log.info("=== 로그인 완료 ===");
+                    log.info("사용자 ID: {}", customUserDetails.getUserId());
+                    log.info("JWT 토큰 길이: {} characters", jwtToken.length());
+                    log.info("Refresh 토큰 길이: {} characters", refreshToken.length());
+                    log.info("토큰 만료 시간: {} ms", tokenProvider.getExpiryDuration());
+                    log.info("================================");
+                    
                     return ResponseEntity.ok(response);
                 })
-                .orElseThrow(() -> new UserLoginException("로그인 처리 중 오류가 발생했습니다. 다시 시도해주세요."));
+                .orElseThrow(() -> {
+                    log.error("=== 로그인 처리 실패 ===");
+                    log.error("사용자명: {}", loginRequest.getUsername());
+                    log.error("================================");
+                    return new UserLoginException("로그인 처리 중 오류가 발생했습니다. 다시 시도해주세요.");
+                });
     }
 
     /**
@@ -107,15 +141,27 @@ public class AuthController {
     @PostMapping("/refresh")
     public ResponseEntity<?> refreshJwtToken(@Valid @RequestBody TokenRefreshRequest tokenRefreshRequest) {
 
-        log.info(tokenRefreshRequest.toString());
+        log.info("=== JWT 토큰 갱신 요청 ===");
+        log.info("요청 정보: {}", tokenRefreshRequest.toString());
+        log.info("================================");
 
         return authService.refreshJwtToken(tokenRefreshRequest)
                 .map(updatedToken -> {
                     String refreshToken = tokenRefreshRequest.getRefreshToken();
-                    log.info("Created new Jwt Auth token: {}", updatedToken);
+                    
+                    log.info("=== JWT 토큰 갱신 완료 ===");
+                    log.info("새로운 JWT 토큰 길이: {} characters", updatedToken.length());
+                    log.info("Refresh 토큰 길이: {} characters", refreshToken.length());
+                    log.info("================================");
+                    
                     return ResponseEntity.ok(new JwtAuthenticationResponse(updatedToken, refreshToken, tokenProvider.getExpiryDuration()));
                 })
-                .orElseThrow(() -> new TokenRefreshException(tokenRefreshRequest.getRefreshToken(), "토큰 갱신 중 오류가 발생했습니다. 다시 로그인 해 주세요."));
+                .orElseThrow(() -> {
+                    log.error("=== JWT 토큰 갱신 실패 ===");
+                    log.error("Refresh 토큰: {}", tokenRefreshRequest.getRefreshToken());
+                    log.error("================================");
+                    return new TokenRefreshException(tokenRefreshRequest.getRefreshToken(), "토큰 갱신 중 오류가 발생했습니다. 다시 로그인 해 주세요.");
+                });
     }
 
     /**
@@ -146,8 +192,17 @@ public class AuthController {
     @ApiImplicitParam(name = "logOutRequest", value = "로그아웃 요청 정보", dataType = "LogOutRequest", required = true)
     @PostMapping("/logout")
     public ResponseEntity<?> logoutUser(@Valid @RequestBody LogOutRequest logOutRequest) {
-        log.info("로그아웃 요청: {}", logOutRequest.getDeviceInfo().getDeviceId());
+        log.info("=== 사용자 로그아웃 요청 ===");
+        log.info("장치 ID: {}", logOutRequest.getDeviceInfo().getDeviceId());
+        log.info("장치 정보: {}", logOutRequest.getDeviceInfo());
+        log.info("================================");
+        
         authService.logoutUser(logOutRequest);
+        
+        log.info("=== 로그아웃 처리 완료 ===");
+        log.info("장치 ID: {}", logOutRequest.getDeviceInfo().getDeviceId());
+        log.info("================================");
+        
         return ResponseEntity.ok(new ApiResponse(true, "로그아웃이 완료되었습니다."));
     }
 
@@ -179,6 +234,33 @@ public class AuthController {
         return authService.getUserInfo(userId)
                 .map(user -> ResponseEntity.ok(user))
                 .orElse(ResponseEntity.notFound().build());
+    }
+
+    /**
+     * 자동 로그인 상태 확인
+     */
+    @ApiOperation(value = "자동 로그인 상태 확인")
+    @GetMapping("/auto-login")
+    public ResponseEntity<?> checkAutoLogin() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        
+        log.info("=== 자동 로그인 상태 확인 ===");
+        log.info("인증 정보: {}", authentication);
+        
+        if (authentication != null && authentication.isAuthenticated() && 
+            !(authentication.getPrincipal() instanceof String) && 
+            !authentication.getPrincipal().equals("anonymousUser")) {
+            
+            CustomUserDetails customUserDetails = (CustomUserDetails) authentication.getPrincipal();
+            log.info("자동 로그인 성공 - 사용자: {}", customUserDetails.getUserId());
+            log.info("================================");
+            
+            return ResponseEntity.ok(new ApiResponse(true, "자동 로그인 성공"));
+        } else {
+            log.info("자동 로그인 실패 - 인증되지 않은 사용자");
+            log.info("================================");
+            return ResponseEntity.status(401).body(new ApiResponse(false, "자동 로그인 실패"));
+        }
     }
 
     /**
@@ -222,12 +304,20 @@ public class AuthController {
     })
     @PostMapping("/kakao/login")
     public ResponseEntity<?> kakaoLogin(@Valid @RequestBody KakaoLoginRequest kakaoLoginRequest) {
-        log.info("카카오 로그인 요청: {}", kakaoLoginRequest.getUserInfo().getEmail());
+        log.info("=== 카카오 로그인 요청 시작 ===");
+        log.info("사용자 이메일: {}", kakaoLoginRequest.getUserInfo().getEmail());
+        log.info("카카오 ID: {}", kakaoLoginRequest.getUserInfo().getId());
+        log.info("액세스 토큰 길이: {} characters", kakaoLoginRequest.getAccessToken().length());
+        log.info("================================");
         
         return authService.kakaoLogin(kakaoLoginRequest)
                 .map(authentication -> {
                     CustomUserDetails customUserDetails = (CustomUserDetails) authentication.getPrincipal();
-                    log.info("카카오 로그인 성공: {}", customUserDetails.getUserId());
+                    log.info("=== 카카오 로그인 성공 ===");
+                    log.info("사용자 ID: {}", customUserDetails.getUserId());
+                    log.info("사용자 이메일: {}", customUserDetails.getEmail());
+                    log.info("사용자 이름: {}", customUserDetails.getName());
+                    log.info("================================");
                     
                     SecurityContextHolder.getContext().setAuthentication(authentication);
                     
@@ -236,12 +326,47 @@ public class AuthController {
                             .map(refreshToken -> {
                                 String jwtToken = authService.generateToken(customUserDetails);
                                 JwtAuthenticationResponse response = new JwtAuthenticationResponse(jwtToken, refreshToken, tokenProvider.getExpiryDuration());
-                                response.setUserInfo(customUserDetails.getUserId(), customUserDetails.getEmail(), customUserDetails.getName());
+                                
+                                // 카카오 사용자의 경우 올바른 정보 설정
+                                String userId = customUserDetails.getUserId();
+                                String email = customUserDetails.getEmail();
+                                String name = customUserDetails.getName();
+                                
+                                // 카카오 사용자인 경우 실제 닉네임 사용
+                                if (userId.startsWith("kakao_")) {
+                                    // 카카오 사용자의 경우 실제 닉네임을 username으로 사용
+                                    log.info("=== 카카오 사용자 응답 정보 설정 ===");
+                                    log.info("userId: {}", userId);
+                                    log.info("email: {}", email);
+                                    log.info("name: {}", name);
+                                    log.info("================================");
+                                    response.setUserInfo(name, email, name);
+                                } else {
+                                    response.setUserInfo(userId, email, name);
+                                }
+                                
+                                log.info("=== 카카오 로그인 완료 ===");
+                                log.info("JWT 토큰 길이: {} characters", jwtToken.length());
+                                log.info("Refresh 토큰 길이: {} characters", refreshToken.length());
+                                log.info("토큰 만료 시간: {} ms", tokenProvider.getExpiryDuration());
+                                log.info("================================");
+                                
                                 return ResponseEntity.ok(response);
                             })
-                            .orElseThrow(() -> new UserLoginException("카카오 로그인 처리 중 오류가 발생했습니다."));
+                            .orElseThrow(() -> {
+                                log.error("=== 카카오 로그인 처리 실패 ===");
+                                log.error("사용자 ID: {}", customUserDetails.getUserId());
+                                log.error("================================");
+                                return new UserLoginException("카카오 로그인 처리 중 오류가 발생했습니다.");
+                            });
                 })
-                .orElseThrow(() -> new UserLoginException("카카오 로그인에 실패했습니다."));
+                .orElseThrow(() -> {
+                    log.error("=== 카카오 로그인 인증 실패 ===");
+                    log.error("사용자 이메일: {}", kakaoLoginRequest.getUserInfo().getEmail());
+                    log.error("카카오 ID: {}", kakaoLoginRequest.getUserInfo().getId());
+                    log.error("================================");
+                    return new UserLoginException("카카오 로그인 인증에 실패했습니다.");
+                });
     }
 
     /**

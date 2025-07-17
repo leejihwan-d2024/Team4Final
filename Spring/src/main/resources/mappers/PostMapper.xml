@@ -98,4 +98,11 @@
         WHERE post_id = #{postId}
     </update>
 
+    <update id="increaseViewCount">
+        UPDATE BOARD_POSTS
+        SET VIEW_COUNT = VIEW_COUNT + 1
+        WHERE POST_ID = #{postId}
+    </update>
+
+
 </mapper>

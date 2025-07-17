@@ -90,7 +90,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-        http.cors().and()
+        http.cors().configurationSource(corsConfigurationSource()).and()
                 .csrf().disable()
                 .exceptionHandling().authenticationEntryPoint(jwtEntryPoint)
                 .and()
@@ -162,14 +162,46 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOriginPatterns(java.util.Arrays.asList("http://localhost:3000", "http://localhost:3001"));
-        configuration.setAllowedMethods(java.util.Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
-        configuration.setAllowedHeaders(java.util.Arrays.asList("*"));
-        configuration.setAllowCredentials(true);
-        configuration.setMaxAge(3600L);
         
+        // 모든 허용된 오리진 설정 (와일드카드 패턴 사용)
+        configuration.setAllowedOriginPatterns(java.util.Arrays.asList(
+            "http://localhost:*",
+            "https://localhost:*",
+            "http://127.0.0.1:*",
+            "https://127.0.0.1:*",
+            "http://200.200.200.72:*",
+            "https://200.200.200.72:*",
+            "http://200.200.200.62:3000",
+            "https://200.200.200.62:3000"
+        ));
+        
+        // 허용된 HTTP 메서드
+        configuration.setAllowedMethods(java.util.Arrays.asList(
+            "GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH", "HEAD"
+        ));
+        
+        // 허용된 헤더 (모든 헤더 허용)
+        configuration.setAllowedOriginPatterns(java.util.Arrays.asList("http://localhost:3000", "http://localhost:3001","http://200.200.200.62:3000","https://200.200.200.62:3000"));
+        configuration.setAllowedHeaders(java.util.Arrays.asList("*"));
+        
+        // 노출할 헤더
+        configuration.setExposedHeaders(java.util.Arrays.asList(
+            "Access-Control-Allow-Origin",
+            "Access-Control-Allow-Credentials",
+            "Access-Control-Allow-Methods",
+            "Access-Control-Allow-Headers",
+            "Authorization"
+        ));
+        
+        // 자격 증명 허용
+        configuration.setAllowCredentials(true);
+        
+        // preflight 요청 캐시 시간
+        configuration.setMaxAge(3600L);
+
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/api/**", configuration);
+        source.registerCorsConfiguration("/auth/**", configuration); // 카카오 로그인 엔드포인트 추가
         return source;
     }
 

@@ -41,20 +41,45 @@ app.use(cookieParser());
 app.use(
   session({
     secret: SESSION_SECRET,
-    resave: false,
-    saveUninitialized: false, // 보안 강화
+    resave: true,
+    saveUninitialized: true,
     cookie: {
-      secure: process.env.NODE_ENV === "production", // HTTPS 환경에서만 secure
-      httpOnly: true,
-      maxAge: 24 * 60 * 60 * 1000, // 24시간
+      secure: false,
+      httpOnly: false,
+      maxAge: 24 * 60 * 60 * 1000,
+      sameSite: "lax",
     },
-    name: "webauthn-session", // 기본 세션명 변경
+    name: "webauthn-session",
   })
 );
 
 // CORS 설정 추가
 app.use((req, res, next) => {
-  res.header("Access-Control-Allow-Origin", "http://localhost:3000");
+  // 환경별 허용된 오리진 설정
+  const allowedOrigins = [
+    // 로컬 개발 환경
+    "http://localhost:3000",
+    "https://localhost:3000",
+    // 실제 서버 환경 (동적 감지)
+    `http://${req.headers.host?.split(":")[0]}:3000`,
+    `https://${req.headers.host?.split(":")[0]}:3000`,
+    // 환경변수로 설정된 프론트엔드 URL
+    process.env.FRONTEND_URL,
+    process.env.REACT_APP_FRONTEND_URL,
+  ].filter(Boolean); // undefined 값 제거
+
+  const origin = req.headers.origin;
+  console.log("요청 오리진:", origin);
+  console.log("허용된 오리진:", allowedOrigins);
+
+  if (allowedOrigins.includes(origin)) {
+    res.header("Access-Control-Allow-Origin", origin);
+  } else if (origin) {
+    // 개발 환경에서는 모든 오리진 허용 (보안상 프로덕션에서는 제한 필요)
+    console.log("허용되지 않은 오리진이지만 개발 환경에서 허용:", origin);
+    res.header("Access-Control-Allow-Origin", origin);
+  }
+
   res.header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
   res.header(
     "Access-Control-Allow-Headers",
@@ -505,8 +530,32 @@ app.get("/auth/status", (req, res) => {
   });
 });
 
+// 자동 로그인 확인 엔드포인트 추가
+app.get("/api/auth/auto-login", (req, res) => {
+  try {
+    if (req.session.username) {
+      const user = users.get(req.session.username);
+      if (user) {
+        res.status(200).json({
+          authenticated: true,
+          username: user.userId,
+          name: user.userNn,
+          email: user.userEmail,
+        });
+      } else {
+        res.status(401).json({ error: "사용자 정보를 찾을 수 없습니다." });
+      }
+    } else {
+      res.status(401).json({ error: "로그인이 필요합니다." });
+    }
+  } catch (error) {
+    console.error("자동 로그인 확인 오류:", error);
+    res.status(500).json({ error: "서버 오류가 발생했습니다." });
+  }
+});
+
 // 카카오 로그인 API
-app.post("/auth/kakao/login", async (req, res) => {
+app.post("/api/auth/kakao/login", async (req, res) => {
   try {
     const { accessToken, userInfo } = req.body;
 

@@ -11,8 +11,28 @@ interface LayoutProps {
 
 function Layout({ children }: LayoutProps) {
   const navigate = useNavigate();
-
   const [showProduct, setShowProduct] = useState(false);
+
+  // 게시판 접근 핸들러
+  const handleBoardClick = () => {
+    try {
+      const userStr = localStorage.getItem("user");
+      const user = JSON.parse(userStr || "null");
+
+      if (user && user.name) {
+        // 로그인 되어 있으면 게시판으로 이동
+        navigate("/posts");
+      } else {
+        // 로그인 안 되어 있으면 로그인 후 돌아올 주소 저장
+        alert("로그인이 필요합니다");
+        localStorage.setItem("redirectAfterLogin", "/posts");
+        navigate("/login");
+      }
+    } catch (e) {
+      console.error("유저 정보 파싱 실패", e);
+      navigate("/login");
+    }
+  };
 
   return (
     <div className="layout">
@@ -21,11 +41,7 @@ function Layout({ children }: LayoutProps) {
       </div>
       <div className="search-area">
         <input className="search-input" placeholder="검색 창" />
-        <button
-          type="submit"
-          className="searchBtn
-        "
-        >
+        <button type="submit" className="searchBtn">
           검색
         </button>
       </div>
@@ -49,7 +65,7 @@ function Layout({ children }: LayoutProps) {
               {showProduct && <Marathon />}
             </ul>
           </li>
-          <li className="menu-item" onClick={() => navigate("/posts")}>
+          <li className="menu-item" onClick={handleBoardClick}>
             게시판
             <ul className="submenu">
               <li></li>

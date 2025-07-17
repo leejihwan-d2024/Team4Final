@@ -4,6 +4,7 @@ import { fetchPosts } from "../api/api";
 import Layout from "./Layout";
 import { useNavigate } from "react-router-dom";
 import "../styles/PostMain.css";
+import axios from "axios";
 
 interface PostMainProps {
   posts: Post[];
@@ -126,13 +127,26 @@ function PostMain({ posts, onDelete, onEdit, onSelect }: PostMainProps) {
         <ul className="postUl">
           {filteredPosts.map((post) => (
             <li key={post.postId}>
-              <span onClick={() => navigate(`/detail/${post.postId}`)}>
+              <span
+                onClick={async () => {
+                  try {
+                    await axios.post(
+                      `https://localhost:8080/api/posts/${post.postId}/view`
+                    );
+                    navigate(`/detail/${post.postId}`);
+                  } catch (err) {
+                    console.error("조회수 증가 실패", err);
+                    navigate(`/detail/${post.postId}`); // 실패해도 페이지는 이동
+                  }
+                }}
+              >
                 {post.postId} . {post.title} -🖊{post.category}
               </span>
               <span>
                 {post.createdAt}
                 👍{post.likeCount}
               </span>
+              <span>조회수: {post.viewCount}</span>
               <button onClick={() => toggleLike(post)}>
                 {likedPosts.includes(post.postId) ? "좋아요 취소" : "좋아요"}
               </button>

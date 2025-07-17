@@ -1,6 +1,6 @@
 import React, { useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
-import api from "../api/axiosInstance";
+import api from "../api/GG_axiosInstance";
 import "./join.css";
 
 // 타입 정의

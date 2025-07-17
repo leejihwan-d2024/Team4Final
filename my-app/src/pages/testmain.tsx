@@ -8,7 +8,7 @@ interface User {
   userEmail?: string;
 }
 
-const Main: React.FC = () => {
+const TestMain: React.FC = () => {
   const navigate = useNavigate();
 
   const handleLogout = (): void => {
@@ -23,7 +23,7 @@ const Main: React.FC = () => {
   };
 
   const handleGoToJoin = (): void => {
-    navigate("/join");
+    navigate("/main");
   };
 
   const handleGoToHome = (): void => {
@@ -32,6 +32,18 @@ const Main: React.FC = () => {
 
   const userString = localStorage.getItem("user");
   const user: User | null = userString ? JSON.parse(userString) : null;
+
+  // 카카오 로그인 여부 확인 (userId가 kakao_로 시작하거나, 닉네임이 카카오사용자_로 시작하는지 확인)
+  const isKakaoUser =
+    user?.userId?.startsWith("kakao_") ||
+    user?.userNn?.startsWith("카카오사용자_");
+
+  // 디버깅 로그 추가
+  console.log("=== TestMain 페이지 - 사용자 정보 확인 ===");
+  console.log("localStorage user string:", userString);
+  console.log("파싱된 사용자 정보:", user);
+  console.log("카카오 사용자 여부:", isKakaoUser);
+  console.log("================================");
 
   return (
     <div
@@ -124,7 +136,7 @@ const Main: React.FC = () => {
               e.currentTarget.style.backgroundColor = "#ffc107";
             }}
           >
-            회원가입 페이지로
+            메인 페이지로
           </button>
 
           <button
@@ -161,15 +173,25 @@ const Main: React.FC = () => {
             <h3 style={{ margin: "0 0 10px 0", color: "#495057" }}>
               사용자 정보
             </h3>
-            <p style={{ margin: "5px 0", color: "#6c757d" }}>
-              <strong>ID:</strong> {user.userId}
-            </p>
-            <p style={{ margin: "5px 0", color: "#6c757d" }}>
-              <strong>닉네임:</strong> {user.userNn}
-            </p>
-            <p style={{ margin: "5px 0", color: "#6c757d" }}>
-              <strong>이메일:</strong> {user.userEmail}
-            </p>
+            {isKakaoUser ? (
+              // 카카오 로그인 시 닉네임만 표시
+              <p style={{ margin: "5px 0", color: "#6c757d" }}>
+                <strong>닉네임:</strong> {user.userNn}
+              </p>
+            ) : (
+              // 일반 로그인 시 모든 정보 표시
+              <>
+                <p style={{ margin: "5px 0", color: "#6c757d" }}>
+                  <strong>ID:</strong> {user.userId}
+                </p>
+                <p style={{ margin: "5px 0", color: "#6c757d" }}>
+                  <strong>닉네임:</strong> {user.userNn}
+                </p>
+                <p style={{ margin: "5px 0", color: "#6c757d" }}>
+                  <strong>이메일:</strong> {user.userEmail}
+                </p>
+              </>
+            )}
           </div>
         )}
       </div>
@@ -177,4 +199,4 @@ const Main: React.FC = () => {
   );
 };
 
-export default Main;
+export default TestMain;

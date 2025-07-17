@@ -19,4 +19,5 @@ public interface PostService {
     void deletePostWithComments(Long postId);
 
 
+    void increaseViewCount(Long postId);
 }

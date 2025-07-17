@@ -1,12 +1,12 @@
 # 카카오 로그인 설정 가이드
 
-## 🔑 **필요한 카카오 앱키들**
+## 🔑 **필요한 카카오 앱키들 (웹 로그인 전용)**
 
 ### 1. **카카오 개발자 콘솔에서 필요한 키들**
 
 - **JavaScript 키**: 프론트엔드에서 카카오 SDK 초기화용
 - **REST API 키**: 백엔드에서 카카오 API 호출용
-- **Admin 키**: 백엔드에서 추가 API 호출용 (선택사항)
+- **Client Secret**: 백엔드에서 토큰 교환용
 
 ### 2. **환경변수 설정**
 
@@ -16,9 +16,6 @@
 kakao:
   client-id: ${KAKAO_CLIENT_ID:your_rest_api_key}
   client-secret: ${KAKAO_CLIENT_SECRET:your_client_secret}
-  redirect-uri: ${KAKAO_REDIRECT_URI:http://localhost:3000/auth/kakao/callback}
-  app-key: ${KAKAO_APP_KEY:your_javascript_key}
-  admin-key: ${KAKAO_ADMIN_KEY:your_admin_key}
 ```
 
 #### **시스템 환경변수 설정**
@@ -27,21 +24,16 @@ kakao:
 # Windows
 set KAKAO_CLIENT_ID=your_rest_api_key
 set KAKAO_CLIENT_SECRET=your_client_secret
-set KAKAO_APP_KEY=your_javascript_key
-set KAKAO_ADMIN_KEY=your_admin_key
 
 # Linux/Mac
 export KAKAO_CLIENT_ID=your_rest_api_key
 export KAKAO_CLIENT_SECRET=your_client_secret
-export KAKAO_APP_KEY=your_javascript_key
-export KAKAO_ADMIN_KEY=your_admin_key
 ```
 
 ### 3. **프론트엔드 환경변수** (`.env` 파일)
 
 ```env
 REACT_APP_KAKAO_APP_KEY=your_javascript_key
-REACT_APP_KAKAO_REDIRECT_URI=http://localhost:3000/auth/kakao/callback
 ```
 
 ## 📋 **카카오 개발자 콘솔 설정**
@@ -55,7 +47,6 @@ REACT_APP_KAKAO_REDIRECT_URI=http://localhost:3000/auth/kakao/callback
 ### 2. **카카오 로그인 설정**
 
 - **활성화**: ON
-- **Redirect URI**: `http://localhost:3000/auth/kakao/callback`
 - **동의항목 설정**:
   - 필수: 닉네임, 이메일
   - 선택: 프로필 사진
@@ -63,16 +54,14 @@ REACT_APP_KAKAO_REDIRECT_URI=http://localhost:3000/auth/kakao/callback
 ### 3. **보안 설정**
 
 - **Client Secret 생성** (REST API 키 옆)
-- **Admin 키 확인** (선택사항)
 
-## 🔧 **키별 용도**
+## 🔧 **키별 용도 (웹 로그인 전용)**
 
 | 키 종류       | 용도                  | 설정 위치                |
 | ------------- | --------------------- | ------------------------ |
 | JavaScript 키 | 프론트엔드 SDK 초기화 | 프론트엔드 `.env`        |
 | REST API 키   | 백엔드 API 호출       | 백엔드 `application.yml` |
 | Client Secret | 백엔드 토큰 교환      | 백엔드 `application.yml` |
-| Admin 키      | 관리자 API 호출       | 백엔드 `application.yml` |
 
 ## 🚀 **테스트 방법**
 
@@ -115,10 +104,139 @@ curl -X POST http://localhost:8080/auth/kakao/login \
 
 ### **리다이렉트 오류**
 
-- Redirect URI가 정확히 설정되었는지 확인
 - 도메인 설정이 올바른지 확인
 
 ### **권한 오류**
 
 - 동의항목이 올바르게 설정되었는지 확인
 - 앱이 활성화되어 있는지 확인
+
+## 🚨 **카카오 로그인 오류 해결 방법**
+
+### **"Failed to launch 'intent:#Intent;action=com.kakao.talk.intent.action.CAPRI_LOGGED_IN_ACTIVITY" 오류**
+
+이 오류는 카카오톡 앱이 설치되어 있지 않거나, 브라우저에서 카카오톡 앱을 실행할 수 없을 때 발생합니다.
+
+#### **해결 방법 1: 카카오 개발자 콘솔 설정 수정**
+
+1. **카카오 개발자 콘솔** → **내 애플리케이션** → **앱 선택**
+2. **카카오 로그인** → **동의항목** 탭
+3. **카카오톡 로그인 활성화** → **OFF**로 변경
+4. **웹 로그인 활성화** → **ON**으로 변경
+5. **저장**
+
+#### **해결 방법 2: 프론트엔드 코드 수정**
+
+카카오 로그인 시 웹 로그인만 사용하도록 설정:
+
+```javascript
+// 카카오 로그인 옵션 수정
+window.Kakao.Auth.login({
+  throughTalk: false, // 카카오톡 앱 로그인 비활성화
+  success: (authResponse) => {
+    console.log("카카오 로그인 성공:", authResponse);
+    resolve(authResponse);
+  },
+  fail: (error) => {
+    console.error("카카오 로그인 실패:", error);
+    reject(error);
+  },
+});
+```
+
+#### **해결 방법 3: 환경별 설정**
+
+**개발 환경 (localhost)**
+
+- 카카오톡 로그인: OFF
+- 웹 로그인: ON
+- Redirect URI: `http://localhost:3000/auth/kakao/callback`
+
+**프로덕션 환경**
+
+- 카카오톡 로그인: ON (선택사항)
+- 웹 로그인: ON
+- Redirect URI: `https://yourdomain.com/auth/kakao/callback`
+
+#### **해결 방법 4: 브라우저 호환성 확인**
+
+- **Chrome**: 최신 버전 사용
+- **Firefox**: 최신 버전 사용
+- **Safari**: 최신 버전 사용
+- **Edge**: 최신 버전 사용
+
+#### **해결 방법 5: 디버깅 로그 추가**
+
+프론트엔드에 상세한 로그를 추가하여 문제 진단:
+
+```javascript
+const handleKakaoLogin = async (): Promise<void> => {
+  try {
+    console.log("=== 카카오 로그인 시작 ===");
+    console.log("카카오 SDK 초기화 상태:", window.Kakao?.isInitialized());
+    console.log("브라우저 정보:", navigator.userAgent);
+
+    if (!window.Kakao) {
+      setError("카카오 SDK가 로드되지 않았습니다.");
+      return;
+    }
+
+    if (!window.Kakao.isInitialized()) {
+      setError("카카오 SDK가 초기화되지 않았습니다.");
+      return;
+    }
+
+    // 카카오 로그인 실행 (웹 로그인만 사용)
+    const response: KakaoAuthResponse = await new Promise(
+      (resolve, reject) => {
+        window.Kakao.Auth.login({
+          throughTalk: false, // 카카오톡 앱 로그인 비활성화
+          success: (authResponse) => {
+            console.log("카카오 로그인 성공:", authResponse);
+            resolve(authResponse);
+          },
+          fail: (error) => {
+            console.error("카카오 로그인 실패:", error);
+            reject(error);
+          },
+        });
+      }
+    );
+
+    console.log("=== 카카오 로그인 완료 ===");
+    console.log("액세스 토큰:", response.access_token);
+
+    // 나머지 로직...
+
+  } catch (error: any) {
+    console.error("=== 카카오 로그인 오류 상세 ===");
+    console.error("오류 타입:", error.constructor.name);
+    console.error("오류 메시지:", error.message);
+    console.error("오류 스택:", error.stack);
+    console.error("================================");
+    setError("카카오 로그인에 실패했습니다: " + error.message);
+  }
+};
+```
+
+### **추가 권장사항**
+
+1. **카카오 개발자 콘솔에서 앱 상태 확인**
+
+   - 앱이 활성화되어 있는지 확인
+   - JavaScript 키가 올바른지 확인
+   - Redirect URI가 정확히 설정되어 있는지 확인
+
+2. **브라우저 개발자 도구 확인**
+
+   - Console 탭에서 오류 메시지 확인
+   - Network 탭에서 요청/응답 확인
+
+3. **환경변수 확인**
+
+   - 프론트엔드 `.env` 파일에 `REACT_APP_KAKAO_APP_KEY` 설정
+   - 백엔드 `application.yml`에 카카오 설정 확인
+
+4. **테스트 환경**
+   - 개발 환경에서는 웹 로그인만 사용
+   - 프로덕션 환경에서는 카카오톡 로그인도 활성화 가능
