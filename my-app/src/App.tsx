@@ -33,7 +33,7 @@ import Join from "./pages/join";
 import FirstPage from "./pages/FirstPage";
 import TestMain from "./pages/testmain";
 import "./auth.css";
-
+import "./App.css";
 function App() {
   const [posts, setPosts] = useState<Post[]>([]);
   const [selectedPost, setSelectedPost] = useState<Post | null>(null);

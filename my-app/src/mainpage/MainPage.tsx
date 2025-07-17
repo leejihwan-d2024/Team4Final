@@ -3,11 +3,12 @@ import styled from "styled-components";
 import "../App.css";
 import LocationTracker from "./LocationTracker";
 import PathMap from "./PathMap";
+import { Link } from "react-router-dom";
 
 function MainPage() {
   const [getRunning, setRunning] = useState(-1);
   const [location, setLocation] = useState("불러오는 중...");
-
+  const [menuOpen, setMenuOpen] = useState(false);
   useEffect(() => {
     if (!navigator.geolocation) {
       setLocation("위치 정보 지원 안됨");
@@ -60,53 +61,44 @@ function MainPage() {
       {/* 달리기, 메뉴 등은 기존 그대로 유지 */}
       <button
         type="button"
-        className="text-white bg-blue-700 hover:bg-blue-800 ..."
-        onClick={() => alert("메뉴")}
+        className="fixed top-4 right-4 z-50 text-white bg-blue-700 hover:bg-blue-800 px-4 py-2 rounded"
+        onClick={() => setMenuOpen(true)}
       >
-        (메뉴버튼)
+        메뉴
       </button>
-
-      <button
-        type="button"
-        className="text-white bg-blue-700 hover:bg-blue-800 ..."
-        onClick={() => {
-          if (getRunning === 1) {
-            alert("달리기종료");
-            document.body.style.backgroundColor = "grey";
-          } else {
-            alert("달리기시작");
-            document.body.style.backgroundColor = "green";
-          }
-          setRunning(getRunning * -1);
-        }}
+      <div
+        className={`fixed top-0 right-0 h-full w-64 bg-white shadow-lg transform transition-transform duration-300 z-50 ${
+          menuOpen ? "translate-x-0" : "translate-x-full"
+        }`}
       >
-        <img
-          className="fit-picture"
-          src="/shared-assets/images/examples/grapefruit-slice.jpg"
-          alt="running image"
-        />
-      </button>
-
-      <div className="RunningDataArea">
-        <ul>
+        <div className="p-4 border-b font-bold text-lg">📋 메뉴</div>
+        <ul className="p-4 space-y-4">
           <li>
-            <span>달린 시간 : </span>
-            <span>00 : 00 : 00</span>
+            <Link to="/menu1" className="text-blue-700 hover:underline">
+              📌 더미 메뉴 1
+            </Link>
           </li>
           <li>
-            <span>달린 거리 : </span>
-            <span>0000</span>
+            <Link to="/menu2" className="text-blue-700 hover:underline">
+              🔧 더미 메뉴 2
+            </Link>
           </li>
           <li>
-            <span>칼로리 소모 : </span>
-            <span>0000</span>
+            <Link to="/menu3" className="text-blue-700 hover:underline">
+              📞 더미 메뉴 3
+            </Link>
           </li>
         </ul>
+        <button
+          className="absolute top-4 right-4 text-gray-600 hover:text-black"
+          onClick={() => setMenuOpen(false)}
+        >
+          ✖
+        </button>
       </div>
-
       <button
         type="button"
-        className="text-white bg-blue-700 hover:bg-blue-800 ..."
+        className="text-white bg-blue-700 hover:bg-blue-800 px-4 py-2 rounded"
         onClick={() => alert("커뮤니티")}
       >
         (커뮤니티버튼)
