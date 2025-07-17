@@ -262,7 +262,14 @@ const PathMap: React.FC<PathMapProps> = ({ measurementId, setSt }) => {
   };
   return (
     <>
-      <div ref={mapRef} style={{ width: "600px", height: "400px" }} />
+      <div
+        ref={mapRef}
+        style={{
+          width: "100vw", // 화면 가로 전체
+          height: "calc(100vw * 0.6667)", // 가로 비율에 따라 세로 3:2
+          maxHeight: "100vh", // 너무 높으면 화면 넘치지 않게
+        }}
+      />
       <div id="result" style={{ marginTop: "10px", fontWeight: "bold" }} />
 
       <div style={{ marginTop: "10px" }}>

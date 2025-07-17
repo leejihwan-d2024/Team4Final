@@ -1,4 +1,5 @@
 import React, { useState, useRef, useEffect } from "react";
+import PathMap from "./PathMap";
 
 interface LocationData {
   x: number;
@@ -107,12 +108,75 @@ const LocationTracker = () => {
         .catch((err) => console.error("전송 실패:", err));
     }
   };
-
   return (
-    <div>
-      <button onClick={handleClick}>{buttonText}</button>
-      <div style={{ marginTop: "10px", fontSize: "20px", fontWeight: "bold" }}>
-        {displayTime}
+    <div
+      style={{
+        position: "relative",
+        width: "100vw",
+        height: "100vh",
+        overflow: "hidden",
+      }}
+    >
+      {/* PathMap: 전체화면 배경 + 조건부 표시 */}
+      <div
+        style={{
+          position: "absolute",
+          top: 0,
+          left: 0,
+          width: "100%",
+          height: "100%",
+          opacity: tracking ? 1 : 0, // 투명 처리
+          transition: "opacity 0.3s ease-in-out",
+          zIndex: 0,
+          pointerEvents: tracking ? "auto" : "none", // 클릭 막기
+        }}
+      >
+        <PathMap measurementId={7} />
+      </div>
+
+      {/* 버튼 + 타이머: 중앙 레이어 */}
+      <div
+        style={{
+          position: "absolute",
+          top: "50%",
+          left: "50%",
+          transform: "translate(-50%, -50%)",
+          zIndex: 1,
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+        }}
+      >
+        <button
+          onClick={handleClick}
+          style={{
+            width: "150px",
+            height: "150px",
+            borderRadius: "50%",
+            backgroundColor: tracking ? "#ff4d4d" : "#4CAF50",
+            color: "white",
+            fontSize: "24px",
+            fontWeight: "bold",
+            border: "none",
+            boxShadow: "0 8px 16px rgba(0, 0, 0, 0.2)",
+            cursor: "pointer",
+            transition: "background-color 0.3s",
+          }}
+        >
+          {buttonText}
+        </button>
+
+        <div
+          style={{
+            marginTop: "20px",
+            fontSize: "24px",
+            fontWeight: "bold",
+            color: "#fff",
+            textShadow: "1px 1px 4px rgba(0, 0, 0, 0.7)",
+          }}
+        >
+          {displayTime}
+        </div>
       </div>
     </div>
   );
