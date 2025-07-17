@@ -112,7 +112,6 @@ function MainPage() {
         (커뮤니티버튼)
       </button>
       <LocationTracker />
-      <PathMap measurementId={7} />
     </div>
   );
 }
