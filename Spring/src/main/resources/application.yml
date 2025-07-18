@@ -38,7 +38,7 @@ spring:
     host: smtp.gmail.com
     port: 587
     username: kgw8656@gmail.com
-    password: kgw1219
+    password: uovw znwa efrd dcke # Gmail 앱 비밀번호로 변경 필요
     properties:
       mail:
         smtp:

@@ -46,25 +46,41 @@ const ResetPasswordPage: React.FC = () => {
     setLoading(true);
     setMessage("");
 
+    console.log("=== 비밀번호 재설정 요청 시작 ===");
+    console.log("사용자 ID:", userId);
+    console.log("토큰:", token ? "토큰 존재" : "토큰 없음");
+    console.log("새 비밀번호 길이:", newPassword.length);
+    console.log("================================");
+
     try {
       if (!newPassword || !confirmPassword) {
-        setMessage("새 비밀번호를 입력해주세요.");
+        const errorMsg = "새 비밀번호를 입력해주세요.";
+        console.log("검증 실패:", errorMsg);
+        setMessage(errorMsg);
         setIsSuccess(false);
+        alert(errorMsg);
         return;
       }
 
       if (newPassword !== confirmPassword) {
-        setMessage("비밀번호가 일치하지 않습니다.");
+        const errorMsg = "비밀번호가 일치하지 않습니다.";
+        console.log("검증 실패:", errorMsg);
+        setMessage(errorMsg);
         setIsSuccess(false);
+        alert(errorMsg);
         return;
       }
 
       if (newPassword.length < 6) {
-        setMessage("비밀번호는 최소 6자 이상이어야 합니다.");
+        const errorMsg = "비밀번호는 최소 6자 이상이어야 합니다.";
+        console.log("검증 실패:", errorMsg);
+        setMessage(errorMsg);
         setIsSuccess(false);
+        alert(errorMsg);
         return;
       }
 
+      console.log("=== API 요청 시작 ===");
       const response = await api.post<ResetPasswordResponse>(
         "/api/auth/reset-password",
         {
@@ -74,26 +90,48 @@ const ResetPasswordPage: React.FC = () => {
         } as ResetPasswordRequest
       );
 
+      console.log("=== API 응답 수신 ===");
+      console.log("응답 상태:", response.status);
+      console.log("응답 데이터:", response.data);
+
       if (response.data.success) {
-        setMessage(response.data.message);
+        const successMsg =
+          "비밀번호가 성공적으로 변경되었습니다. 로그인 페이지로 이동합니다.";
+        console.log("비밀번호 재설정 성공:", successMsg);
+        setMessage(successMsg);
         setIsSuccess(true);
+        alert(successMsg);
+
         // 3초 후 로그인 페이지로 이동
         setTimeout(() => {
+          console.log("로그인 페이지로 이동");
           navigate("/login");
         }, 3000);
       } else {
-        setMessage(response.data.message);
+        const errorMsg =
+          response.data.message || "비밀번호 재설정에 실패했습니다.";
+        console.log("비밀번호 재설정 실패:", errorMsg);
+        setMessage(errorMsg);
         setIsSuccess(false);
+        alert(errorMsg);
       }
     } catch (error: any) {
-      console.error("비밀번호 재설정 오류:", error);
-      setMessage(
+      console.error("=== 비밀번호 재설정 오류 상세 ===");
+      console.error("오류 타입:", error.constructor.name);
+      console.error("오류 메시지:", error.message);
+      console.error("응답 데이터:", error.response?.data);
+      console.error("응답 상태:", error.response?.status);
+      console.error("================================");
+
+      const errorMsg =
         error.response?.data?.message ||
-          "비밀번호 재설정 중 오류가 발생했습니다."
-      );
+        "비밀번호 재설정 중 오류가 발생했습니다.";
+      setMessage(errorMsg);
       setIsSuccess(false);
+      alert(errorMsg);
     } finally {
       setLoading(false);
+      console.log("=== 비밀번호 재설정 요청 완료 ===");
     }
   };
 

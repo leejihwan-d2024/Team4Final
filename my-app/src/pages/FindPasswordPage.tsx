@@ -13,6 +13,12 @@ interface FindPasswordResponse {
   message: string;
 }
 
+interface ApiResponse {
+  success: boolean;
+  message: string;
+  data?: any;
+}
+
 const FindPasswordPage: React.FC = () => {
   const [userId, setUserId] = useState<string>("");
   const [email, setEmail] = useState<string>("");
@@ -26,36 +32,63 @@ const FindPasswordPage: React.FC = () => {
     setLoading(true);
     setMessage("");
 
+    console.log("=== 비밀번호 찾기 요청 시작 ===");
+    console.log("아이디:", userId);
+    console.log("이메일:", email);
+    console.log("================================");
+
     try {
       if (!userId || !email) {
-        setMessage("아이디와 이메일을 모두 입력해주세요.");
+        const errorMsg = "아이디와 이메일을 모두 입력해주세요.";
+        console.log("검증 실패:", errorMsg);
+        setMessage(errorMsg);
         setIsSuccess(false);
+        alert(errorMsg);
         return;
       }
 
-      const response = await api.post<FindPasswordResponse>(
-        "/api/auth/find-password",
-        {
-          userId: userId,
-          email: email,
-        } as FindPasswordRequest
-      );
+      console.log("=== API 요청 시작 ===");
+      const response = await api.post<ApiResponse>("/api/auth/find-password", {
+        userId: userId,
+        email: email,
+      } as FindPasswordRequest);
+
+      console.log("=== API 응답 수신 ===");
+      console.log("응답 상태:", response.status);
+      console.log("응답 데이터:", response.data);
 
       if (response.data.success) {
-        setMessage(response.data.message);
+        const successMsg =
+          "비밀번호 재설정 이메일이 발송되었습니다. 이메일을 확인해주세요.";
+        console.log("비밀번호 찾기 성공:", successMsg);
+        setMessage(successMsg);
         setIsSuccess(true);
+        alert(successMsg);
       } else {
-        setMessage(response.data.message);
+        const errorMsg =
+          response.data.message || "비밀번호 찾기에 실패했습니다.";
+        console.log("비밀번호 찾기 실패:", errorMsg);
+        setMessage(errorMsg);
         setIsSuccess(false);
+        alert(errorMsg);
       }
     } catch (error: any) {
-      console.error("비밀번호 찾기 오류:", error);
-      setMessage(
-        error.response?.data?.message || "비밀번호 찾기 중 오류가 발생했습니다."
-      );
+      console.error("=== 비밀번호 찾기 오류 상세 ===");
+      console.error("오류 타입:", error.constructor.name);
+      console.error("오류 메시지:", error.message);
+      console.error("응답 데이터:", error.response?.data);
+      console.error("응답 상태:", error.response?.status);
+      console.error("================================");
+
+      const errorMsg =
+        error.response?.data?.message ||
+        "비밀번호 찾기 중 오류가 발생했습니다.";
+      setMessage(errorMsg);
       setIsSuccess(false);
+      alert(errorMsg);
     } finally {
       setLoading(false);
+      console.log("=== 비밀번호 찾기 요청 완료 ===");
     }
   };
 
