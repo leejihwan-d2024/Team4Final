@@ -1,5 +1,5 @@
 .product-wrapper {
-  width: 98%;
+  width: 110%;
   max-width: 360px;
   margin: 0 auto;
   border: 2px solid #bad546;
@@ -19,6 +19,10 @@
 .product-title span {
   color: #bad546;
   font-weight: bold;
+}
+.hh {
+  text-decoration: underline;
+  margin-top: 10px;
 }
 
 .product-list {
@@ -55,7 +59,7 @@
   font-weight: bold;
   color: #bad546;
 }
-.btn {
+.btnn {
   padding: 12px 12px;
   font-size: 16px;
   cursor: pointer;
@@ -64,10 +68,16 @@
   border: none;
   border-radius: 8px;
   transition: background-color 0.2s ease;
-  width: 360px;
+  margin-top: 10px;
+  width: 90%;
+  margin-left: 20px;
+  height: 70%;
 }
 .input {
-  width: 250px;
+  width: 270px;
   margin-left: 5px;
-  height: 20px;
+  height: 50psx;
+}
+.heart {
+  font-size: 15px;
 }

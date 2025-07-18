@@ -58,7 +58,9 @@ function ProductCard({
           {parseInt(product.lprice).toLocaleString()}원
         </p>
       </a>
-      <button onClick={handleLike}>{liked ? "❤️ 찜취소" : "🤍 찜하기"}</button>
+      <button onClick={handleLike} className="heart">
+        {liked ? "❤️ 찜취소" : "🤍 찜하기"}
+      </button>
     </li>
   );
 }

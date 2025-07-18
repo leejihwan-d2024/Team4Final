@@ -50,12 +50,14 @@
   border: 2px solid #bad546;
   border-radius: 12px;
   padding: 10px;
+  padding-left: 30px;
   margin-top: 12px;
   max-width: 85%;
   background-color: #f9f9f9;
   box-shadow: 3px 3px 10px rgba(0, 0, 0, 0.1);
   box-sizing: border-box;
   align-items: center;
+  padding-right: 30px;
 }
 
 button {
@@ -111,22 +113,16 @@ button {
   width: 100%;
   padding: 0 5px;
   box-sizing: border-box;
-}
 
-.category-button {
-  flex: 1;
-  padding: 6px 0;
-  font-size: 12px;
-  font-weight: bold;
-  background-color: #bad546;
+  margin-right: 8px;
+  padding: 4px 8px;
+
   color: white;
-  border: none;
+  border: 1px solid rgb(133, 122, 122);
   border-radius: 4px;
   cursor: pointer;
-  text-shadow: 1px 1px 3px rgb(43, 41, 41);
-  white-space: nowrap;
-  text-align: center;
-  width: 18vw;
+  font-size: 14px;
+  font-weight: bold;
 }
 
 .post-list {
@@ -168,6 +164,7 @@ button {
   cursor: pointer;
   text-shadow: 0px 0px 8px rgb(43, 41, 41);
   transition: background-color 0.3s;
+  margin-top: 0px;
 }
 
 .write-button:hover {
@@ -194,6 +191,18 @@ button {
   border: none;
   border-radius: 5px;
   cursor: pointer;
+}
+h2 {
+  font-size: large;
+  font-weight: bold;
+  margin-top: 5px;
+}
+.write {
+  border: 1px solid rgb(117, 104, 104);
+  margin-left: 250px;
+  border-radius: 5px;
+  padding: 2px;
+  background-color: white;
 }
 
 @media (max-width: 480px) {

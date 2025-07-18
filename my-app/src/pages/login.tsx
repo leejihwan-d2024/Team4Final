@@ -112,8 +112,11 @@ const Login: React.FC = () => {
           // 토큰 유효성 검증
           const response = await api.get("/api/auth/auto-login");
           if (response.status === 200) {
-            console.log("이미 로그인된 상태입니다. 메인 페이지로 이동합니다.");
-            navigate("/main");
+            const redirectPath =
+              localStorage.getItem("redirectAfterLogin") || "/main";
+            localStorage.removeItem("redirectAfterLogin");
+            console.log("이미 로그인된 상태입니다. 이동:", redirectPath);
+            navigate(redirectPath);
             return;
           }
         } catch (error) {
@@ -236,8 +239,7 @@ const Login: React.FC = () => {
 
         alert("로그인 성공!");
         console.log("겨겨겨결과", JSON.stringify(result, null, 2));
-        const redirectPath =
-          localStorage.getItem("redirectAfterLogin") || "/main";
+        const redirectPath = localStorage.getItem("redirectAfterLogin") || "/";
         localStorage.removeItem("redirectAfterLogin");
         navigate(redirectPath);
       } else {
@@ -408,8 +410,7 @@ const Login: React.FC = () => {
         }
 
         alert("카카오 로그인 성공!");
-        const redirectPath =
-          localStorage.getItem("redirectAfterLogin") || "/main";
+        const redirectPath = localStorage.getItem("redirectAfterLogin") || "/";
         localStorage.removeItem("redirectAfterLogin");
         navigate(redirectPath);
       } else {

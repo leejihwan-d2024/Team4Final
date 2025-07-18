@@ -112,3 +112,15 @@
   cursor: pointer;
   font-weight: bold;
 }
+.searchBtn {
+  background-color: #f9f9f9;
+  border: 1px solid black;
+  padding: 2px;
+  border-radius: 5px;
+}
+.log {
+  border: 1px solid black;
+}
+.name {
+  font-weight: 600;
+}

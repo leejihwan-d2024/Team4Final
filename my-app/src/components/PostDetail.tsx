@@ -38,6 +38,7 @@ function PostDetail() {
       </div>
       <p>카테고리: {post.category}</p>
       <p>날짜: {post.createdAt}</p>
+      <hr></hr>
       <Comment postId={post.postId} />
     </div>
   );

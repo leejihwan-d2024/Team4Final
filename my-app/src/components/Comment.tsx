@@ -1,5 +1,6 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
+import "../styles/Comment.css";
 
 interface Comment {
   commentId: number;
@@ -70,7 +71,8 @@ function Comment({ postId }: CommentProps) {
 
   return (
     <div className="comment-section">
-      <h3>댓글</h3>
+      <h3 className="comm">댓글</h3>
+      <hr></hr>
       <ul>
         {comments.map((comment) => (
           <li key={comment.commentId}>
@@ -85,10 +87,14 @@ function Comment({ postId }: CommentProps) {
             </p>
             {/* 🔐 본인 댓글만 삭제 버튼 노출 */}
             {comment.commentAuthor === currentUserId && (
-              <button onClick={() => handleDelete(comment.commentId)}>
+              <button
+                onClick={() => handleDelete(comment.commentId)}
+                className="delete"
+              >
                 삭제
               </button>
             )}
+            <hr></hr>
           </li>
         ))}
       </ul>
@@ -100,7 +106,9 @@ function Comment({ postId }: CommentProps) {
           placeholder="댓글을 입력하세요"
         />
         <br />
-        <button onClick={handleSubmit}>등록</button>
+        <button onClick={handleSubmit} className="submit">
+          등록
+        </button>
       </div>
     </div>
   );

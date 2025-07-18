@@ -1,0 +1,18 @@
+.comm {
+  font-weight: bolder;
+  font-size: larger;
+}
+textarea {
+  width: 100%;
+}
+.submit {
+  border: 1px solid rgb(131, 120, 120);
+  border-radius: 5px;
+  background-color: #bad546;
+  color: white;
+  width: 100%;
+}
+.delete {
+  border: 1px solid rgb(131, 120, 120);
+  border-radius: 5px;
+}
