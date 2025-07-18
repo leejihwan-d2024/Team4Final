@@ -4,9 +4,10 @@ import kr.co.kh.mapper.RunningCrewMapper;
 import kr.co.kh.model.vo.RunningCrewVO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import org.springframework.transaction.annotation.Transactional;
+
 @Service
 @RequiredArgsConstructor
 public class RunningCrewService {
@@ -21,12 +22,12 @@ public class RunningCrewService {
         return crewMapper.selectAllCrews();
     }
 
-    public RunningCrewVO getCrewById(Long id) {
-        return crewMapper.selectCrewById(id);
+    public RunningCrewVO getCrewById(String id) { // 변경됨
+        return crewMapper.selectCrewById(id);     // 변경됨
     }
 
-    public boolean isLeader(Long crewId, String userId) {
-        RunningCrewVO crew = crewMapper.selectCrewById(crewId);
+    public boolean isLeader(String crewId, String userId) { // 변경됨
+        RunningCrewVO crew = crewMapper.selectCrewById(crewId); // 변경됨
         return crew != null && crew.getLeaderId().equals(userId);
     }
 
@@ -35,10 +36,8 @@ public class RunningCrewService {
     }
 
     @Transactional
-    public void deleteCrew(Long crewId) {
-        crewMapper.deleteCrewMembersByCrewId(crewId); //  자식 먼저 삭제
-        crewMapper.deleteCrew(crewId);                //  부모 삭제
+    public void deleteCrew(String crewId) { // 변경됨
+        crewMapper.deleteCrewMembersByCrewId(crewId); // 변경됨
+        crewMapper.deleteCrew(crewId);                // 변경됨
     }
-
 }
-

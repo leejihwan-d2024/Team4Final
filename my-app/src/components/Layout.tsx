@@ -12,14 +12,23 @@ interface LayoutProps {
 function Layout({ children }: LayoutProps) {
   const navigate = useNavigate();
   const [showProduct, setShowProduct] = useState(false);
+  const handleLogout = () => {
+    localStorage.removeItem("user");
+    localStorage.removeItem("token");
+    localStorage.removeItem("refreshToken");
 
+    localStorage.setItem("redirectAfterLogin", "/posts");
+    alert("로그아웃 되었습니다.");
+    navigate("/login");
+  };
+
+  const userStr = localStorage.getItem("user");
+  const user = JSON.parse(userStr || "null");
+  const isLoggedIn = !!(user && user.userId);
   // 게시판 접근 핸들러
   const handleBoardClick = () => {
     try {
-      const userStr = localStorage.getItem("user");
-      const user = JSON.parse(userStr || "null");
-
-      if (user && user.name) {
+      if (user && user.userId) {
         // 로그인 되어 있으면 게시판으로 이동
         navigate("/posts");
       } else {
@@ -38,6 +47,16 @@ function Layout({ children }: LayoutProps) {
     <div className="layout">
       <div className="layout-header" onClick={() => navigate("/posts")}>
         RUNNING <br /> CREW
+      </div>
+      <div style={{ float: "right", fontSize: "14px" }}>
+        {isLoggedIn ? (
+          <>
+            <span style={{ marginRight: "10px" }}>{user.userNn}님</span>
+            <button onClick={handleLogout}>로그아웃</button>
+          </>
+        ) : (
+          <button onClick={() => navigate("/login")}>로그인</button>
+        )}
       </div>
       <div className="search-area">
         <input className="search-input" placeholder="검색 창" />

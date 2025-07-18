@@ -71,7 +71,6 @@ function PostWrite({ onSubmit }: PostWriteProps) {
         onChange={(e) => setContent(e.target.value)}
       />
       <select value={category} onChange={(e) => setCategory(e.target.value)}>
-        <option value="전체">전체</option>
         <option value="러닝">러닝</option>
         <option value="스포츠">스포츠</option>
         <option value="잡담">잡담</option>

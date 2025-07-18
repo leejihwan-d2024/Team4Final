@@ -10,7 +10,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @NoArgsConstructor
 public class RunningCrewVO {
-    private Long crewId;
+    private String crewId;
     private String crewTitle;
     private String leaderNn;
     private LocalDateTime startTime;

@@ -10,7 +10,7 @@ import lombok.ToString;
 @ToString
 @NoArgsConstructor
 public class CrewMemberVO {
-    private Long crewId;
+    private String crewId;
     private String userId;
     private Integer status;
 }

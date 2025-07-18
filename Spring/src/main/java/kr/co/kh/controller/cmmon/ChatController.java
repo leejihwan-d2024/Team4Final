@@ -20,7 +20,7 @@ public class ChatController {
     private final SimpMessagingTemplate messagingTemplate;
 
     @MessageMapping("/chat/{crewId}")
-    public void sendMessage(@DestinationVariable Long crewId, ChatMessageVO message) {
+    public void sendMessage(@DestinationVariable String crewId, ChatMessageVO message) {
         log.info("📥 받은 메시지 - 크루ID: {}, 내용: {}", crewId, message);
 
         message.setCrewId(crewId);
