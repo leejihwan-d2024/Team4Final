@@ -58,7 +58,6 @@ const ResetPasswordPage: React.FC = () => {
         setMessage(errorMsg);
         setIsSuccess(false);
         alert(errorMsg);
-        alert(errorMsg);
         return;
       }
 
@@ -67,7 +66,6 @@ const ResetPasswordPage: React.FC = () => {
         setMessage(errorMsg);
         setIsSuccess(false);
         alert(errorMsg);
-        alert(errorMsg);
         return;
       }
 
@@ -75,7 +73,6 @@ const ResetPasswordPage: React.FC = () => {
         const errorMsg = "비밀번호는 최소 6자 이상이어야 합니다.";
         setMessage(errorMsg);
         setIsSuccess(false);
-        alert(errorMsg);
         alert(errorMsg);
         return;
       }
@@ -101,8 +98,6 @@ const ResetPasswordPage: React.FC = () => {
         setIsSuccess(true);
         alert(successMsg);
 
-        alert(successMsg);
-
         // 3초 후 로그인 페이지로 이동
         setTimeout(() => {
           console.log("로그인 페이지로 이동");
@@ -114,7 +109,6 @@ const ResetPasswordPage: React.FC = () => {
         setMessage(errorMsg);
         setIsSuccess(false);
         alert(errorMsg);
-        alert(errorMsg);
       }
     } catch (error: any) {
       console.error("비밀번호 재설정 오류:", error);
@@ -122,10 +116,7 @@ const ResetPasswordPage: React.FC = () => {
         error.response?.data?.message ||
         "비밀번호 재설정 중 오류가 발생했습니다.";
       setMessage(errorMsg);
-      ("비밀번호 재설정 중 오류가 발생했습니다.");
-      setMessage(errorMsg);
       setIsSuccess(false);
-      alert(errorMsg);
       alert(errorMsg);
     } finally {
       setLoading(false);

@@ -43,7 +43,6 @@ const FindPasswordPage: React.FC = () => {
         setMessage(errorMsg);
         setIsSuccess(false);
         alert(errorMsg);
-        alert(errorMsg);
         return;
       }
 
@@ -63,13 +62,11 @@ const FindPasswordPage: React.FC = () => {
         setMessage(successMsg);
         setIsSuccess(true);
         alert(successMsg);
-        alert(successMsg);
       } else {
         const errorMsg =
           response.data.message || "비밀번호 찾기에 실패했습니다.";
         setMessage(errorMsg);
         setIsSuccess(false);
-        alert(errorMsg);
         alert(errorMsg);
       }
     } catch (error: any) {
@@ -79,7 +76,6 @@ const FindPasswordPage: React.FC = () => {
         "비밀번호 찾기 중 오류가 발생했습니다.";
       setMessage(errorMsg);
       setIsSuccess(false);
-      alert(errorMsg);
       alert(errorMsg);
     } finally {
       setLoading(false);

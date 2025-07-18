@@ -41,7 +41,6 @@ const FindIdPage: React.FC = () => {
         setMessage(errorMsg);
         setIsSuccess(false);
         alert(errorMsg);
-        alert(errorMsg);
         return;
       }
 
@@ -60,12 +59,10 @@ const FindIdPage: React.FC = () => {
         setMessage(successMsg);
         setIsSuccess(true);
         alert(successMsg);
-        alert(successMsg);
       } else {
         const errorMsg = response.data.message || "아이디 찾기에 실패했습니다.";
         setMessage(errorMsg);
         setIsSuccess(false);
-        alert(errorMsg);
         alert(errorMsg);
       }
     } catch (error: any) {
@@ -74,7 +71,6 @@ const FindIdPage: React.FC = () => {
         error.response?.data?.message || "아이디 찾기 중 오류가 발생했습니다.";
       setMessage(errorMsg);
       setIsSuccess(false);
-      alert(errorMsg);
       alert(errorMsg);
     } finally {
       setLoading(false);
