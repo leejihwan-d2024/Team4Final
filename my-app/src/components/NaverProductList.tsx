@@ -45,12 +45,14 @@ function NaverProductList() {
           value={inputValue}
           onChange={(e) => setInputValue(e.target.value)}
         ></input>
-        <button type="submit" className="btn" onClick={handleSearch}>
+        <button type="submit" className="btnn" onClick={handleSearch}>
           검색
         </button>
       </Layout>
       <nav>
-        <a href="/liked">❤️찜한 상품</a>
+        <a href="/liked" className="hh">
+          ❤️찜한 상품
+        </a>
       </nav>
       <h2 className="product-title">
         🛍️ 상품 검색: <span>{query}</span>

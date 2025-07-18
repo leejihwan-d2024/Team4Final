@@ -19,7 +19,7 @@ function Layout({ children }: LayoutProps) {
 
     localStorage.setItem("redirectAfterLogin", "/posts");
     alert("로그아웃 되었습니다.");
-    navigate("/login");
+    navigate("/main");
   };
 
   const userStr = localStorage.getItem("user");
@@ -45,17 +45,32 @@ function Layout({ children }: LayoutProps) {
 
   return (
     <div className="layout">
-      <div className="layout-header" onClick={() => navigate("/posts")}>
+      <div className="layout-header" onClick={() => navigate("/main")}>
         RUNNING <br /> CREW
       </div>
       <div style={{ float: "right", fontSize: "14px" }}>
         {isLoggedIn ? (
           <>
-            <span style={{ marginRight: "10px" }}>{user.userNn}님</span>
-            <button onClick={handleLogout}>로그아웃</button>
+            <span style={{ marginRight: "10px" }} className="name">
+              {user.userNn}님
+            </span>
+            <button onClick={handleLogout} className="log">
+              로그아웃
+            </button>
           </>
         ) : (
-          <button onClick={() => navigate("/login")}>로그인</button>
+          <button
+            onClick={() => {
+              localStorage.setItem(
+                "redirectAfterLogin",
+                window.location.pathname
+              );
+              navigate("/login");
+            }}
+            className="log"
+          >
+            로그인
+          </button>
         )}
       </div>
       <div className="search-area">
@@ -69,19 +84,80 @@ function Layout({ children }: LayoutProps) {
           <li className="menu-item">
             러닝참여
             <ul className="submenu">
-              <li>모임찾기</li>
-              <li>혼자달리기</li>
+              <li
+                onClick={() => {
+                  if (!isLoggedIn) {
+                    localStorage.setItem("redirectAfterLogin", "/MainPage2");
+                    navigate("/login");
+                  } else {
+                    navigate("/MainPage2");
+                  }
+                }}
+              >
+                모임찾기
+              </li>
+              <li
+                onClick={() => {
+                  navigate("/main");
+                }}
+              >
+                혼자달리기
+              </li>
+              <li
+                onClick={() => {
+                  if (!isLoggedIn) {
+                    localStorage.setItem("redirectAfterLogin", "/chat/:crewId");
+                    navigate("/login");
+                  } else {
+                    navigate("/chat/:crewId");
+                  }
+                }}
+              >
+                크루채팅방
+              </li>
             </ul>
           </li>
           <li className="menu-item">
             러닝정보
             <ul className="submenu">
-              <li onClick={() => navigate("/info")}>러닝관련정보</li>
-              {showProduct && <RunningInfo />}
-              <li onClick={() => navigate("/shop")}>러닝관련상품</li>
-              {showProduct && <NaverProductList />}
-              <li onClick={() => navigate("/marathon")}>대회정보확인</li>
-              {showProduct && <Marathon />}
+              <li
+                onClick={() => {
+                  if (!isLoggedIn) {
+                    localStorage.setItem("redirectAfterLogin", "/info");
+                    navigate("/login");
+                  } else {
+                    navigate("/info");
+                  }
+                }}
+              >
+                러닝관련정보
+              </li>
+
+              <li
+                onClick={() => {
+                  if (!isLoggedIn) {
+                    localStorage.setItem("redirectAfterLogin", "/shop");
+                    navigate("/login");
+                  } else {
+                    navigate("/shop");
+                  }
+                }}
+              >
+                러닝관련상품
+              </li>
+
+              <li
+                onClick={() => {
+                  if (!isLoggedIn) {
+                    localStorage.setItem("redirectAfterLogin", "/marathon");
+                    navigate("/login");
+                  } else {
+                    navigate("/marathon");
+                  }
+                }}
+              >
+                대회정보확인
+              </li>
             </ul>
           </li>
           <li className="menu-item" onClick={handleBoardClick}>

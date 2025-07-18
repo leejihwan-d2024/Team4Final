@@ -130,8 +130,13 @@ function PostMain({ posts, onDelete, onEdit, onSelect }: PostMainProps) {
           </button>
         ))}
       </div>
-
-      <h2>전체 게시글</h2>
+      <br />
+      <div>
+        <h2>전체 게시글</h2>
+        <button onClick={() => navigate("/write")} className="write">
+          ✏️글쓰기
+        </button>
+      </div>
       <div className="postWrapperBox">
         <ul className="postUl">
           {currentPosts.map((post) => (
@@ -194,8 +199,6 @@ function PostMain({ posts, onDelete, onEdit, onSelect }: PostMainProps) {
           )}
         </div>
       </div>
-
-      <button onClick={() => navigate("/write")}>글쓰기</button>
     </div>
   );
 }
