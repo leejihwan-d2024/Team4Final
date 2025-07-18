@@ -105,7 +105,9 @@
             USER_STATUS = #{userStatus,jdbcType=NUMERIC},
             USER_PROFILE_IMAGE_URL = #{userProfileImageUrl,jdbcType=VARCHAR},
             USER_POINT = #{userPoint,jdbcType=NUMERIC},
-            USER_ACTIVE_POINT = #{userActivePoint,jdbcType=NUMERIC}
+            USER_ACTIVE_POINT = #{userActivePoint,jdbcType=NUMERIC},
+            PROVIDER = #{provider,jdbcType=VARCHAR},
+            KAKAO_ID = #{kakaoId,jdbcType=VARCHAR}
         WHERE USER_ID = #{userId,jdbcType=VARCHAR}
     </update>
 

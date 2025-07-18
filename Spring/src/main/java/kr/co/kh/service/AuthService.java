@@ -73,6 +73,10 @@ public class AuthService {
         newUserVO.setUserPhoneno(newRegistrationRequest.getPhoneno()); // 폰번호 설정 추가
         newUserVO.setUserStatus(1); // 활성 상태
         
+        // 일반 사용자 구분을 위한 필드 설정
+        newUserVO.setProvider("LOCAL");
+        newUserVO.setKakaoId(null); // 일반 사용자는 카카오 ID 없음
+        
         // 사용자 등록
         userServiceInterface.registerUser(newUserVO);
         
@@ -481,8 +485,13 @@ public class AuthService {
         newUserVO.setUserNn(nickname);
         newUserVO.setUserStatus(1); // 활성 상태
         
-        log.info("새 사용자 정보 설정 완료: userId={}, userEmail={}, userNn={}", 
-            newUserVO.getUserId(), newUserVO.getUserEmail(), newUserVO.getUserNn());
+        // 카카오 사용자 구분을 위한 필드 설정
+        newUserVO.setProvider("KAKAO");
+        newUserVO.setKakaoId(kakaoUserInfo.getId());
+        
+        log.info("새 사용자 정보 설정 완료: userId={}, userEmail={}, userNn={}, provider={}, kakaoId={}", 
+            newUserVO.getUserId(), newUserVO.getUserEmail(), newUserVO.getUserNn(), 
+            newUserVO.getProvider(), newUserVO.getKakaoId());
         
         try {
             userServiceInterface.registerUser(newUserVO);
