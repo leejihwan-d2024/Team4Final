@@ -1,9 +1,12 @@
 package kr.co.kh.achv.entity;
 
+import lombok.ToString;
+
 import javax.persistence.*;
 
 @Entity
 @Table(name = "ACHV")
+@ToString
 public class Achv {
 
     @Id

@@ -14,7 +14,7 @@ interface Achievement {
 interface BadgeRewardResponse {
   result: "SUCCESS" | "ALREADY_CLAIMED" | "NO_REWARD_MAPPING";
   badgeName?: string;
-  badgeImage?: string;
+  badgeImageUrl?: string;
 }
 
 function Achv() {
@@ -39,13 +39,12 @@ function Achv() {
         console.log("📥 원본 응답:", data);
 
         const mappedData = data.map((item: any, index: number) => ({
-          // ✅ 수정: 중복 방지를 위해 id가 없으면 index로 대체
           id: item.achvId?.toString() ?? item.achv_id ?? `fallback-${index}`,
           title: item.achvTitle ?? item.achv_title ?? "제목 없음",
           description: item.achvContent ?? "",
           currentValue: parseInt(item.currentValue) || 0,
           maxPoint: parseInt(item.achvMaxPoint) || 1,
-          claimed: item.isCompleted === "Y",
+          claimed: item.isComplate === "Y", // ✅ 수정됨
         }));
 
         console.log("📦 매핑 후 업적 목록:", mappedData);
@@ -79,17 +78,78 @@ function Achv() {
       const result: BadgeRewardResponse = await response.json();
 
       if (result.result === "SUCCESS") {
-        alert(`🎉 ${result.badgeName} 뱃지를 획득했습니다!`);
-        if (result.badgeImage) {
-          const img = new Image();
-          img.src = result.badgeImage;
-          img.alt = result.badgeName ?? "뱃지";
-          img.style.maxWidth = "150px";
-          const w = window.open("", "_blank", "width=300,height=300");
-          if (w) {
-            w.document.write(`<h2>${result.badgeName}</h2>`);
-            w.document.body.appendChild(img);
-          }
+        const popup = window.open(
+          "",
+          "_blank",
+          "width=380,height=480,top=180,left=600"
+        );
+
+        if (popup) {
+          popup.document.write(`
+      <!DOCTYPE html>
+      <html lang="ko">
+        <head>
+          <meta charset="UTF-8" />
+          <title>🎖️ 뱃지 획득</title>
+          <style>
+            body {
+              margin: 0;
+              font-family: "Segoe UI", sans-serif;
+              background: linear-gradient(135deg, #f0f4f8, #ffffff);
+              height: 100vh;
+              display: flex;
+              justify-content: center;
+              align-items: center;
+            }
+            .popup-container {
+              background: #fff;
+              padding: 30px 24px;
+              border-radius: 20px;
+              box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
+              text-align: center;
+              animation: fadeIn 0.5s ease-out;
+              max-width: 320px;
+            }
+            .popup-title {
+              font-size: 1.6rem;
+              font-weight: bold;
+              color: #2c3e50;
+              margin-bottom: 16px;
+            }
+            .popup-image {
+              width: 140px;
+              height: 140px;
+              object-fit: cover;
+              border-radius: 16px;
+              box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
+              margin-bottom: 16px;
+            }
+            .popup-message {
+              font-size: 1rem;
+              color: #4a4a4a;
+              margin-top: 10px;
+            }
+            @keyframes fadeIn {
+              from {
+                opacity: 0;
+                transform: scale(0.85);
+              }
+              to {
+                opacity: 1;
+                transform: scale(1);
+              }
+            }
+          </style>
+        </head>
+        <body>
+          <div class="popup-container">
+            <div class="popup-title">🎉 ${result.badgeName} 획득!</div>
+            <img src="${result.badgeImageUrl}" alt="badge" class="popup-image" />
+            <div class="popup-message">프로필에서 확인해보세요!</div>
+          </div>
+        </body>
+      </html>
+    `);
         }
         setAchievements((prev) =>
           prev.map((achv) =>

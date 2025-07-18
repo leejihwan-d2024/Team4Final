@@ -30,11 +30,12 @@
         CASE
         WHEN NVL(UAL.CURRENT_VALUE, 0) >= A.ACHV_MAX_POINT THEN 'Y'
         ELSE 'N'
-        END AS isComplate
+        END AS isComplete  <!-- ❌ 철자 오타!! -->
         FROM ACHV A
         LEFT JOIN USER_ACHV_LIST UAL ON A.ACHV_ID = UAL.ACHV_ID AND UAL.USER_ID = #{userId}
         LEFT JOIN ACHV_REWARD R ON A.ACHV_ID = R.ACHV_ID
     </select>
+
 
 
 </mapper>

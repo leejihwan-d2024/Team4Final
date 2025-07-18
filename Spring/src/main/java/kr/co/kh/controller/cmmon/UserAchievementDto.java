@@ -1,8 +1,14 @@
 package kr.co.kh.controller.cmmon;
 
 import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.ToString;
 
+@Setter
 @Getter
+@NoArgsConstructor
+@ToString
 public class UserAchievementDto {
     private String achvId;
     private String achvTitle;
@@ -16,7 +22,7 @@ public class UserAchievementDto {
     private String rewardValue;
     private String badgeName;
     private String badgeImageUrl;
-    private String isComplate;// "완료" 또는 ""
+    private String isComplete;// "완료" 또는 ""
 
     public UserAchievementDto(String achvId, String achvTitle, String achvContent,
                               int achvMaxPoint, int currentValue, String isRewarded,
@@ -35,10 +41,16 @@ public class UserAchievementDto {
         this.rewardValue = rewardValue;
         this.badgeName = badgeName;
         this.badgeImageUrl = badgeImageUrl;
-        this.isComplate = isComplate;
+        this.isComplete = isComplate;
     }
 
-    public UserAchievementDto(String ignoredAchvId, String ignoredAchvTitle, String ignoredAchvContent, int ignoredCurrentValue, Integer ignoredAchvMaxPoint, String ignoredIsRewarded) {
+    public UserAchievementDto(String ignoredAchvId, String ignoredAchvTitle, String ignoredAchvContent, int ignoredCurrentValue, Integer ignoredAchvMaxPoint, String ignoredIsRewarded ) {
+        this.achvId = ignoredAchvId;
+        this.achvTitle = ignoredAchvTitle;
+        this.achvContent = ignoredAchvContent;
+        this.currentValue = ignoredCurrentValue;
+        this.achvMaxPoint = ignoredAchvMaxPoint;
+        this.isRewarded = ignoredIsRewarded;
     }
 
     // 필요 시 setter 추가

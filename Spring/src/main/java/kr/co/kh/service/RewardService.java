@@ -2,16 +2,22 @@ package kr.co.kh.service;
 
 import kr.co.kh.mapper.RewardMapper;
 import kr.co.kh.model.vo.RewardVO;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
+@Slf4j
 @Service
 public class RewardService {
 
     @Autowired
     private RewardMapper rewardMapper;
+
+    public RewardVO claimReward(String achvId) {
+        return null;
+    }
 
     public enum RewardResult {
         SUCCESS,
@@ -51,4 +57,12 @@ public class RewardService {
 
         return RewardResult.SUCCESS;
     }
+
+    // ✅ 보상 정보를 반환하는 메서드 (기존 코드 유지한 채 추가)
+    public RewardVO getRewardByAchvId(String achvId) {
+        List<RewardVO> rewards = rewardMapper.findRewardByAchvId(achvId);
+        if (rewards == null || rewards.isEmpty()) return null;
+        return rewards.get(0);
+    }
+
 }

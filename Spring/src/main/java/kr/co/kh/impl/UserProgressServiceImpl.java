@@ -25,20 +25,24 @@ public class UserProgressServiceImpl implements UserProgressService {
 
     @Override
     public List<UserAchievementDto> getUserProgress(String userId) {
-        return progressRepository.findByUserId(userId).stream()
+        List<UserAchievementDto> result = progressRepository.findByUserId(userId).stream()
                 .map(p -> {
                     String achvId = p.getAchv().getAchvId();
                     List<RewardVO> rewards = rewardMapper.findRewardByAchvId(achvId);
 
-                    boolean claimed = false;
+                    log.info(p.toString());
+
+                    log.info(rewards.toString());
+                    boolean claimed = true;
                     if (!rewards.isEmpty()) {
                         Long rewardId = rewards.get(0).getRewardId();
                         claimed = rewardMapper.existsUserReward(userId, rewardId) > 0;
                     }
 
                     log.info(String.valueOf(claimed));
+                    log.info(p.getAchv().getAchvTitle().toString());
 
-                    return new UserAchievementDto(
+                    UserAchievementDto data = new UserAchievementDto(
                             achvId,
                             p.getAchv().getAchvTitle(),
                             p.getAchv().getAchvContent(),
@@ -46,8 +50,12 @@ public class UserProgressServiceImpl implements UserProgressService {
                             p.getAchv().getAchvMaxPoint(),
                             claimed ? "Y" : "N"
                     );
+                    log.info(data.toString());
+                    return data;
                 })
                 .collect(Collectors.toList());
+        log.info(result.toString());
+        return  result;
     }
 
     @Override

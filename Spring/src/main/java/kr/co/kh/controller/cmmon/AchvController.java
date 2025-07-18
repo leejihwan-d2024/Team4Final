@@ -1,6 +1,8 @@
 package kr.co.kh.controller.cmmon;
 
 import kr.co.kh.achv.entity.Achv;
+import kr.co.kh.model.payload.response.BadgeRewardResponse;
+import kr.co.kh.model.vo.RewardVO;
 import kr.co.kh.service.AchievementService;
 import kr.co.kh.service.RewardService;
 import kr.co.kh.service.RewardService.RewardResult;
@@ -72,28 +74,31 @@ public class AchvController {
         userProgressService.updateProgress(userId, achvId, value);
     }
 
-    // ✅ 보상 요청 처리 (파라미터명 통일: achvId 사용)
+    // ✅ 보상 요청 처리 (기존은 문자열 반환)
+    // 🎯 아래는 BadgeRewardResponse 객체를 반환하도록 추가된 버전
     @GetMapping("/reward")
-    public ResponseEntity<String> claimReward(
+    public ResponseEntity<BadgeRewardResponse> claimReward(
             @RequestParam String userId,
             @RequestParam String achvId
     ) {
         try {
             RewardResult result = rewardService.claimReward(userId, achvId);
+            RewardVO reward = rewardService.getRewardByAchvId(achvId);
 
-            switch (result) {
-                case SUCCESS:
-                    return ResponseEntity.ok("🎉 보상 지급 완료!");
-                case ALREADY_CLAIMED:
-                    return ResponseEntity.ok("이미 보상을 받았습니다.");
-                case NO_REWARD_MAPPING:
-                    return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("보상 정보가 존재하지 않습니다.");
-                default:
-                    return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("알 수 없는 오류가 발생했습니다.");
+            BadgeRewardResponse response = new BadgeRewardResponse();
+            response.setResult(result.name());
+
+            if (result == RewardResult.SUCCESS && reward != null) {
+                response.setBadgeName(reward.getBadgeName());
+                response.setBadgeImageUrl(reward.getBadgeImageUrl());
             }
+
+            return ResponseEntity.ok(response);
+
         } catch (Exception e) {
             e.printStackTrace();
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("서버 오류 발생: " + e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(new BadgeRewardResponse("ERROR", null, null));
         }
     }
 }
