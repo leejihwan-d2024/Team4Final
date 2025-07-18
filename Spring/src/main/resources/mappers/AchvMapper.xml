@@ -18,11 +18,18 @@
         VALUES (#{userId, jdbcType=VARCHAR}, #{rewardId, jdbcType=VARCHAR}, SYSDATE)
     </insert>
 
-    <insert id="insertUserAchvList">
+    <!-- ✅ 수정: jdbcType 명시로 null 안전 처리 -->
+    <insert id="insertUserAchvList" parameterType="map">
         INSERT INTO USER_ACHV_LIST (
         USER_ID, ACHV_ID, ACHIEVED_DATE, IS_REWARDED, REWARD_ID, BADGE_NAME, BADGE_IMAGE_URL
         ) VALUES (
-        #{userId}, #{achvId}, SYSDATE, 'Y', #{rewardId}, #{badgeName}, #{badgeImageUrl}
+        #{userId, jdbcType=VARCHAR},
+        #{achvId, jdbcType=VARCHAR},
+        SYSDATE,
+        'Y',
+        #{rewardId, jdbcType=INTEGER},
+        #{badgeName, jdbcType=VARCHAR},
+        #{badgeImageUrl, jdbcType=VARCHAR}
         )
     </insert>
 
@@ -34,7 +41,7 @@
         REWARD_TYPE     AS rewardType,
         REWARD_VALUE    AS rewardValue,
         BADGE_NAME      AS badgeName,
-        BADGE_IMAGE_URL AS badgeImage
+        BADGE_IMAGE_URL AS badgeImageUrl
         FROM ACHV_REWARD
         WHERE ACHV_ID = #{achvId}
     </select>

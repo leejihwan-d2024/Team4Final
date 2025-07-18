@@ -25,13 +25,25 @@ function Achv() {
   const [loading, setLoading] = useState(true);
   const [claimingId, setClaimingId] = useState<string | null>(null);
 
-  const userId = "1";
-
   useEffect(() => {
+    const user = JSON.parse(localStorage.getItem("user") || "null");
+    const token = localStorage.getItem("token");
+    const refreshToken = localStorage.getItem("refreshToken");
+
+    console.log("현재 사용자 정보:", user);
+    console.log("토큰 정보:", token, refreshToken);
+
     const fetchAchievements = async () => {
       try {
         const response = await fetch(
-          `https://localhost:8080/api/achievements/user/${userId}`
+          `https://localhost:8080/api/achievements/user`,
+          {
+            method: "GET",
+            credentials: "include",
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
         );
         if (!response.ok) throw new Error("서버 응답 실패");
 
@@ -58,7 +70,7 @@ function Achv() {
     };
 
     fetchAchievements();
-  }, [userId]);
+  }, []);
 
   const getProgressPercent = (currentValue: number, maxPoint: number) => {
     if (!maxPoint || isNaN(currentValue) || isNaN(maxPoint)) return 0;
@@ -66,11 +78,27 @@ function Achv() {
   };
 
   const handleClaim = async (achvId: string) => {
+    console.log(localStorage.getItem("user"));
+    const user = JSON.parse(localStorage.getItem("user") || "null");
+    const token = localStorage.getItem("token");
+
+    if (!user || !user.userId) {
+      alert("로그인이 필요합니다. 로그인 페이지로 이동합니다.");
+      navigate("/login"); // 🔥 로그인 페이지로 이동
+      return;
+    }
+
     setClaimingId(achvId);
     try {
       const response = await fetch(
-        `https://localhost:8080/api/achievements/reward?userId=${userId}&achvId=${achvId}`,
-        { method: "GET" }
+        `https://localhost:8080/api/achievements/reward?userId=${user.userId}&achvId=${achvId}`,
+        {
+          method: "GET",
+          credentials: "include",
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
       );
 
       if (!response.ok) throw new Error("보상 요청 실패");

@@ -1,20 +1,25 @@
 package kr.co.kh.controller.cmmon;
 
 import kr.co.kh.achv.entity.Achv;
+import kr.co.kh.annotation.CurrentUser;
+import kr.co.kh.model.CustomUserDetails;
 import kr.co.kh.model.dto.RewardResponse;
 import kr.co.kh.service.AchievementService;
 import kr.co.kh.service.RewardService;
 import kr.co.kh.service.RewardService.RewardResult;
 import kr.co.kh.service.UserProgressService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Map;
 
-@CrossOrigin(origins = "http://localhost:3000")
+@Slf4j
+@CrossOrigin(origins = "http://localhost:3000", allowCredentials = "true")
 @RestController
 @RequestMapping("/api/achievements")
 public class AchvController {
@@ -35,9 +40,12 @@ public class AchvController {
     }
 
     // 특정 유저 업적 진행 상태 조회
-    @GetMapping("/user/{userId}")
-    public List<UserAchvProgressDto> getUserProgress(@PathVariable String userId) {
-        return userProgressService.getUserProgress(userId);
+    @GetMapping("/user")
+    public List<UserAchvProgressDto> getUserProgress(@CurrentUser CustomUserDetails user) {
+        if (user == null) {
+            throw new RuntimeException("로그인 정보가 없습니다.");
+        }
+        return userProgressService.getUserProgress(user.getUserId());
     }
 
     // 테스트용 임시 데이터 반환
@@ -79,10 +87,13 @@ public class AchvController {
     // ✅ 보상 요청 처리 - JSON 형태의 RewardResponse 반환
     @GetMapping("/reward")
     public ResponseEntity<RewardResponse> claimReward(
-            @RequestParam String userId,
+            @CurrentUser CustomUserDetails user,
             @RequestParam String achvId
     ) {
         try {
+            log.info(user.getUserId());
+            log.info(user.getUsername());
+            String userId = user.getUserId();
             RewardResponse response = rewardService.claimReward(userId, achvId);
 
             switch (response.getResult()) {
