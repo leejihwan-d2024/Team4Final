@@ -181,10 +181,11 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
             "https://200.200.200.67:*",
             "http://200.200.200.70:*",
             "https://200.200.200.70:*"
+               // 모든 오리진 허용 (개발 환경용 - 필요시 주석 해제)
+        // configuration.setAllowedOriginPatterns(java.util.Arrays.asList("*"));
         ));
         
-        // 모든 오리진 허용 (개발 환경용 - 필요시 주석 해제)
-        // configuration.setAllowedOriginPatterns(java.util.Arrays.asList("*"));
+     
         
         // 허용된 HTTP 메서드
         configuration.setAllowedMethods(java.util.Arrays.asList(

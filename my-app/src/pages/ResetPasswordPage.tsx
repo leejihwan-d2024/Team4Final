@@ -48,20 +48,26 @@ const ResetPasswordPage: React.FC = () => {
 
     try {
       if (!newPassword || !confirmPassword) {
-        setMessage("새 비밀번호를 입력해주세요.");
+        const errorMsg = "새 비밀번호를 입력해주세요.";
+        setMessage(errorMsg);
         setIsSuccess(false);
+        alert(errorMsg);
         return;
       }
 
       if (newPassword !== confirmPassword) {
-        setMessage("비밀번호가 일치하지 않습니다.");
+        const errorMsg = "비밀번호가 일치하지 않습니다.";
+        setMessage(errorMsg);
         setIsSuccess(false);
+        alert(errorMsg);
         return;
       }
 
       if (newPassword.length < 6) {
-        setMessage("비밀번호는 최소 6자 이상이어야 합니다.");
+        const errorMsg = "비밀번호는 최소 6자 이상이어야 합니다.";
+        setMessage(errorMsg);
         setIsSuccess(false);
+        alert(errorMsg);
         return;
       }
 
@@ -75,23 +81,31 @@ const ResetPasswordPage: React.FC = () => {
       );
 
       if (response.data.success) {
-        setMessage(response.data.message);
+        const successMsg =
+          "비밀번호가 성공적으로 변경되었습니다. 로그인 페이지로 이동합니다.";
+        setMessage(successMsg);
         setIsSuccess(true);
+        alert(successMsg);
+
         // 3초 후 로그인 페이지로 이동
         setTimeout(() => {
           navigate("/login");
         }, 3000);
       } else {
-        setMessage(response.data.message);
+        const errorMsg =
+          response.data.message || "비밀번호 재설정에 실패했습니다.";
+        setMessage(errorMsg);
         setIsSuccess(false);
+        alert(errorMsg);
       }
     } catch (error: any) {
       console.error("비밀번호 재설정 오류:", error);
-      setMessage(
+      const errorMsg =
         error.response?.data?.message ||
-          "비밀번호 재설정 중 오류가 발생했습니다."
-      );
+        "비밀번호 재설정 중 오류가 발생했습니다.";
+      setMessage(errorMsg);
       setIsSuccess(false);
+      alert(errorMsg);
     } finally {
       setLoading(false);
     }

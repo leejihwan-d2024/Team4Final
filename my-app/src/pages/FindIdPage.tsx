@@ -27,8 +27,10 @@ const FindIdPage: React.FC = () => {
 
     try {
       if (!email) {
-        setMessage("이메일을 입력해주세요.");
+        const errorMsg = "이메일을 입력해주세요.";
+        setMessage(errorMsg);
         setIsSuccess(false);
+        alert(errorMsg);
         return;
       }
 
@@ -37,18 +39,24 @@ const FindIdPage: React.FC = () => {
       } as FindIdRequest);
 
       if (response.data.success) {
-        setMessage(response.data.message);
+        const successMsg =
+          "아이디 찾기 이메일이 발송되었습니다. 이메일을 확인해주세요.";
+        setMessage(successMsg);
         setIsSuccess(true);
+        alert(successMsg);
       } else {
-        setMessage(response.data.message);
+        const errorMsg = response.data.message || "아이디 찾기에 실패했습니다.";
+        setMessage(errorMsg);
         setIsSuccess(false);
+        alert(errorMsg);
       }
     } catch (error: any) {
       console.error("아이디 찾기 오류:", error);
-      setMessage(
-        error.response?.data?.message || "아이디 찾기 중 오류가 발생했습니다."
-      );
+      const errorMsg =
+        error.response?.data?.message || "아이디 찾기 중 오류가 발생했습니다.";
+      setMessage(errorMsg);
       setIsSuccess(false);
+      alert(errorMsg);
     } finally {
       setLoading(false);
     }
