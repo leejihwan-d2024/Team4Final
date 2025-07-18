@@ -15,7 +15,9 @@
             USER_LAST_LOGIN,
             USER_PROFILE_IMAGE_URL,
             USER_POINT,
-            USER_ACTIVE_POINT
+            USER_ACTIVE_POINT,
+            PROVIDER,
+            KAKAO_ID
         ) VALUES (
             #{userId,jdbcType=VARCHAR},
             #{userPw,jdbcType=VARCHAR},
@@ -27,7 +29,9 @@
             SYSDATE,
             #{userProfileImageUrl,jdbcType=VARCHAR},
             #{userPoint,jdbcType=NUMERIC},
-            #{userActivePoint,jdbcType=NUMERIC}
+            #{userActivePoint,jdbcType=NUMERIC},
+            #{provider,jdbcType=VARCHAR},
+            #{kakaoId,jdbcType=VARCHAR}
         )
     </insert>
 
@@ -44,7 +48,9 @@
             USER_LAST_LOGIN,
             USER_PROFILE_IMAGE_URL,
             USER_POINT,
-            USER_ACTIVE_POINT
+            USER_ACTIVE_POINT,
+            PROVIDER,
+            KAKAO_ID
         FROM USERS 
         WHERE USER_ID = #{userId,jdbcType=VARCHAR}
     </select>
@@ -62,7 +68,9 @@
             USER_LAST_LOGIN,
             USER_PROFILE_IMAGE_URL,
             USER_POINT,
-            USER_ACTIVE_POINT
+            USER_ACTIVE_POINT,
+            PROVIDER,
+            KAKAO_ID
         FROM USERS 
         WHERE USER_EMAIL = #{userEmail,jdbcType=VARCHAR}
     </select>
@@ -80,7 +88,9 @@
             USER_LAST_LOGIN,
             USER_PROFILE_IMAGE_URL,
             USER_POINT,
-            USER_ACTIVE_POINT
+            USER_ACTIVE_POINT,
+            PROVIDER,
+            KAKAO_ID
         FROM USERS 
         ORDER BY USER_SIGN_UP DESC
     </select>
