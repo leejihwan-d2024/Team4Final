@@ -38,7 +38,7 @@ spring:
     host: smtp.gmail.com
     port: 587
     username: kgw8656@gmail.com
-    password: kgw1219
+    password: uovw znwa efrd dcke
     properties:
       mail:
         smtp:
@@ -46,9 +46,9 @@ spring:
           starttls:
             enable: true
             required: true
-          timeout: 5000
-          connectiontimeout: 5000
-          writetimeout: 5000
+          timeout: 50000
+          connectiontimeout: 50000
+          writetimeout: 50000
   datasource:
     driver-class-name: net.sf.log4jdbc.sql.jdbcapi.DriverSpy
     url: ENC(-4msIeRxFkf4pJ979SHFTDuduvKZuiDLuLWE7EAwzBBYQdyJ4dxSUCVSs3oB1zECJYqeuZs+OJL9bvKGOybx99g==)
