@@ -74,18 +74,53 @@ function MainPage() {
         <div className="p-4 border-b font-bold text-lg">📋 메뉴</div>
         <ul className="p-4 space-y-4">
           <li>
-            <Link to="/menu1" className="text-blue-700 hover:underline">
-              📌 더미 메뉴 1
+            <Link to="/testmain" className="text-blue-700 hover:underline">
+              📞 테스트메인
             </Link>
           </li>
           <li>
-            <Link to="/menu2" className="text-blue-700 hover:underline">
-              🔧 더미 메뉴 2
+            <Link to="/FirstPage" className="text-blue-700 hover:underline">
+              📌 로그인페이지
             </Link>
           </li>
           <li>
-            <Link to="/menu3" className="text-blue-700 hover:underline">
-              📞 더미 메뉴 3
+            <Link to="/MainPage2" className="text-blue-700 hover:underline">
+              🔧 크루메인
+            </Link>
+          </li>
+          <li>
+            <Link to="/CrewCreate" className="text-blue-700 hover:underline">
+              📞 크루생성
+            </Link>
+          </li>
+          <li>
+            <Link to="/achv" className="text-blue-700 hover:underline">
+              📞 업적
+            </Link>
+          </li>
+          <li>
+            <Link to="/posts" className="text-blue-700 hover:underline">
+              📞 게시판
+            </Link>
+          </li>
+          <li>
+            <Link to="/shop" className="text-blue-700 hover:underline">
+              📞 관련상품
+            </Link>
+          </li>
+          <li>
+            <Link to="/info" className="text-blue-700 hover:underline">
+              📞 관련정보
+            </Link>
+          </li>
+          <li>
+            <Link to="/marathon" className="text-blue-700 hover:underline">
+              📞 대회정보
+            </Link>
+          </li>
+          <li>
+            <Link to="/" className="text-blue-700 hover:underline">
+              📞 -
             </Link>
           </li>
         </ul>
