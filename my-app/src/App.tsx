@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 
 import "./App.css";
 import {
@@ -32,12 +32,16 @@ import Login from "./pages/login";
 import Join from "./pages/join";
 import FirstPage from "./pages/FirstPage";
 import TestMain from "./pages/testmain";
+import FindIdPage from "./pages/FindIdPage";
+import FindPasswordPage from "./pages/FindPasswordPage";
+import ResetPasswordPage from "./pages/ResetPasswordPage";
 import "./auth.css";
 import "./App.css";
 function App() {
   const [posts, setPosts] = useState<Post[]>([]);
   const [selectedPost, setSelectedPost] = useState<Post | null>(null);
   const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
+  const hasLogged = useRef(false);
 
   // 전체 게시글 불러오기
   const fetchPosts = async () => {
@@ -97,25 +101,28 @@ function App() {
   useEffect(() => {
     fetchPosts();
 
-    // 앱 시작 시 토큰 정보 로깅 및 자동 로그인 체크
-    console.log("=== 앱 시작 - 토큰 정보 확인 ===");
-    logTokenInfo();
+    // 앱 시작 시 토큰 정보 로깅 및 자동 로그인 체크 (한 번만 실행)
+    if (!hasLogged.current) {
+      console.log("=== 앱 시작 - 토큰 정보 확인 ===");
+      logTokenInfo();
 
-    // 자동 로그인 체크 (체크박스가 체크된 경우에만)
-    const checkAutoLogin = async () => {
-      const savedAutoLogin = localStorage.getItem("autoLoginEnabled");
-      if (savedAutoLogin === "true") {
-        console.log("자동 로그인 기능이 활성화되어 있습니다.");
-        const isAutoLoggedIn = await checkAndHandleAutoLogin();
-        setIsLoggedIn(isAutoLoggedIn);
-      } else {
-        console.log("자동 로그인 기능이 비활성화되어 있습니다.");
-        setIsLoggedIn(false);
-      }
-    };
+      // 자동 로그인 체크 (체크박스가 체크된 경우에만)
+      const checkAutoLogin = async () => {
+        const savedAutoLogin = localStorage.getItem("autoLoginEnabled");
+        if (savedAutoLogin === "true") {
+          console.log("자동 로그인 기능이 활성화되어 있습니다.");
+          const isAutoLoggedIn = await checkAndHandleAutoLogin();
+          setIsLoggedIn(isAutoLoggedIn);
+        } else {
+          console.log("자동 로그인 기능이 비활성화되어 있습니다.");
+          setIsLoggedIn(false);
+        }
+      };
 
-    checkAutoLogin();
-    console.log("================================");
+      checkAutoLogin();
+      console.log("================================");
+      hasLogged.current = true;
+    }
   }, []);
 
   return (
@@ -188,6 +195,9 @@ function App() {
         <Route path="/testmain" element={<TestMain />} />
         <Route path="/login" element={<Login />} />
         <Route path="/join" element={<Join />} />
+        <Route path="/find-id" element={<FindIdPage />} />
+        <Route path="/find-password" element={<FindPasswordPage />} />
+        <Route path="/reset-password" element={<ResetPasswordPage />} />
       </Routes>
     </BrowserRouter>
   );

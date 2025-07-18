@@ -51,44 +51,30 @@ spring:
     time-zone: Asia/Seoul
     date-format: yyyy-MM-dd
     jpa-date-time-format: yyyy-MM-dd HH:mm:ss
-mybatis:
-  mapper-locations: classpath:mappers/*.xml
-  type-aliases-package: kr.co.kh.model.vo,kr.co.kh.vo
-  configuration:
-    map-underscore-to-camel-case: true
-  # config-location: classpath:mybatis-config.xml
-
-  #logging:
-  #  level:
-  #    root: info
-  #    org:
-  #      hibernate:
-  #        SQL: DEBUG
-  file:
-    path: C:\\WAS_DATA\\mybatis\\mybatis-log.txt
-
-#JWT properties
-app:
-  jwt:
-    header: Authorization
-    header.prefix: Bearer
-    secret: abcdefghijklmnopqrstuvwxyz
-    expiration: 5184000000
-  token:
-    email:
-      verification:
-        duration: 5184000000
-    password:
-      reset:
-        duration: 5184000000
-    refresh:
-      duration: 5184000000 # 1달
+  mail:
+    host: localhost
+    port: 1025
+    username: test@localhost
+    password: test
+    properties:
+      mail:
+        smtp:
+          auth: false
+          starttls:
+            enable: false
+          timeout: 5000
+          connectiontimeout: 5000
+          writetimeout: 5000
+  # 개발용 로컬 이메일 서버 설정 (MailHog)
   velocity:
     templates:
       location: C:\\WAS_DATA\\velocity\\templates
   cache: #Logged out token cache
     logoutToken:
       maxSize: 1000
+  email:
+    enabled: false
+    log-only: true
 jasypt:
   encryptor:
     bean: jasyptStringEncryptor

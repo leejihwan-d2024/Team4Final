@@ -162,6 +162,39 @@
   }
 }
 
+/* 아이디/비밀번호 찾기 링크 */
+.find-account-links {
+  margin-top: 15px;
+  text-align: center;
+  font-size: 14px;
+}
+
+.btn-link {
+  background: none;
+  border: none;
+  color: #667eea;
+  cursor: pointer;
+  font-size: 14px;
+  text-decoration: underline;
+  padding: 5px 10px;
+  transition: color 0.3s ease;
+}
+
+.btn-link:hover {
+  color: #5a67d8;
+}
+
+.btn-link:disabled {
+  color: #ccc;
+  cursor: not-allowed;
+  text-decoration: none;
+}
+
+.separator {
+  color: #ccc;
+  margin: 0 10px;
+}
+
 /* 반응형 디자인 */
 @media (max-width: 480px) {
   .login-container {

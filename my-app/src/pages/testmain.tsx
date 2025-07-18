@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useRef } from "react";
 import { useNavigate } from "react-router-dom";
 
 // 타입 정의
@@ -10,6 +10,7 @@ interface User {
 
 const TestMain: React.FC = () => {
   const navigate = useNavigate();
+  const hasLogged = useRef(false);
 
   const handleLogout = (): void => {
     localStorage.removeItem("user");
@@ -38,12 +39,15 @@ const TestMain: React.FC = () => {
     user?.userId?.startsWith("kakao_") ||
     user?.userNn?.startsWith("카카오사용자_");
 
-  // 디버깅 로그 추가
-  console.log("=== TestMain 페이지 - 사용자 정보 확인 ===");
-  console.log("localStorage user string:", userString);
-  console.log("파싱된 사용자 정보:", user);
-  console.log("카카오 사용자 여부:", isKakaoUser);
-  console.log("================================");
+  // 디버깅 로그 추가 (개발 환경에서만, 한 번만 실행)
+  if (!hasLogged.current && process.env.NODE_ENV === "development") {
+    console.log("=== TestMain 페이지 - 사용자 정보 확인 ===");
+    console.log("localStorage user string:", userString);
+    console.log("파싱된 사용자 정보:", user);
+    console.log("카카오 사용자 여부:", isKakaoUser);
+    console.log("================================");
+    hasLogged.current = true;
+  }
 
   return (
     <div

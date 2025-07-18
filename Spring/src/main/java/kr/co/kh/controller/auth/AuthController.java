@@ -14,6 +14,11 @@ import kr.co.kh.model.payload.request.UpdatePasswordRequest;
 import kr.co.kh.model.payload.request.UpdateProfileRequest;
 import kr.co.kh.model.payload.request.DeleteAccountRequest;
 import kr.co.kh.model.payload.request.KakaoLoginRequest;
+import kr.co.kh.model.payload.request.FindIdRequest;
+import kr.co.kh.model.payload.request.FindPasswordRequest;
+import kr.co.kh.model.payload.request.ResetPasswordRequest;
+import kr.co.kh.model.payload.response.FindIdResponse;
+import kr.co.kh.model.payload.response.FindPasswordResponse;
 import kr.co.kh.model.CustomUserDetails;
 import kr.co.kh.model.payload.response.ApiResponse;
 import kr.co.kh.model.payload.response.JwtAuthenticationResponse;
@@ -48,6 +53,8 @@ public class AuthController {
     @GetMapping("/check")
     public ResponseEntity<?> checkServerStatus() {
         log.info("=== 서버 상태 확인 요청 ===");
+        log.info("서버가 정상적으로 실행 중입니다.");
+        log.info("현재 시간: {}", java.time.LocalDateTime.now());
         return ResponseEntity.ok(new ApiResponse(true, "서버가 정상 작동 중입니다."));
     }
 
@@ -429,4 +436,166 @@ public class AuthController {
         }
     }
 
+    /**
+     * 아이디 찾기
+     */
+    @ApiOperation(value = "아이디 찾기")
+    @ApiImplicitParam(name = "email", value = "이메일", dataType = "String", required = true)
+    @PostMapping("/find-id")
+    public ResponseEntity<?> findUserId(@Valid @RequestBody FindIdRequest findIdRequest) {
+        log.info("=== AuthController.findUserId 호출됨 ===");
+        log.info("이메일: {}", findIdRequest.getEmail());
+        
+        try {
+            log.info("AuthService.findUserIdByEmail 호출 시작...");
+            FindIdResponse response = authService.findUserIdByEmail(findIdRequest);
+            log.info("AuthService.findUserIdByEmail 호출 완료");
+            
+            if (response.isSuccess()) {
+                log.info("=== 아이디 찾기 성공 ===");
+                log.info("이메일: {}", findIdRequest.getEmail());
+                log.info("응답 메시지: {}", response.getMessage());
+                log.info("================================");
+                return ResponseEntity.ok(new ApiResponse(true, response.getMessage()));
+            } else {
+                log.warn("=== 아이디 찾기 실패 ===");
+                log.warn("이메일: {}, 오류: {}", findIdRequest.getEmail(), response.getMessage());
+                log.warn("================================");
+                return ResponseEntity.ok(new ApiResponse(false, response.getMessage()));
+            }
+        } catch (Exception e) {
+            log.error("=== 아이디 찾기 중 오류 ===");
+            log.error("이메일: {}, 오류: {}", findIdRequest.getEmail(), e.getMessage(), e);
+            log.error("================================");
+            return ResponseEntity.ok(new ApiResponse(false, "아이디 찾기 중 오류가 발생했습니다."));
+        }
+    }
+
+    /**
+     * 비밀번호 찾기
+     */
+    @ApiOperation(value = "비밀번호 찾기")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "userId", value = "아이디", dataType = "String", required = true),
+            @ApiImplicitParam(name = "email", value = "이메일", dataType = "String", required = true)
+    })
+    @PostMapping("/find-password")
+    public ResponseEntity<?> findPassword(@Valid @RequestBody FindPasswordRequest findPasswordRequest) {
+        log.info("=== 비밀번호 찾기 요청 ===");
+        log.info("아이디: {}, 이메일: {}", findPasswordRequest.getUserId(), findPasswordRequest.getEmail());
+        
+        try {
+            FindPasswordResponse response = authService.findPasswordByUserIdAndEmail(findPasswordRequest);
+            
+            if (response.isSuccess()) {
+                log.info("=== 비밀번호 찾기 성공 ===");
+                log.info("아이디: {}, 이메일: {}", findPasswordRequest.getUserId(), findPasswordRequest.getEmail());
+                log.info("================================");
+                return ResponseEntity.ok(new ApiResponse(true, response.getMessage()));
+            } else {
+                log.warn("=== 비밀번호 찾기 실패 ===");
+                log.warn("아이디: {}, 이메일: {}, 오류: {}", 
+                    findPasswordRequest.getUserId(), findPasswordRequest.getEmail(), response.getMessage());
+                log.warn("================================");
+                return ResponseEntity.ok(new ApiResponse(false, response.getMessage()));
+            }
+        } catch (Exception e) {
+            log.error("=== 비밀번호 찾기 중 오류 ===");
+            log.error("아이디: {}, 이메일: {}, 오류: {}", 
+                findPasswordRequest.getUserId(), findPasswordRequest.getEmail(), e.getMessage(), e);
+            log.error("================================");
+            return ResponseEntity.ok(new ApiResponse(false, "비밀번호 찾기 중 오류가 발생했습니다."));
+        }
+    }
+
+    /**
+     * 비밀번호 재설정
+     */
+    @ApiOperation(value = "비밀번호 재설정")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "userId", value = "아이디", dataType = "String", required = true),
+            @ApiImplicitParam(name = "token", value = "재설정 토큰", dataType = "String", required = true),
+            @ApiImplicitParam(name = "newPassword", value = "새 비밀번호", dataType = "String", required = true)
+    })
+    @PostMapping("/reset-password")
+    public ResponseEntity<?> resetPassword(@Valid @RequestBody ResetPasswordRequest resetPasswordRequest) {
+        log.info("=== 비밀번호 재설정 요청 ===");
+        log.info("아이디: {}", resetPasswordRequest.getUserId());
+        
+        try {
+            boolean success = authService.resetPassword(resetPasswordRequest);
+            
+            if (success) {
+                log.info("=== 비밀번호 재설정 성공 ===");
+                log.info("아이디: {}", resetPasswordRequest.getUserId());
+                log.info("================================");
+                return ResponseEntity.ok(new ApiResponse(true, "비밀번호가 성공적으로 재설정되었습니다."));
+            } else {
+                log.warn("=== 비밀번호 재설정 실패 ===");
+                log.warn("아이디: {}", resetPasswordRequest.getUserId());
+                log.warn("================================");
+                return ResponseEntity.ok(new ApiResponse(false, "비밀번호 재설정에 실패했습니다. 토큰을 확인해주세요."));
+            }
+        } catch (Exception e) {
+            log.error("=== 비밀번호 재설정 중 오류 ===");
+            log.error("아이디: {}, 오류: {}", resetPasswordRequest.getUserId(), e.getMessage(), e);
+            log.error("================================");
+            return ResponseEntity.ok(new ApiResponse(false, "비밀번호 재설정 중 오류가 발생했습니다."));
+        }
+    }
+
+    /**
+     * 이메일 설정 확인
+     */
+    @ApiOperation(value = "이메일 설정 확인")
+    @GetMapping("/check-email-config")
+    public ResponseEntity<?> checkEmailConfig() {
+        log.info("=== 이메일 설정 확인 요청 ===");
+        
+        try {
+            // 이메일 서비스 주입 확인
+            if (authService.isEmailServiceAvailable()) {
+                log.info("이메일 서비스가 정상적으로 설정되었습니다.");
+                return ResponseEntity.ok(new ApiResponse(true, "이메일 서비스가 정상적으로 설정되었습니다. 실제 이메일이 발송됩니다."));
+            } else {
+                log.warn("이메일 서비스 설정이 완료되지 않았습니다.");
+                return ResponseEntity.ok(new ApiResponse(false, "이메일 서비스 설정이 완료되지 않았습니다. 로그 모드로 동작합니다."));
+            }
+        } catch (Exception e) {
+            log.error("이메일 설정 확인 중 오류 발생", e);
+            return ResponseEntity.ok(new ApiResponse(false, "이메일 설정 확인 중 오류가 발생했습니다: " + e.getMessage()));
+        }
+    }
+
+    /**
+     * 이메일 테스트 발송
+     */
+    @ApiOperation(value = "이메일 테스트 발송")
+    @ApiImplicitParam(name = "email", value = "테스트 이메일 주소", dataType = "String", required = true)
+    @PostMapping("/test-email")
+    public ResponseEntity<?> testEmail(@RequestParam String email) {
+        log.info("=== 이메일 테스트 발송 요청 ===");
+        log.info("테스트 이메일: {}", email);
+        
+        try {
+            boolean success = authService.sendTestEmail(email);
+            
+            if (success) {
+                log.info("=== 이메일 테스트 발송 성공 ===");
+                log.info("테스트 이메일: {}", email);
+                log.info("================================");
+                return ResponseEntity.ok(new ApiResponse(true, "테스트 이메일이 성공적으로 발송되었습니다."));
+            } else {
+                log.warn("=== 이메일 테스트 발송 실패 ===");
+                log.warn("테스트 이메일: {}", email);
+                log.warn("================================");
+                return ResponseEntity.ok(new ApiResponse(false, "테스트 이메일 발송에 실패했습니다."));
+            }
+        } catch (Exception e) {
+            log.error("=== 이메일 테스트 발송 중 오류 ===");
+            log.error("테스트 이메일: {}, 오류: {}", email, e.getMessage(), e);
+            log.error("================================");
+            return ResponseEntity.ok(new ApiResponse(false, "이메일 테스트 발송 중 오류가 발생했습니다: " + e.getMessage()));
+        }
+    }
 }

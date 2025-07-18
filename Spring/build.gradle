@@ -53,6 +53,7 @@ dependencies {
     implementation 'com.fasterxml.jackson.core:jackson-annotations:2.13.1'
     implementation 'com.fasterxml.jackson.core:jackson-databind'
     implementation 'org.springframework.boot:spring-boot-starter-websocket'
+    implementation 'org.springframework.boot:spring-boot-starter-mail:2.6.2'
 
     // https://mvnrepository.com/artifact/org.apache.poi/poi
     implementation 'com.github.ulisesbocchio:jasypt-spring-boot-starter:3.0.4'
