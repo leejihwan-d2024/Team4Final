@@ -497,6 +497,25 @@ const Login: React.FC = () => {
         <button type="submit" className="btn btn-primary" disabled={loading}>
           {loading ? "로그인 중..." : "로그인"}
         </button>
+        <div className="find-account-links">
+          <button
+            type="button"
+            className="btn-link"
+            onClick={() => navigate("/find-id")}
+            disabled={loading}
+          >
+            아이디 찾기
+          </button>
+          <span className="separator">|</span>
+          <button
+            type="button"
+            className="btn-link"
+            onClick={() => navigate("/find-password")}
+            disabled={loading}
+          >
+            비밀번호 찾기
+          </button>
+        </div>
       </form>
       <div className="login-actions">
         <button

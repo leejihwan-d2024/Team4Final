@@ -9,36 +9,25 @@ import org.springframework.security.core.userdetails.UserDetails;
 import java.util.Collection;
 import java.util.Objects;
 import java.util.Arrays;
-import java.util.Set;
-import java.util.HashSet;
+
+/*  
+ * 로그인 성공 후: UserVO → CustomUserDetails 변환
+ * JWT 토큰 생성: 사용자 정보를 토큰에 포함
+ * 인증 유지: JWT 토큰 검증 후 사용자 정보 복원
+ * 권한 관리: Spring Security 권한 시스템과 연동
+ *
+*/
 
 @ToString
 public class CustomUserDetails implements UserDetails {
 
     private final UserVO userVO;
     private final Collection<? extends GrantedAuthority> authorities;
-    private final Set<Role> roles;
 
     public CustomUserDetails(final UserVO userVO) {
         this.userVO = userVO;
-        // 기본 USER 권한 부여 (실제로는 DB에서 조회해야 함)
+        // 기본 USER 권한 부여
         this.authorities = Arrays.asList(new SimpleGrantedAuthority("ROLE_USER"));
-        
-        // 기본 Role 설정
-        this.roles = new HashSet<>();
-        Role userRole = new Role();
-        userRole.setRole(RoleName.ROLE_USER);
-        roles.add(userRole);
-    }
-
-    public CustomUserDetails(final UserVO userVO, final Set<Role> roles) {
-        this.userVO = userVO;
-        this.roles = roles;
-        
-        // 실제 권한을 Spring Security authorities로 변환
-        this.authorities = roles.stream()
-                .map(role -> new SimpleGrantedAuthority(role.getRole().name()))
-                .collect(java.util.stream.Collectors.toList());
     }
 
     @Override
@@ -71,11 +60,6 @@ public class CustomUserDetails implements UserDetails {
     // UserService에서 사용하는 getId() 메서드
     public Long getId() {
         return (long) getUserId().hashCode();
-    }
-
-    // MenuService에서 사용하는 getRoles() 메서드
-    public Set<Role> getRoles() {
-        return roles;
     }
 
     @Override

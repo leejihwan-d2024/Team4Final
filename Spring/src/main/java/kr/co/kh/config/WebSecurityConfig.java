@@ -169,11 +169,22 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
             "https://localhost:*",
             "http://127.0.0.1:*",
             "https://127.0.0.1:*",
+            "file://*",
+            "null",  // file:// 프로토콜에서 발생하는 null origin 허용
             "http://200.200.200.72:*",
             "https://200.200.200.72:*",
             "http://200.200.200.62:*",
-            "https://200.200.200.62:*"
+            "https://200.200.200.62:*",
+            "http://200.200.200.82:*",
+            "https://200.200.200.82:*",
+            "http://200.200.200.67:*",
+            "https://200.200.200.67:*",
+            "http://200.200.200.70:*",
+            "https://200.200.200.70:*"
         ));
+        
+        // 모든 오리진 허용 (개발 환경용 - 필요시 주석 해제)
+        // configuration.setAllowedOriginPatterns(java.util.Arrays.asList("*"));
         
         // 허용된 HTTP 메서드
         configuration.setAllowedMethods(java.util.Arrays.asList(

@@ -33,6 +33,22 @@ spring:
   output:
     ansi:
       enabled: always
+  # 이메일 설정
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: kgw8656@gmail.com
+    password: kgw1219
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+            required: true
+          timeout: 5000
+          connectiontimeout: 5000
+          writetimeout: 5000
   datasource:
     driver-class-name: net.sf.log4jdbc.sql.jdbcapi.DriverSpy
     url: ENC(-4msIeRxFkf4pJ979SHFTDuduvKZuiDLuLWE7EAwzBBYQdyJ4dxSUCVSs3oB1zECJYqeuZs+OJL9bvKGOybx99g==)
@@ -87,6 +103,9 @@ app:
     header.prefix: Bearer
     secret: abcdefghijklmnopqrstuvwxyz
     expiration: 5184000000
+  # 비밀번호 재설정 URL
+  reset-password:
+    url: ${RESET_PASSWORD_URL:http://localhost:3000/reset-password}
   token:
     email:
       verification:
@@ -119,7 +138,7 @@ logging:
     name: C:\\WAS_DATA\\application_log\\log.txt
     append: true
   level:
-    org.springframework.web: OFF
+    org.springframework.web: INFO
     java.sql: INFO
     jdbc: OFF
     jdbc.sqlonly: INFO
@@ -130,6 +149,9 @@ logging:
     jdbc.connection: OFF
     com.zaxxer.hikari: INFO
     com.zaxxer.hikari.HikariConfig: INFO
+    kr.co.kh.service.impl.EmailServiceImpl: DEBUG
+    kr.co.kh.service.AuthService: DEBUG
+    kr.co.kh.controller.auth.AuthController: DEBUG
     root: INFO
     catalina: INFO
   logback:

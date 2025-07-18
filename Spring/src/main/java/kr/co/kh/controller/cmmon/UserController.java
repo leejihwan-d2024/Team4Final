@@ -8,7 +8,6 @@ import kr.co.kh.event.OnUserLogoutSuccessEvent;
 import kr.co.kh.model.CustomUserDetails;
 import kr.co.kh.model.payload.request.LogOutRequest;
 import kr.co.kh.model.payload.response.ApiResponse;
-import kr.co.kh.model.payload.response.UserResponse;
 import kr.co.kh.service.UserService;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -19,6 +18,8 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.HashMap;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/user")
@@ -40,15 +41,14 @@ public class UserController {
     @ApiOperation(value = "사용자 정보 확인")
     @ApiImplicitParam(name = "currentUser", value = "사용자 정보", dataType = "CustomUserDetails", dataTypeClass = CustomUserDetails.class, required = true)
     public ResponseEntity<?> getUserProfile(@CurrentUser CustomUserDetails currentUser) {
-        UserResponse userResponse = new UserResponse(
-            currentUser.getUsername(),
-            currentUser.getEmail(),
-            null, // roles
-            null, // id
-            currentUser.isEnabled(),
-            currentUser.getName()
-        );
-        return ResponseEntity.ok(userResponse);
+        Map<String, Object> userProfile = new HashMap<>();
+        userProfile.put("username", currentUser.getUsername());
+        userProfile.put("email", currentUser.getEmail());
+        userProfile.put("name", currentUser.getName());
+        userProfile.put("active", currentUser.isEnabled());
+        userProfile.put("userId", currentUser.getId());
+        
+        return ResponseEntity.ok(userProfile);
     }
 
     /**
