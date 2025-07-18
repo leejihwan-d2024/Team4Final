@@ -13,6 +13,12 @@ interface FindPasswordResponse {
   message: string;
 }
 
+interface ApiResponse {
+  success: boolean;
+  message: string;
+  data?: any;
+}
+
 const FindPasswordPage: React.FC = () => {
   const [userId, setUserId] = useState<string>("");
   const [email, setEmail] = useState<string>("");
@@ -26,22 +32,30 @@ const FindPasswordPage: React.FC = () => {
     setLoading(true);
     setMessage("");
 
+    console.log("=== 비밀번호 찾기 요청 시작 ===");
+    console.log("아이디:", userId);
+    console.log("이메일:", email);
+    console.log("================================");
+
     try {
       if (!userId || !email) {
         const errorMsg = "아이디와 이메일을 모두 입력해주세요.";
         setMessage(errorMsg);
         setIsSuccess(false);
         alert(errorMsg);
+        alert(errorMsg);
         return;
       }
 
-      const response = await api.post<FindPasswordResponse>(
-        "/api/auth/find-password",
-        {
-          userId: userId,
-          email: email,
-        } as FindPasswordRequest
-      );
+      console.log("=== API 요청 시작 ===");
+      const response = await api.post<ApiResponse>("/api/auth/find-password", {
+        userId: userId,
+        email: email,
+      } as FindPasswordRequest);
+
+      console.log("=== API 응답 수신 ===");
+      console.log("응답 상태:", response.status);
+      console.log("응답 데이터:", response.data);
 
       if (response.data.success) {
         const successMsg =
@@ -49,11 +63,13 @@ const FindPasswordPage: React.FC = () => {
         setMessage(successMsg);
         setIsSuccess(true);
         alert(successMsg);
+        alert(successMsg);
       } else {
         const errorMsg =
           response.data.message || "비밀번호 찾기에 실패했습니다.";
         setMessage(errorMsg);
         setIsSuccess(false);
+        alert(errorMsg);
         alert(errorMsg);
       }
     } catch (error: any) {
@@ -64,8 +80,10 @@ const FindPasswordPage: React.FC = () => {
       setMessage(errorMsg);
       setIsSuccess(false);
       alert(errorMsg);
+      alert(errorMsg);
     } finally {
       setLoading(false);
+      console.log("=== 비밀번호 찾기 요청 완료 ===");
     }
   };
 

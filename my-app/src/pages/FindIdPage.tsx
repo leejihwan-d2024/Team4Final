@@ -13,6 +13,12 @@ interface FindIdResponse {
   userId?: string;
 }
 
+interface ApiResponse {
+  success: boolean;
+  message: string;
+  data?: any;
+}
+
 const FindIdPage: React.FC = () => {
   const [email, setEmail] = useState<string>("");
   const [loading, setLoading] = useState<boolean>(false);
@@ -25,18 +31,28 @@ const FindIdPage: React.FC = () => {
     setLoading(true);
     setMessage("");
 
+    console.log("=== 아이디 찾기 요청 시작 ===");
+    console.log("이메일:", email);
+    console.log("================================");
+
     try {
       if (!email) {
         const errorMsg = "이메일을 입력해주세요.";
         setMessage(errorMsg);
         setIsSuccess(false);
         alert(errorMsg);
+        alert(errorMsg);
         return;
       }
 
-      const response = await api.post<FindIdResponse>("/api/auth/find-id", {
+      console.log("=== API 요청 시작 ===");
+      const response = await api.post<ApiResponse>("/api/auth/find-id", {
         email: email,
       } as FindIdRequest);
+
+      console.log("=== API 응답 수신 ===");
+      console.log("응답 상태:", response.status);
+      console.log("응답 데이터:", response.data);
 
       if (response.data.success) {
         const successMsg =
@@ -44,10 +60,12 @@ const FindIdPage: React.FC = () => {
         setMessage(successMsg);
         setIsSuccess(true);
         alert(successMsg);
+        alert(successMsg);
       } else {
         const errorMsg = response.data.message || "아이디 찾기에 실패했습니다.";
         setMessage(errorMsg);
         setIsSuccess(false);
+        alert(errorMsg);
         alert(errorMsg);
       }
     } catch (error: any) {
@@ -57,8 +75,10 @@ const FindIdPage: React.FC = () => {
       setMessage(errorMsg);
       setIsSuccess(false);
       alert(errorMsg);
+      alert(errorMsg);
     } finally {
       setLoading(false);
+      console.log("=== 아이디 찾기 요청 완료 ===");
     }
   };
 

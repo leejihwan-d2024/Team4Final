@@ -46,11 +46,18 @@ const ResetPasswordPage: React.FC = () => {
     setLoading(true);
     setMessage("");
 
+    console.log("=== 비밀번호 재설정 요청 시작 ===");
+    console.log("사용자 ID:", userId);
+    console.log("토큰:", token ? "토큰 존재" : "토큰 없음");
+    console.log("새 비밀번호 길이:", newPassword.length);
+    console.log("================================");
+
     try {
       if (!newPassword || !confirmPassword) {
         const errorMsg = "새 비밀번호를 입력해주세요.";
         setMessage(errorMsg);
         setIsSuccess(false);
+        alert(errorMsg);
         alert(errorMsg);
         return;
       }
@@ -60,6 +67,7 @@ const ResetPasswordPage: React.FC = () => {
         setMessage(errorMsg);
         setIsSuccess(false);
         alert(errorMsg);
+        alert(errorMsg);
         return;
       }
 
@@ -68,9 +76,11 @@ const ResetPasswordPage: React.FC = () => {
         setMessage(errorMsg);
         setIsSuccess(false);
         alert(errorMsg);
+        alert(errorMsg);
         return;
       }
 
+      console.log("=== API 요청 시작 ===");
       const response = await api.post<ResetPasswordResponse>(
         "/api/auth/reset-password",
         {
@@ -80,6 +90,10 @@ const ResetPasswordPage: React.FC = () => {
         } as ResetPasswordRequest
       );
 
+      console.log("=== API 응답 수신 ===");
+      console.log("응답 상태:", response.status);
+      console.log("응답 데이터:", response.data);
+
       if (response.data.success) {
         const successMsg =
           "비밀번호가 성공적으로 변경되었습니다. 로그인 페이지로 이동합니다.";
@@ -87,8 +101,11 @@ const ResetPasswordPage: React.FC = () => {
         setIsSuccess(true);
         alert(successMsg);
 
+        alert(successMsg);
+
         // 3초 후 로그인 페이지로 이동
         setTimeout(() => {
+          console.log("로그인 페이지로 이동");
           navigate("/login");
         }, 3000);
       } else {
@@ -97,6 +114,7 @@ const ResetPasswordPage: React.FC = () => {
         setMessage(errorMsg);
         setIsSuccess(false);
         alert(errorMsg);
+        alert(errorMsg);
       }
     } catch (error: any) {
       console.error("비밀번호 재설정 오류:", error);
@@ -104,10 +122,14 @@ const ResetPasswordPage: React.FC = () => {
         error.response?.data?.message ||
         "비밀번호 재설정 중 오류가 발생했습니다.";
       setMessage(errorMsg);
+      ("비밀번호 재설정 중 오류가 발생했습니다.");
+      setMessage(errorMsg);
       setIsSuccess(false);
+      alert(errorMsg);
       alert(errorMsg);
     } finally {
       setLoading(false);
+      console.log("=== 비밀번호 재설정 요청 완료 ===");
     }
   };
 
