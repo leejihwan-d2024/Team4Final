@@ -1,7 +1,8 @@
 package kr.co.kh.controller.cmmon;
 
 import kr.co.kh.achv.entity.Achv;
-import kr.co.kh.model.dto.RewardResponse;
+import kr.co.kh.model.payload.response.BadgeRewardResponse;
+import kr.co.kh.model.vo.RewardVO;
 import kr.co.kh.service.AchievementService;
 import kr.co.kh.service.RewardService;
 import kr.co.kh.service.RewardService.RewardResult;
@@ -36,7 +37,7 @@ public class AchvController {
 
     // 특정 유저 업적 진행 상태 조회
     @GetMapping("/user/{userId}")
-    public List<UserAchvProgressDto> getUserProgress(@PathVariable String userId) {
+    public List<UserAchievementDto> getUserProgress(@PathVariable String userId) {
         return userProgressService.getUserProgress(userId);
     }
 
@@ -50,8 +51,7 @@ public class AchvController {
                         "achv_content", "앱에 처음 로그인했습니다!",
                         "current_value", 1,
                         "achv_max_point", 1,
-                        "is_completed", "Y",
-                        "is_claimed", "N"
+                        "is_completed", "Y"
                 ),
                 Map.of(
                         "achv_id", "ACHV02",
@@ -59,8 +59,7 @@ public class AchvController {
                         "achv_content", "처음으로 게시글을 작성했습니다!",
                         "current_value", 5,
                         "achv_max_point", 10,
-                        "is_completed", "N",
-                        "is_claimed", "N"
+                        "is_completed", "N"
                 )
         );
     }
@@ -75,30 +74,31 @@ public class AchvController {
         userProgressService.updateProgress(userId, achvId, value);
     }
 
-    // ✅ 보상 요청 처리 (파라미터명 통일: achvId 사용)
-    // ✅ 보상 요청 처리 - JSON 형태의 RewardResponse 반환
+    // ✅ 보상 요청 처리 (기존은 문자열 반환)
+    // 🎯 아래는 BadgeRewardResponse 객체를 반환하도록 추가된 버전
     @GetMapping("/reward")
-    public ResponseEntity<RewardResponse> claimReward(
+    public ResponseEntity<BadgeRewardResponse> claimReward(
             @RequestParam String userId,
             @RequestParam String achvId
     ) {
         try {
-            RewardResponse response = rewardService.claimReward(userId, achvId);
+            RewardResult result = rewardService.claimReward(userId, achvId).getResult();
+            RewardVO reward = rewardService.getRewardByAchvId(achvId);
 
-            switch (response.getResult()) {
-                case SUCCESS:
-                case ALREADY_CLAIMED:
-                    return ResponseEntity.ok(response);
-                case NO_REWARD_MAPPING:
-                    return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
-                default:
-                    return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
+            BadgeRewardResponse response = new BadgeRewardResponse();
+            response.setResult(result.name());
+
+            if (result == RewardResult.SUCCESS && reward != null) {
+                response.setBadgeName(reward.getBadgeName());
+                response.setBadgeImageUrl(reward.getBadgeImageUrl());
             }
+
+            return ResponseEntity.ok(response);
+
         } catch (Exception e) {
             e.printStackTrace();
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(
-                    new RewardResponse(RewardService.RewardResult.NO_REWARD_MAPPING, null, null)
-            );
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(new BadgeRewardResponse("ERROR", null, null));
         }
     }
 }

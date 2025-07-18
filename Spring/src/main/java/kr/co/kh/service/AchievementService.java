@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 @Service
@@ -44,8 +45,8 @@ public class AchievementService {
 
     // ✅ rewardId 조회용 메서드 추가 (선택)
     public Long getRewardIdByAchvId(String achvId) {
-        return Long.valueOf((String) achvRepository.findById(achvId)
+        return Long.valueOf((String) Objects.requireNonNull(achvRepository.findById(achvId)
                 .map(Achv::getRewardId)
-                .orElse(null));
+                .orElse(null)));
     }
 }

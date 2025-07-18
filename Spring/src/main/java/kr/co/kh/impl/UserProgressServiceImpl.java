@@ -1,6 +1,6 @@
 package kr.co.kh.impl;
 
-import kr.co.kh.controller.cmmon.UserAchvProgressDto;
+import kr.co.kh.controller.cmmon.UserAchievementDto;
 import kr.co.kh.model.vo.RewardVO;
 import kr.co.kh.repository.UserAchvProgressRepository;
 import kr.co.kh.mapper.RewardMapper;
@@ -24,21 +24,25 @@ public class UserProgressServiceImpl implements UserProgressService {
     private final AchievementService achievementService;
 
     @Override
-    public List<UserAchvProgressDto> getUserProgress(String userId) {
-        return progressRepository.findByUserId(userId).stream()
+    public List<UserAchievementDto> getUserProgress(String userId) {
+        List<UserAchievementDto> result = progressRepository.findByUserId(userId).stream()
                 .map(p -> {
                     String achvId = p.getAchv().getAchvId();
                     List<RewardVO> rewards = rewardMapper.findRewardByAchvId(achvId);
 
-                    boolean claimed = false;
+                    log.info(p.toString());
+
+                    log.info(rewards.toString());
+                    boolean claimed = true;
                     if (!rewards.isEmpty()) {
                         Long rewardId = rewards.get(0).getRewardId();
                         claimed = rewardMapper.existsUserReward(userId, rewardId) > 0;
                     }
 
                     log.info(String.valueOf(claimed));
+                    log.info(p.getAchv().getAchvTitle().toString());
 
-                    return new UserAchvProgressDto(
+                    UserAchievementDto data = new UserAchievementDto(
                             achvId,
                             p.getAchv().getAchvTitle(),
                             p.getAchv().getAchvContent(),
@@ -46,8 +50,12 @@ public class UserProgressServiceImpl implements UserProgressService {
                             p.getAchv().getAchvMaxPoint(),
                             claimed ? "Y" : "N"
                     );
+                    log.info(data.toString());
+                    return data;
                 })
                 .collect(Collectors.toList());
+        log.info(result.toString());
+        return  result;
     }
 
     @Override

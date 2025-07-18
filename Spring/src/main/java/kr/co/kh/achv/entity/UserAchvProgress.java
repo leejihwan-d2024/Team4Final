@@ -1,11 +1,14 @@
 package kr.co.kh.achv.entity;
 
+import lombok.ToString;
+
 import javax.persistence.*;
 import java.io.Serializable;
 
 @Entity
 @IdClass(UserAchvProgressId.class)
 @Table(name = "USER_ACHV_PROGRESS")
+@ToString
 public class UserAchvProgress implements Serializable {
 
     @Id

@@ -29,12 +29,12 @@
     <!-- 업적 ID로 보상 조회 -->
     <select id="findRewardByAchvId" parameterType="string" resultType="kr.co.kh.model.vo.RewardVO">
         SELECT
-        REWARD_ID       AS rewardId,
-        ACHV_ID         AS achvId,
-        REWARD_TYPE     AS rewardType,
-        REWARD_VALUE    AS rewardValue,
-        BADGE_NAME      AS badgeName,
-        BADGE_IMAGE_URL AS badgeImage
+        REWARD_ID        AS rewardId,
+        ACHV_ID          AS achvId,
+        REWARD_TYPE      AS rewardType,
+        REWARD_VALUE     AS rewardValue,
+        BADGE_NAME       AS badgeName,
+        BADGE_IMAGE_URL  AS badgeImageUrl
         FROM ACHV_REWARD
         WHERE ACHV_ID = #{achvId}
     </select>
