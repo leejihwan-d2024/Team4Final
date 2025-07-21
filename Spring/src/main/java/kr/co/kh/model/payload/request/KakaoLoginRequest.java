@@ -23,7 +23,6 @@ public class KakaoLoginRequest {
     private KakaoUserInfo userInfo;
 
     @Valid
-    @NotNull(message = "장치정보는 필수 항목입니다.")
     private DeviceInfo deviceInfo;
 
     public KakaoLoginRequest() {

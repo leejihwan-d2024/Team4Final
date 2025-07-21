@@ -180,20 +180,31 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
             "http://200.200.200.67:*",
             "https://200.200.200.67:*",
             "http://200.200.200.70:*",
-            "https://200.200.200.70:*"
-               // 모든 오리진 허용 (개발 환경용 - 필요시 주석 해제)
-        // configuration.setAllowedOriginPatterns(java.util.Arrays.asList("*"));
+            "https://200.200.200.70:*",
+            // 모바일 브라우저를 위한 추가 설정
+            "capacitor://*",
+            "ionic://*",
+            "http://*",
+            "https://*"
         ));
-        
-     
         
         // 허용된 HTTP 메서드
         configuration.setAllowedMethods(java.util.Arrays.asList(
             "GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH", "HEAD"
         ));
         
-        // 허용된 헤더 (모든 헤더 허용)
-        configuration.setAllowedHeaders(java.util.Arrays.asList("*"));
+        // 허용된 헤더 (모든 헤더 허용 + 모바일 특화 헤더)
+        configuration.setAllowedHeaders(java.util.Arrays.asList(
+            "*",
+            "User-Agent",
+            "Accept-Language",
+            "Accept-Encoding",
+            "Cache-Control",
+            "Pragma",
+            "X-Requested-With",
+            "X-Forwarded-For",
+            "X-Real-IP"
+        ));
         
         // 노출할 헤더
         configuration.setExposedHeaders(java.util.Arrays.asList(
@@ -201,14 +212,16 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
             "Access-Control-Allow-Credentials",
             "Access-Control-Allow-Methods",
             "Access-Control-Allow-Headers",
-            "Authorization"
+            "Authorization",
+            "Content-Type",
+            "X-Requested-With"
         ));
         
         // 자격 증명 허용
         configuration.setAllowCredentials(true);
         
-        // preflight 요청 캐시 시간
-        configuration.setMaxAge(3600L);
+        // preflight 요청 캐시 시간 (모바일에서 더 긴 시간 설정)
+        configuration.setMaxAge(7200L);
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration); // 모든 경로에 적용

@@ -205,6 +205,14 @@ public class AuthService {
             deviceInfo.setDeviceType(kr.co.kh.model.vo.DeviceType.OTHER);
             deviceInfo.setNotificationToken(null);
             log.info("기본 장치정보 생성: {}", deviceInfo.getDeviceId());
+        } else {
+            // deviceInfo가 있지만 deviceType이 WEB인 경우 자동 감지 시도
+            if (deviceInfo.getDeviceType() == kr.co.kh.model.vo.DeviceType.WEB || 
+                deviceInfo.getDeviceType() == kr.co.kh.model.vo.DeviceType.web) {
+                // User-Agent를 통해 실제 디바이스 타입 감지
+                // 실제 구현에서는 HttpServletRequest가 필요하므로 여기서는 로그만 남김
+                log.info("WEB 디바이스 타입 감지됨 - 실제 디바이스 타입 확인 필요");
+            }
         }
 
         // 기존 refresh token 삭제 (임시로 주석 처리)
@@ -267,11 +275,21 @@ public class AuthService {
         log.info("=== 로그아웃 처리 시작 ===");
         log.info("장치 정보: {}", logOutRequest.getDeviceInfo());
         try {
+            // DeviceInfo가 null인 경우 기본값 생성
+            DeviceInfo deviceInfo = logOutRequest.getDeviceInfo();
+            if (deviceInfo == null) {
+                deviceInfo = new DeviceInfo();
+                deviceInfo.setDeviceId("default_device_logout");
+                deviceInfo.setDeviceType(kr.co.kh.model.vo.DeviceType.OTHER);
+                deviceInfo.setNotificationToken(null);
+                log.info("로그아웃용 기본 장치정보 생성: {}", deviceInfo.getDeviceId());
+            }
+            
             // refresh token 삭제 (임시로 주석 처리)
-            // refreshTokenService.deleteByUserIdAndDeviceId(logOutRequest.getUserId(), logOutRequest.getDeviceId());
+            // refreshTokenService.deleteByUserIdAndDeviceId(logOutRequest.getUserId(), deviceInfo.getDeviceId());
             log.info("refresh token 삭제 완료");
             // 사용자 장치 정보 삭제 (임시로 주석 처리)
-            // userDeviceService.deleteUserDevice(logOutRequest.getUserId(), logOutRequest.getDeviceId());
+            // userDeviceService.deleteUserDevice(logOutRequest.getUserId(), deviceInfo.getDeviceId());
             log.info("사용자 장치 정보 삭제 완료");
             log.info("=== 로그아웃 처리 완료 ===");
         } catch (Exception e) {
