@@ -112,6 +112,8 @@ app:
   # 비밀번호 재설정 URL
   reset-password:
     url: ${RESET_PASSWORD_URL:http://localhost:3000/reset-password}
+  # 기본 프로필 이미지 URL
+  default-profile-image: ${DEFAULT_PROFILE_IMAGE:http://img1.kakaocdn.net/thumb/R640x640.q70/?fname=http://t1.kakaocdn.net/account_images/default_profile.jpeg}
   token:
     email:
       verification:
@@ -138,6 +140,10 @@ kakao:
 
 upload:
   path: C:\\WAS_DATA\\upload
+  profile:
+    path: C:\\WAS_DATA\\upload\\profile
+    max-size: 5MB
+    allowed-types: jpg,jpeg,png,gif
 
 logging:
   file:

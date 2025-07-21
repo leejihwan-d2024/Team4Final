@@ -5,63 +5,28 @@ import java.util.Date;
 
 @Data
 public class UserVO {
-    private String userId;
-    private String userPw;
-    private String userNn;
-    private String userEmail;
-    private String userDefloc;
-    private String userPhoneno;
-    private int userStatus;
-    private Date userSignUp;
-    private Date userLastLogin;
-    private String userProfileImageUrl;
-    private int userPoint;
-    private int userActivePoint;
+    // 기본 사용자 정보
+    private String userId;           // 사용자 고유 ID
+    private String userPw;           // 사용자 비밀번호
+    private String userNn;           // 사용자 닉네임
+    private String userEmail;        // 사용자 이메일
+    private String userDefloc;       // 사용자 기본 위치
+    private String userPhoneno;      // 사용자 전화번호
+    private int userStatus;          // 사용자 상태 (1: 활성, 0: 비활성)
+    private Date userSignUp;         // 가입일
+    private Date userLastLogin;      // 마지막 로그인일
+    private int userPoint;           // 사용자 포인트
+    private int userActivePoint;     // 활성 포인트
     
-    // 로그인 방식 구분 (LOCAL, KAKAO, GOOGLE 등)
-    private String provider;
+    // 프로필 이미지 관련
+    private String userProfileImageUrl;  // 프로필 이미지 URL (카카오/일반 사용자 공통)
     
-    // 카카오 ID (카카오 사용자의 경우)
-    private String kakaoId;
+    // 소셜 로그인 관련
+    private String provider;         // 로그인 방식 구분 (LOCAL, KAKAO, GOOGLE 등)
+    // private String kakaoId;          // 카카오 ID *****(userId 와 통합 사용됨)*****
     
-    /**
-     * 카카오 사용자인지 확인
-     */
-    public boolean isKakaoUser() {
-        return "KAKAO".equals(provider) || (userId != null && userId.startsWith("kakao_"));
-    }
-    
-    /**
-     * 일반 사용자인지 확인
-     */
-    public boolean isLocalUser() {
-        return "LOCAL".equals(provider) || (userId != null && !userId.startsWith("kakao_"));
-    }
-    
-    /**
-     * 사용자 타입을 문자열로 반환
-     */
-    public String getUserType() {
-        if (isKakaoUser()) {
-            return "카카오 사용자";
-        } else if (isLocalUser()) {
-            return "일반 사용자";
-        } else {
-            return "알 수 없음";
-        }
-    }
-    
-    /**
-     * 로그인 방식 아이콘 또는 표시명 반환
-     */
-    public String getLoginMethodDisplay() {
-        if (isKakaoUser()) {
-            return "카카오";
-        } else if (isLocalUser()) {
-            return "일반";
-        } else {
-            return "기타";
-        }
-    }
+    // 카카오 사용자 관련 추가 필드 (필요시 확장)
+    private String kakaoProfileImageUrl;  // 카카오 원본 프로필 이미지 URL
+    // private String kakaoNickname;         // 카카오 원본 닉네임 *****(userNn 와 통합 사용됨)*****
 }
 

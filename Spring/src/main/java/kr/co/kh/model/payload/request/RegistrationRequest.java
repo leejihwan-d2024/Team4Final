@@ -31,6 +31,9 @@ public class RegistrationRequest {
     @JsonProperty("userPhoneno")
     private String phoneno;
 
+    @JsonProperty("userProfileImageUrl")
+    private String profileImageUrl;
+
     private int roleNum;
 
 }

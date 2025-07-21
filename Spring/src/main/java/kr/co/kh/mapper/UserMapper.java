@@ -38,4 +38,22 @@ public interface UserMapper {
     
     // 마지막 로그인 시간 업데이트
     void updateLastLoginTime(String userId);
+    
+    // 프로필 이미지 URL 업데이트
+    int updateProfileImageUrl(String userId, String imageUrl);
+    
+    // 프로필 이미지 URL 조회
+    String getProfileImageUrl(String userId);
+    
+    // 프로필 이미지 URL 저장 (새로운 URL 추가)
+    int saveProfileImageUrl(String userId, String imageUrl);
+    
+    // 프로필 이미지 URL 업데이트 (기존 URL을 새로운 URL로 변경)
+    int updateProfileImageUrlFromOld(String userId, String oldUrl, String newUrl);
+    
+    // 저장된 프로필 이미지 URL 목록 조회
+    List<String> getSavedProfileImageUrls(String userId);
+    
+    // 특정 프로필 이미지 URL 삭제
+    int deleteProfileImageUrl(String userId, String url);
 } 

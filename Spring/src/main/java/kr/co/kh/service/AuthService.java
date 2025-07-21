@@ -76,11 +76,23 @@ public class AuthService {
         newUserVO.setUserEmail(newRegistrationRequest.getEmail());
         newUserVO.setUserNn(newRegistrationRequest.getName());
         newUserVO.setUserPhoneno(newRegistrationRequest.getPhoneno()); // 폰번호 설정 추가
+        
+        // 프로필 이미지 URL 설정
+        String profileImageUrl = newRegistrationRequest.getProfileImageUrl();
+        if (profileImageUrl != null && !profileImageUrl.trim().isEmpty()) {
+            newUserVO.setUserProfileImageUrl(profileImageUrl);
+            log.info("프로필 이미지 URL 설정: {}", profileImageUrl);
+        } else {
+            // 기본 프로필 이미지 URL 설정
+            newUserVO.setUserProfileImageUrl("http://img1.kakaocdn.net/thumb/R640x640.q70/?fname=http://t1.kakaocdn.net/account_images/default_profile.jpeg");
+            log.info("기본 프로필 이미지 URL 설정");
+        }
+        
         newUserVO.setUserStatus(1); // 활성 상태
         
         // 일반 사용자 구분을 위한 필드 설정
         newUserVO.setProvider("LOCAL");
-        newUserVO.setKakaoId(null); // 일반 사용자는 카카오 ID 없음
+        // newUserVO.setKakaoId(null); // 일반 사용자는 카카오 ID 없음
         
         // 사용자 등록
         userServiceInterface.registerUser(newUserVO);
@@ -442,14 +454,33 @@ public class AuthService {
             log.info("기존 카카오 사용자 로그인 (ID로 찾음): {}", existingUserById.get().getUserId());
             UserVO existingUser = existingUserById.get();
             
+            boolean needsUpdate = false;
+            
             // 기존 사용자의 닉네임이 기본값인 경우 실제 카카오 닉네임으로 업데이트
             if (existingUser.getUserNn() != null && existingUser.getUserNn().startsWith("카카오사용자_")) {
                 String newNickname = kakaoUserInfo.getNickname();
                 if (newNickname != null && !newNickname.trim().isEmpty()) {
                     log.info("기존 카카오 사용자 닉네임 업데이트: {} -> {}", existingUser.getUserNn(), newNickname);
                     existingUser.setUserNn(newNickname);
-                    userServiceInterface.updateUser(existingUser);
+                    needsUpdate = true;
                 }
+            }
+            
+            // 카카오 프로필 이미지 업데이트 (새로운 이미지가 있고, 현재 이미지가 기본값인 경우)
+            String newProfileImageUrl = kakaoUserInfo.getProfileImage();
+            if (newProfileImageUrl != null && !newProfileImageUrl.trim().isEmpty()) {
+                String currentProfileImageUrl = existingUser.getUserProfileImageUrl();
+                if (currentProfileImageUrl == null || currentProfileImageUrl.trim().isEmpty() || 
+                    currentProfileImageUrl.contains("http://img1.kakaocdn.net/")) {
+                    log.info("기존 카카오 사용자 프로필 이미지 업데이트: {} -> {}", currentProfileImageUrl, newProfileImageUrl);
+                    existingUser.setUserProfileImageUrl(newProfileImageUrl);
+                    needsUpdate = true;
+                }
+            }
+            
+            // 변경사항이 있으면 업데이트
+            if (needsUpdate) {
+                userServiceInterface.updateUser(existingUser);
             }
             
             return existingUser;
@@ -465,6 +496,23 @@ public class AuthService {
                 // 기존 사용자가 있으면 그 사용자 정보를 업데이트
                 UserVO existingUser = existingUserByEmail.get();
                 existingUser.setUserNn(kakaoUserInfo.getNickname() != null ? kakaoUserInfo.getNickname() : existingUser.getUserNn());
+                
+                // 카카오 프로필 이미지 업데이트 (새로운 이미지가 있고, 현재 이미지가 기본값인 경우)
+                String newProfileImageUrl = kakaoUserInfo.getProfileImage();
+                if (newProfileImageUrl != null && !newProfileImageUrl.trim().isEmpty()) {
+                    String currentProfileImageUrl = existingUser.getUserProfileImageUrl();
+                    if (currentProfileImageUrl == null || currentProfileImageUrl.trim().isEmpty() || 
+                        currentProfileImageUrl.contains("http://img1.kakaocdn.net/")) {
+                        log.info("기존 사용자 프로필 이미지 업데이트: {} -> {}", currentProfileImageUrl, newProfileImageUrl);
+                        existingUser.setUserProfileImageUrl(newProfileImageUrl);
+                    }
+                }
+                
+                // 카카오 관련 정보 설정
+                existingUser.setProvider("KAKAO");
+                // existingUser.setKakaoId(kakaoUserInfo.getId());
+                // existingUser.setKakaoNickname(kakaoUserInfo.getNickname());
+                
                 userServiceInterface.updateUser(existingUser);
                 return existingUser;
             }
@@ -486,13 +534,25 @@ public class AuthService {
         newUserVO.setUserNn(nickname);
         newUserVO.setUserStatus(1); // 활성 상태
         
-        // 카카오 사용자 구분을 위한 필드 설정
+        // 카카오 사용자 정보 설정
         newUserVO.setProvider("KAKAO");
-        newUserVO.setKakaoId(kakaoUserInfo.getId());
+        // newUserVO.setKakaoId(kakaoUserInfo.getId());
+        // newUserVO.setKakaoNickname(kakaoUserInfo.getNickname());
+        newUserVO.setKakaoProfileImageUrl(kakaoUserInfo.getProfileImage());
         
-        log.info("새 사용자 정보 설정 완료: userId={}, userEmail={}, userNn={}, provider={}, kakaoId={}",
+        // 카카오 프로필 이미지를 USER_PROFILE_IMAGE_URL에 설정
+        if (kakaoUserInfo.getProfileImage() != null && !kakaoUserInfo.getProfileImage().trim().isEmpty()) {
+            newUserVO.setUserProfileImageUrl(kakaoUserInfo.getProfileImage());
+            log.info("카카오 프로필 이미지를 USER_PROFILE_IMAGE_URL에 설정: {}", kakaoUserInfo.getProfileImage());
+        } else {
+            // 카카오 사용자는 기존 로직 유지 (null로 설정)
+            newUserVO.setUserProfileImageUrl(null);
+            log.info("카카오 프로필 이미지가 없으므로 null로 설정");
+        }
+        
+        log.info("새 사용자 정보 설정 완료: userId={}, userEmail={}, userNn={}, provider={}, profileImage={}",
             newUserVO.getUserId(), newUserVO.getUserEmail(), newUserVO.getUserNn(),
-            newUserVO.getProvider(), newUserVO.getKakaoId());
+            newUserVO.getProvider(), newUserVO.getUserProfileImageUrl());
         
         try {
             userServiceInterface.registerUser(newUserVO);

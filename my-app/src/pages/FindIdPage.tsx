@@ -93,6 +93,11 @@ const FindIdPage: React.FC = () => {
         가입 시 등록한 이메일 주소를 입력하시면
         <br />
         해당 이메일로 아이디를 발송해드립니다.
+        <br />
+        <span style={{ color: "red" }}>
+          아이디 찾기와 비밀번호 찾기는 <br /> 
+          Naver와 Gmail만 가능합니다.
+        </span>
       </p>
 
       <form onSubmit={handleSubmit}>

@@ -15,9 +15,7 @@
             USER_LAST_LOGIN,
             USER_PROFILE_IMAGE_URL,
             USER_POINT,
-            USER_ACTIVE_POINT,
-            PROVIDER,
-            KAKAO_ID
+            USER_ACTIVE_POINT
         ) VALUES (
             #{userId,jdbcType=VARCHAR},
             #{userPw,jdbcType=VARCHAR},
@@ -29,9 +27,7 @@
             SYSDATE,
             #{userProfileImageUrl,jdbcType=VARCHAR},
             #{userPoint,jdbcType=NUMERIC},
-            #{userActivePoint,jdbcType=NUMERIC},
-            #{provider,jdbcType=VARCHAR},
-            #{kakaoId,jdbcType=VARCHAR}
+            #{userActivePoint,jdbcType=NUMERIC}
         )
     </insert>
 
@@ -48,9 +44,7 @@
             USER_LAST_LOGIN,
             USER_PROFILE_IMAGE_URL,
             USER_POINT,
-            USER_ACTIVE_POINT,
-            PROVIDER,
-            KAKAO_ID
+            USER_ACTIVE_POINT
         FROM USERS 
         WHERE USER_ID = #{userId,jdbcType=VARCHAR}
     </select>
@@ -68,9 +62,7 @@
             USER_LAST_LOGIN,
             USER_PROFILE_IMAGE_URL,
             USER_POINT,
-            USER_ACTIVE_POINT,
-            PROVIDER,
-            KAKAO_ID
+            USER_ACTIVE_POINT
         FROM USERS 
         WHERE USER_EMAIL = #{userEmail,jdbcType=VARCHAR}
     </select>
@@ -88,9 +80,7 @@
             USER_LAST_LOGIN,
             USER_PROFILE_IMAGE_URL,
             USER_POINT,
-            USER_ACTIVE_POINT,
-            PROVIDER,
-            KAKAO_ID
+            USER_ACTIVE_POINT
         FROM USERS 
         ORDER BY USER_SIGN_UP DESC
     </select>
@@ -105,9 +95,7 @@
             USER_STATUS = #{userStatus,jdbcType=NUMERIC},
             USER_PROFILE_IMAGE_URL = #{userProfileImageUrl,jdbcType=VARCHAR},
             USER_POINT = #{userPoint,jdbcType=NUMERIC},
-            USER_ACTIVE_POINT = #{userActivePoint,jdbcType=NUMERIC},
-            PROVIDER = #{provider,jdbcType=VARCHAR},
-            KAKAO_ID = #{kakaoId,jdbcType=VARCHAR}
+            USER_ACTIVE_POINT = #{userActivePoint,jdbcType=NUMERIC}
         WHERE USER_ID = #{userId,jdbcType=VARCHAR}
     </update>
 
@@ -143,6 +131,52 @@
         UPDATE USERS SET
             USER_LAST_LOGIN = SYSDATE
         WHERE USER_ID = #{userId,jdbcType=VARCHAR}
+    </update>
+
+    <!-- 프로필 이미지 URL 업데이트 -->
+    <update id="updateProfileImageUrl" parameterType="map">
+        UPDATE USERS SET
+            USER_PROFILE_IMAGE_URL = #{imageUrl,jdbcType=VARCHAR}
+        WHERE USER_ID = #{userId,jdbcType=VARCHAR}
+    </update>
+
+    <!-- 프로필 이미지 URL 조회 -->
+    <select id="getProfileImageUrl" parameterType="String" resultType="String">
+        SELECT USER_PROFILE_IMAGE_URL
+        FROM USERS 
+        WHERE USER_ID = #{userId,jdbcType=VARCHAR}
+    </select>
+
+    <!-- 프로필 이미지 URL 저장 (새로운 URL 추가) -->
+    <update id="saveProfileImageUrl" parameterType="map">
+        UPDATE USERS SET
+            USER_PROFILE_IMAGE_URL = #{imageUrl,jdbcType=VARCHAR}
+        WHERE USER_ID = #{userId,jdbcType=VARCHAR}
+    </update>
+
+    <!-- 프로필 이미지 URL 업데이트 (기존 URL을 새로운 URL로 변경) -->
+    <update id="updateProfileImageUrlFromOld" parameterType="map">
+        UPDATE USERS SET
+            USER_PROFILE_IMAGE_URL = #{newUrl,jdbcType=VARCHAR}
+        WHERE USER_ID = #{userId,jdbcType=VARCHAR}
+        AND USER_PROFILE_IMAGE_URL = #{oldUrl,jdbcType=VARCHAR}
+    </update>
+
+    <!-- 저장된 프로필 이미지 URL 목록 조회 -->
+    <select id="getSavedProfileImageUrls" parameterType="String" resultType="String">
+        SELECT USER_PROFILE_IMAGE_URL
+        FROM USERS 
+        WHERE USER_ID = #{userId,jdbcType=VARCHAR}
+        AND USER_PROFILE_IMAGE_URL IS NOT NULL
+        AND USER_PROFILE_IMAGE_URL != ''
+    </select>
+
+    <!-- 특정 프로필 이미지 URL 삭제 -->
+    <update id="deleteProfileImageUrl" parameterType="map">
+        UPDATE USERS SET
+            USER_PROFILE_IMAGE_URL = NULL
+        WHERE USER_ID = #{userId,jdbcType=VARCHAR}
+        AND USER_PROFILE_IMAGE_URL = #{url,jdbcType=VARCHAR}
     </update>
 
 </mapper> 

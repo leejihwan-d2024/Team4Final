@@ -218,13 +218,23 @@ public class AuthController {
             @ApiImplicitParam(name = "userId", value = "아이디", dataType = "String", required = true),
             @ApiImplicitParam(name = "userEmail", value = "이메일", dataType = "String", required = true),
             @ApiImplicitParam(name = "userPw", value = "비밀번호", dataType = "String", required = true),
-            @ApiImplicitParam(name = "userNn", value = "이름", dataType = "String", required = true)
+            @ApiImplicitParam(name = "userNn", value = "이름", dataType = "String", required = true),
+            @ApiImplicitParam(name = "userProfileImageUrl", value = "프로필 이미지 URL", dataType = "String", required = false)
     })
     @PostMapping("/register")
     public ResponseEntity<?> registerUser(@Valid @RequestBody RegistrationRequest request) {
-        log.info("회원가입 요청: {}", request.getUsername());
+        log.info("=== 회원가입 요청 ===");
+        log.info("아이디: {}", request.getUsername());
+        log.info("이메일: {}", request.getEmail());
+        log.info("이름: {}", request.getName());
+        log.info("프로필 이미지 URL: {}", request.getProfileImageUrl());
+        log.info("================================");
+        
         return authService.registerUser(request).map(userVO -> {
-            log.info("회원가입 성공: {}", userVO.getUserId());
+            log.info("=== 회원가입 성공 ===");
+            log.info("사용자 ID: {}", userVO.getUserId());
+            log.info("프로필 이미지 URL: {}", userVO.getUserProfileImageUrl());
+            log.info("================================");
             return ResponseEntity.ok(new ApiResponse(true, "회원가입이 완료되었습니다."));
         }).orElseThrow(() -> new UserRegistrationException(request.getUsername(), "회원가입 처리 중 오류가 발생했습니다."));
     }
