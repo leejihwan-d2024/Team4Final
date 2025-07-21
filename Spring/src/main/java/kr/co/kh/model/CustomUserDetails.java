@@ -57,6 +57,10 @@ public class CustomUserDetails implements UserDetails {
         return userVO.getUserNn();
     }
 
+    public String getProvider() {
+        return userVO.getProvider();
+    }
+
     // UserService에서 사용하는 getId() 메서드
     public Long getId() {
         return (long) getUserId().hashCode();
