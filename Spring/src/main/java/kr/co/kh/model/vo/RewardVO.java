@@ -11,7 +11,7 @@ public class RewardVO {
     private String rewardType;    // 보상명
     private String rewardValue;   // 설명
     private String badgeName;
-    private String badgeImage;
+    private String badgeImageUrl;
     // 기본 생성자
     public RewardVO() {}
 

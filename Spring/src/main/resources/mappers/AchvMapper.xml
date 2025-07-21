@@ -47,12 +47,22 @@
     </select>
 
     <!-- 보상 ID로 뱃지 정보 조회 -->
-    <select id="findBadgeByRewardId" parameterType="long" resultType="map">
+    <select id="findBadgeByRewardId" parameterType="string" resultType="map">
         SELECT
         BADGE_NAME AS badgeName,
         BADGE_IMAGE_URL AS badgeImageUrl
         FROM ACHV_REWARD
         WHERE REWARD_ID = #{rewardId}
+    </select>
+
+    <!-- 업적 ID로 보상 응답 정보 조회 -->
+    <select id="getRewardResponse" parameterType="map" resultType="kr.co.kh.model.dto.RewardResponse">
+        SELECT
+        'SUCCESS' AS result,
+        BADGE_NAME AS badgeName,
+        BADGE_IMAGE_URL AS badgeImageUrl
+        FROM ACHV_REWARD
+        WHERE ACHV_ID = #{achvId}
     </select>
 
 </mapper>

@@ -9,6 +9,8 @@ import java.util.List;
 
 
 public interface UserProgressService {
+
     List<UserAchvProgressDto> getUserProgress(String userId);
     void updateProgress(String userId, String achvId, int progressValue);
+
 }

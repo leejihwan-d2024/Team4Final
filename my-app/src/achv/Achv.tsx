@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import "./achv.css";
 import { useNavigate } from "react-router-dom";
+import axios from "../api/axiosInstance";
 
 interface Achievement {
   id: string;
@@ -14,7 +15,7 @@ interface Achievement {
 interface BadgeRewardResponse {
   result: "SUCCESS" | "ALREADY_CLAIMED" | "NO_REWARD_MAPPING";
   badgeName?: string;
-  badgeImage?: string;
+  badgeImageUrl?: string;
 }
 
 function Achv() {
@@ -25,31 +26,22 @@ function Achv() {
   const [loading, setLoading] = useState(true);
   const [claimingId, setClaimingId] = useState<string | null>(null);
 
+  // ✅ 모달 관련 상태 추가
+  const [showRewardModal, setShowRewardModal] = useState(false);
+  const [rewardImageUrl, setRewardImageUrl] = useState<string | null>(null);
+  const [rewardBadgeName, setRewardBadgeName] = useState<string | null>(null);
+
   useEffect(() => {
     const user = JSON.parse(localStorage.getItem("user") || "null");
     const token = localStorage.getItem("token");
-    const refreshToken = localStorage.getItem("refreshToken");
-
-    console.log("현재 사용자 정보:", user);
-    console.log("토큰 정보:", token, refreshToken);
 
     const fetchAchievements = async () => {
       try {
-        const response = await fetch(
-          `https://localhost:8080/api/achievements/user`,
-          {
-            method: "GET",
-            credentials: "include",
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          }
-        );
-        if (!response.ok) throw new Error("서버 응답 실패");
+        const response = await axios.get("/api/achievements/user", {
+          headers: { Authorization: `Bearer ${token}` },
+        });
 
-        const data = await response.json();
-        console.log("📥 원본 응답:", data);
-
+        const data = response.data;
         const mappedData = data.map((item: any) => ({
           id: item.achvId?.toString() ?? item.achv_id ?? "없음",
           title: item.achvTitle ?? item.achv_title ?? "제목 없음",
@@ -59,7 +51,6 @@ function Achv() {
           claimed: item.isCompleted === "Y",
         }));
 
-        console.log("📦 매핑 후 업적 목록:", mappedData);
         setAchievements(mappedData);
       } catch (err) {
         console.error("업적 데이터 로드 실패:", err);
@@ -78,46 +69,29 @@ function Achv() {
   };
 
   const handleClaim = async (achvId: string) => {
-    console.log(localStorage.getItem("user"));
     const user = JSON.parse(localStorage.getItem("user") || "null");
     const token = localStorage.getItem("token");
 
     if (!user || !user.userId) {
       alert("로그인이 필요합니다. 로그인 페이지로 이동합니다.");
-      navigate("/login"); // 🔥 로그인 페이지로 이동
+      navigate("/login");
       return;
     }
 
     setClaimingId(achvId);
     try {
-      const response = await fetch(
-        `https://localhost:8080/api/achievements/reward?userId=${user.userId}&achvId=${achvId}`,
-        {
-          method: "GET",
-          credentials: "include",
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
+      const response = await axios.get("/api/achievements/reward", {
+        params: { userId: user.userId, achvId },
+        headers: { Authorization: `Bearer ${token}` },
+      });
 
-      if (!response.ok) throw new Error("보상 요청 실패");
-
-      const result: BadgeRewardResponse = await response.json();
+      const result: BadgeRewardResponse = response.data;
 
       if (result.result === "SUCCESS") {
-        alert(`🎉 ${result.badgeName} 뱃지를 획득했습니다!`);
-        if (result.badgeImage) {
-          const img = new Image();
-          img.src = result.badgeImage;
-          img.alt = result.badgeName ?? "뱃지";
-          img.style.maxWidth = "150px";
-          const w = window.open("", "_blank", "width=300,height=300");
-          if (w) {
-            w.document.write(`<h2>${result.badgeName}</h2>`);
-            w.document.body.appendChild(img);
-          }
-        }
+        setRewardBadgeName(result.badgeName ?? "획득한 뱃지");
+        setRewardImageUrl(result.badgeImageUrl ?? null);
+        setShowRewardModal(true);
+
         setAchievements((prev) =>
           prev.map((achv) =>
             achv.id === achvId ? { ...achv, claimed: true } : achv
@@ -190,7 +164,6 @@ function Achv() {
               achv.currentValue,
               achv.maxPoint
             );
-
             const isClaimable = progressPercent >= 100 && !achv.claimed;
 
             return (
@@ -236,6 +209,31 @@ function Achv() {
               </div>
             );
           })}
+        </div>
+      )}
+
+      {/* ✅ 모달 팝업 */}
+      {showRewardModal && (
+        <div
+          className="modal-overlay"
+          onClick={() => setShowRewardModal(false)}
+        >
+          <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+            <h2>{rewardBadgeName}</h2>
+            {rewardImageUrl && (
+              <img
+                src={rewardImageUrl}
+                alt={rewardBadgeName ?? "뱃지"}
+                className="reward-image"
+              />
+            )}
+            <button
+              onClick={() => setShowRewardModal(false)}
+              className="close-button"
+            >
+              닫기
+            </button>
+          </div>
         </div>
       )}
     </div>

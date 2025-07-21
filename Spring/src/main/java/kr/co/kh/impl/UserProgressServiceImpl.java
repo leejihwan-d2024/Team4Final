@@ -45,6 +45,7 @@ public class UserProgressServiceImpl implements UserProgressService {
                             p.getCurrentValue(),
                             p.getAchv().getAchvMaxPoint(),
                             claimed ? "Y" : "N"
+
                     );
                 })
                 .collect(Collectors.toList());

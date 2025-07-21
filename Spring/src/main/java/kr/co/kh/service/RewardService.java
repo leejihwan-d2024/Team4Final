@@ -47,7 +47,7 @@ public class RewardService {
             return new RewardResponse(
                     RewardResult.ALREADY_CLAIMED,
                     reward.getBadgeName(),
-                    reward.getBadgeImage()
+                    reward.getBadgeImageUrl()
             );
         }
 
@@ -61,13 +61,13 @@ public class RewardService {
                 achvId,
                 reward.getRewardId(),
                 reward.getBadgeName(),
-                reward.getBadgeImage()
+                reward.getBadgeImageUrl()
         );
 
         return new RewardResponse(
                 RewardResult.SUCCESS,
                 reward.getBadgeName(),
-                reward.getBadgeImage()
+                reward.getBadgeImageUrl()
         );
     }
 }

@@ -7,6 +7,8 @@ public class UserAchvProgressDto {
     private int currentValue;
     private int achvMaxPoint;
     private String isCompleted;
+    private String badgeName;
+    private String badgeImageUrl;
 
     public UserAchvProgressDto(String achvId, String achvTitle, String achvContent,
                                int currentValue, int achvMaxPoint, String isCompleted) {
@@ -40,6 +42,22 @@ public class UserAchvProgressDto {
 
     public String getIsCompleted() {
         return isCompleted;
+    }
+
+    public String getBadgeName() {
+        return badgeName;
+    }
+
+    public void setBadgeName(String badgeName) {
+        this.badgeName = badgeName;
+    }
+
+    public String getBadgeImageUrl() {
+        return badgeImageUrl;
+    }
+
+    public void setBadgeImageUrl(String badgeImageUrl) {
+        this.badgeImageUrl = badgeImageUrl;
     }
 
     // 필요하면 setter도 추가 가능
