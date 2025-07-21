@@ -1,13 +1,17 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import styles from "./CrewCreate.module.css";
-import axios from "axios";
+import api from "../api/GG_axiosInstance";
 import PathMap from "../mainpage/PathMap";
 
 export default function CrewCreatePage() {
   const navigate = useNavigate();
+
+  const [defaultId, setDefaultId] = useState("");
+  const [currentUser, setCurrentUser] = useState({ userId: "", nickname: "" });
+
   const [form, setForm] = useState({
-    crewId: "", // crewId 추가
+    crewId: "",
     title: "",
     startLocation: "",
     endLocation: "",
@@ -16,23 +20,33 @@ export default function CrewCreatePage() {
     pace: "",
     description: "",
     isOver15: false,
+    startLocationMapPoint: "",
+    endLocationMapPoint: "",
   });
 
-  // crewId 먼저 받아오기
   useEffect(() => {
-    async function fetchCrewId() {
+    const storedUser = localStorage.getItem("user");
+    if (storedUser) {
+      const parsed = JSON.parse(storedUser);
+      setCurrentUser({
+        userId: parsed.userId || "",
+        nickname: parsed.nickname || "",
+      });
+    }
+  }, []);
+
+  useEffect(() => {
+    async function fetchDefaultId() {
       try {
-        const response = await fetch(
-          "http://localhost:8080/api/crews/defaultId"
-        );
-        const id = await response.text();
+        const response = await api.get("/api/crews/defaultId");
+        const id = response.data;
+        setDefaultId(id);
         setForm((prev) => ({ ...prev, crewId: id }));
       } catch (error) {
-        console.error("❌ crewId 생성 실패:", error);
+        console.error("❌ defaultId 생성 실패:", error);
       }
     }
-
-    fetchCrewId();
+    fetchDefaultId();
   }, []);
 
   const handleChange = (
@@ -46,16 +60,18 @@ export default function CrewCreatePage() {
     e.preventDefault();
 
     try {
-      const response = await axios.post("https://localhost:8080/api/crews", {
-        crewId: form.crewId, // 여기서 함께 전송
+      const response = await api.post("/api/crews", {
+        crewId: form.crewId,
         crewTitle: form.title,
         startLocation: form.startLocation,
         endLocation: form.endLocation,
         startTime: new Date(),
-        startLocationMapPoint: "37.123456,127.123456",
-        endLocationMapPoint: "37.654321,127.654321",
-        district: "서울시 마포구",
+        startLocationMapPoint: form.startLocationMapPoint,
+        endLocationMapPoint: form.endLocationMapPoint,
+        district: startAddress,
         isOver15: form.isOver15 ? 1 : 0,
+        leaderId: currentUser.userId,
+        leaderNn: currentUser.nickname,
       });
 
       console.log("✅ 서버 응답:", response.data);
@@ -88,6 +104,11 @@ export default function CrewCreatePage() {
             const region2 = data.documents[0].region_2depth_name;
             const region3 = data.documents[0].region_3depth_name;
             setStartAddress(`${region2} ${region3}`);
+            setForm((prev) => ({
+              ...prev,
+              startLocation: `${st[0]},${st[1]}`,
+              startLocationMapPoint: `${st[0]},${st[1]}`,
+            }));
           } else {
             setStartAddress("주소 정보 없음");
           }
@@ -116,6 +137,11 @@ export default function CrewCreatePage() {
             const region2 = data.documents[0].region_2depth_name;
             const region3 = data.documents[0].region_3depth_name;
             setEndAddress(`${region2} ${region3}`);
+            setForm((prev) => ({
+              ...prev,
+              endLocation: `${st[2]},${st[3]}`,
+              endLocationMapPoint: `${st[2]},${st[3]}`,
+            }));
           } else {
             setEndAddress("주소 정보 없음");
           }
@@ -140,7 +166,7 @@ export default function CrewCreatePage() {
         />
         <input
           name="startLocation"
-          value={st[0] + "," + st[1]}
+          value={form.startLocation}
           onChange={handleChange}
           hidden
         />
@@ -153,7 +179,7 @@ export default function CrewCreatePage() {
         <PathMap measurementId={7} setSt={setSt} />
         <input
           name="endLocation"
-          value={st[2] + "," + st[3]}
+          value={form.endLocation}
           onChange={handleChange}
           hidden
         />

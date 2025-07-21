@@ -7,6 +7,7 @@
 
     <insert id="insertCrew" parameterType="kr.co.kh.model.vo.RunningCrewVO">
         INSERT INTO RUNNING_CREW (
+        CREW_ID,
         CREW_TITLE,
         START_TIME,
         START_LOCATION,
@@ -19,6 +20,7 @@
         LEADER_ID,
         LEADER_NN
         ) VALUES (
+        #{crewId},
         #{crewTitle},
         #{startTime},
         #{startLocation},
@@ -28,7 +30,7 @@
         #{district},
         SYSDATE,
         #{isOver15},
-        '1',
+        #{leaderId},
         #{leaderNn}
         )
     </insert>
