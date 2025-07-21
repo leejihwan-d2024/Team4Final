@@ -21,10 +21,12 @@ interface PathDataItem {
 
 interface PathMapProps {
   measurementId: number; // 측정 ID
-  setSt?: React.Dispatch<SetStateAction<number[]>>;
+  setPathPoints?: React.Dispatch<
+    SetStateAction<{ lat: number; lng: number }[]>
+  >; // ← 수정됨
 }
 
-const PathMap: React.FC<PathMapProps> = ({ measurementId, setSt }) => {
+const PathMap: React.FC<PathMapProps> = ({ measurementId, setPathPoints }) => {
   const mapRef = useRef<HTMLDivElement | null>(null);
   const clickedPathRef = useRef<any[]>([]);
   const polylineRef = useRef<any>(null);
@@ -153,19 +155,13 @@ const PathMap: React.FC<PathMapProps> = ({ measurementId, setSt }) => {
             map: map,
           });
 
-          // ✅ 외부 상태 전달
-          if (typeof setSt === "function") {
-            const first = clickedPathRef.current[0];
-            const last =
-              clickedPathRef.current[clickedPathRef.current.length - 1] ||
-              first;
-
-            setSt([
-              first.getLat(),
-              first.getLng(),
-              last.getLat(),
-              last.getLng(),
-            ]);
+          // 외부 상태 전달 (좌표 배열 넘김) ← 수정됨
+          if (typeof setPathPoints === "function") {
+            const arr = clickedPathRef.current.map((point) => ({
+              lat: point.getLat(),
+              lng: point.getLng(),
+            }));
+            setPathPoints(arr);
           }
         });
       });
@@ -175,7 +171,7 @@ const PathMap: React.FC<PathMapProps> = ({ measurementId, setSt }) => {
     return () => {
       document.head.removeChild(script);
     };
-  }, [measurementId]);
+  }, [measurementId, setPathPoints]);
 
   const handleSavePath = async () => {
     if (clickedPathRef.current.length === 0) {
@@ -301,6 +297,10 @@ const PathMap: React.FC<PathMapProps> = ({ measurementId, setSt }) => {
                 endMarkerRef.current.setMap(null);
                 endMarkerRef.current = null;
               }
+              // 외부 상태 업데이트 (경로 초기화) ← 수정됨
+              if (typeof setPathPoints === "function") {
+                setPathPoints([]);
+              }
               return;
             }
 
@@ -324,6 +324,15 @@ const PathMap: React.FC<PathMapProps> = ({ measurementId, setSt }) => {
               title: "종료점",
               map: mapInstanceRef.current,
             });
+
+            // 외부 상태 업데이트 (경로 좌표 변경) ← 수정됨
+            if (typeof setPathPoints === "function") {
+              const arr = clickedPathRef.current.map((point) => ({
+                lat: point.getLat(),
+                lng: point.getLng(),
+              }));
+              setPathPoints(arr);
+            }
           }}
         >
           🔁 되돌리기
