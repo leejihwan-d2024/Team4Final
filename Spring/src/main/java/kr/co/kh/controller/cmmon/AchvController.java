@@ -36,11 +36,11 @@ public class AchvController {
 
     // 전체 유저 업적 리스트 조회
     @GetMapping
-    public List<UserAchvProgressDto> getAllAchievements(@RequestParam(required = false) String userId) {
+    public List<UserAchvProgressDto> getAllAchvevements(@RequestParam(required = false) String userId) {
         if (userId != null) {
             return userProgressService.getUserProgress(userId); // ✅ 여기에 연결
         }
-        return achievementService.getTestAchievements(); // 기본 전체 업적만
+        return achievementService.getAllAchvevements(); // 기본 전체 업적만
     }
 
     // 특정 유저 업적 진행 상태 조회
@@ -50,12 +50,12 @@ public class AchvController {
         if (user == null) {
             throw new RuntimeException("로그인 정보가 없습니다.");
         }
-        return userProgressService.getUserProgress(userId);
+        return userProgressService.getUserProgress(user.getUserId());
     }
 
     // 테스트용 임시 데이터 반환
     @GetMapping("/test")
-    public List<Map<String, Object>> getTestAchievements() {
+    public List<Map<String, Object>> getAllAchvevements() {
         return List.of(
                 Map.of(
                         "achv_id", "ACHV01",

@@ -51,7 +51,7 @@ public class AchievementService {
                 .orElse(null)));
     }
 
-    public List<UserAchvProgressDto> getTestAchievements() {
+    public List<UserAchvProgressDto> getAllAchvevements() {
         return List.of();
     }
 }
