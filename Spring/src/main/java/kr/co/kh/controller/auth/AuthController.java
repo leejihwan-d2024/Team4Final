@@ -17,6 +17,8 @@ import kr.co.kh.model.payload.request.KakaoLoginRequest;
 import kr.co.kh.model.payload.request.FindIdRequest;
 import kr.co.kh.model.payload.request.FindPasswordRequest;
 import kr.co.kh.model.payload.request.ResetPasswordRequest;
+import kr.co.kh.model.payload.DeviceInfo;
+import kr.co.kh.model.vo.DeviceType;
 import kr.co.kh.model.payload.response.FindIdResponse;
 import kr.co.kh.model.payload.response.FindPasswordResponse;
 import kr.co.kh.model.CustomUserDetails;
@@ -33,6 +35,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import java.util.Optional;
 
@@ -91,11 +94,45 @@ public class AuthController {
             @ApiImplicitParam(name = "deviceInfo", value = "장치정보", dataType = "DeviceInfo", required = true)
     })
     @PostMapping("/login")
-    public ResponseEntity<?> authenticateUser(@Valid @RequestBody LoginRequest loginRequest) {
+    public ResponseEntity<?> authenticateUser(@Valid @RequestBody LoginRequest loginRequest, HttpServletRequest request) {
         log.info("=== 사용자 로그인 요청 ===");
         log.info("사용자명: {}", loginRequest.getUsername());
         log.info("비밀번호: {}", loginRequest.getPassword() != null ? "***" : "null");
         log.info("장치 정보: {}", loginRequest.getDeviceInfo());
+        log.info("User-Agent: {}", request.getHeader("User-Agent"));
+        log.info("Origin: {}", request.getHeader("Origin"));
+        log.info("Content-Type: {}", request.getHeader("Content-Type"));
+        log.info("Accept: {}", request.getHeader("Accept"));
+        log.info("Request Method: {}", request.getMethod());
+        log.info("Request URL: {}", request.getRequestURL());
+        log.info("Remote Address: {}", request.getRemoteAddr());
+        
+        // DeviceInfo가 null인 경우 자동 생성
+        DeviceInfo deviceInfo = loginRequest.getDeviceInfo();
+        if (deviceInfo == null) {
+            String userAgent = request.getHeader("User-Agent");
+            DeviceType detectedType = DeviceInfo.detectDeviceType(userAgent);
+            String deviceId = DeviceInfo.generateDeviceId(userAgent, loginRequest.getUsername());
+            
+            deviceInfo = new DeviceInfo(deviceId, detectedType, null);
+            loginRequest.setDeviceInfo(deviceInfo);
+            
+            log.info("DeviceInfo 자동 생성: {}", deviceInfo);
+        } else {
+            // DeviceInfo 자동 감지 및 수정
+            String userAgent = request.getHeader("User-Agent");
+            DeviceType detectedType = DeviceInfo.detectDeviceType(userAgent);
+            
+            // WEB으로 설정된 경우 실제 디바이스 타입으로 변경
+            if (deviceInfo.getDeviceType() == kr.co.kh.model.vo.DeviceType.WEB || 
+                deviceInfo.getDeviceType() == kr.co.kh.model.vo.DeviceType.web) {
+                deviceInfo.setDeviceType(detectedType);
+                log.info("디바이스 타입 자동 감지: {} -> {}", 
+                    (deviceInfo.getDeviceType() == kr.co.kh.model.vo.DeviceType.WEB ? "WEB" : "web"), 
+                    detectedType.getValue());
+            }
+        }
+        
         log.info("================================");
 
         Authentication authentication = authService.authenticateUser(loginRequest)
@@ -385,7 +422,26 @@ public class AuthController {
         LoginRequest loginRequest = new LoginRequest();
         loginRequest.setUsername("kakao_" + kakaoLoginRequest.getUserInfo().getId());
         loginRequest.setPassword("kakao_password"); // 카카오 사용자는 비밀번호가 없으므로 더미 값
-        loginRequest.setDeviceInfo(kakaoLoginRequest.getDeviceInfo());
+        
+        // DeviceInfo가 null인 경우 기본값 생성
+        DeviceInfo deviceInfo = kakaoLoginRequest.getDeviceInfo();
+        if (deviceInfo == null) {
+            deviceInfo = new DeviceInfo();
+            deviceInfo.setDeviceId("kakao_device_" + kakaoLoginRequest.getUserInfo().getId());
+            deviceInfo.setDeviceType(kr.co.kh.model.vo.DeviceType.OTHER);
+            deviceInfo.setNotificationToken(null);
+            log.info("카카오 로그인용 기본 장치정보 생성: {}", deviceInfo.getDeviceId());
+        } else {
+            // deviceInfo가 있지만 deviceType이 WEB인 경우 자동 감지
+            if (deviceInfo.getDeviceType() == kr.co.kh.model.vo.DeviceType.WEB || 
+                deviceInfo.getDeviceType() == kr.co.kh.model.vo.DeviceType.web) {
+                // User-Agent를 통해 실제 디바이스 타입 감지
+                // 실제 구현에서는 HttpServletRequest가 필요하므로 여기서는 로그만 남김
+                log.info("카카오 로그인: WEB 디바이스 타입 감지됨 - 실제 디바이스 타입 확인 필요");
+            }
+        }
+        
+        loginRequest.setDeviceInfo(deviceInfo);
         return loginRequest;
     }
 

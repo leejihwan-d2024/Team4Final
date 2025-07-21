@@ -1,0 +1,23 @@
+# 네이버 메일 전용 설정
+naver:
+  mail:
+    host: smtp.naver.com
+    port: 587
+    username: ${NAVER_MAIL_USERNAME:your-naver-email@naver.com}
+    password: ${NAVER_MAIL_PASSWORD:your-app-password}
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+            required: true
+          timeout: 50000
+          connectiontimeout: 50000
+          writetimeout: 50000
+
+# 로깅 설정
+logging:
+  level:
+    kr.co.kh.service.impl.EmailServiceImpl: DEBUG
+    org.springframework.mail: DEBUG

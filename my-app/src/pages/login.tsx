@@ -7,10 +7,7 @@ import "./login.css";
 interface LoginRequest {
   username: string;
   password: string;
-  deviceInfo: {
-    deviceId: string;
-    deviceType: string;
-  };
+  // deviceInfo는 백엔드에서 자동 생성하므로 제외
 }
 
 interface LoginResponse {
@@ -52,6 +49,7 @@ interface KakaoLoginRequest {
     nickname?: string;
     profileImage?: string;
   };
+  // deviceInfo는 백엔드에서 자동 생성하므로 제외
 }
 
 interface KakaoLoginResponse {
@@ -197,10 +195,7 @@ const Login: React.FC = () => {
       const requestData = {
         username: userId,
         password: userPw,
-        deviceInfo: {
-          deviceId: (isMobile ? "mobile-" : "web-") + Date.now(),
-          deviceType: isMobile ? "mobile" : "web",
-        },
+        // deviceInfo는 백엔드에서 자동 생성하므로 제외
       };
       console.log("로그인 요청 데이터:", JSON.stringify(requestData, null, 2));
       console.log("username 값:", requestData.username);
@@ -353,10 +348,7 @@ const Login: React.FC = () => {
               userInfo.kakao_account?.profile?.profile_image_url ||
               userInfo.properties?.profile_image,
           },
-          deviceInfo: {
-            deviceId: "web-" + Date.now(),
-            deviceType: "web",
-          },
+          // deviceInfo는 백엔드에서 자동 생성하므로 제외
         } as KakaoLoginRequest
       );
 
