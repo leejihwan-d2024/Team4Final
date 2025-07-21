@@ -32,20 +32,25 @@ public class AchvController {
 
     @Autowired
     private RewardService rewardService;
+    private String userId;
 
     // 전체 유저 업적 리스트 조회
     @GetMapping
-    public List<Achv> getAllAchievements() {
-        return achievementService.getAllAchievements();
+    public List<UserAchvProgressDto> getAllAchievements(@RequestParam(required = false) String userId) {
+        if (userId != null) {
+            return userProgressService.getUserProgress(userId); // ✅ 여기에 연결
+        }
+        return achievementService.getTestAchievements(); // 기본 전체 업적만
     }
 
     // 특정 유저 업적 진행 상태 조회
     @GetMapping("/user")
     public List<UserAchvProgressDto> getUserProgress(@CurrentUser CustomUserDetails user) {
+        log.info("🔥 CurrentUser: {}", user); // null 확인
         if (user == null) {
             throw new RuntimeException("로그인 정보가 없습니다.");
         }
-        return userProgressService.getUserProgress(user.getUserId());
+        return userProgressService.getUserProgress(userId);
     }
 
     // 테스트용 임시 데이터 반환

@@ -1,7 +1,8 @@
 package kr.co.kh.impl;
 
-import kr.co.kh.controller.cmmon.UserAchievementDto;
+
 import kr.co.kh.controller.cmmon.UserAchvProgressDto;
+import kr.co.kh.mapper.UserProgressMapper;
 import kr.co.kh.model.vo.RewardVO;
 import kr.co.kh.repository.UserAchvProgressRepository;
 import kr.co.kh.mapper.RewardMapper;
@@ -20,66 +21,64 @@ import java.util.stream.Collectors;
 @Slf4j
 public class UserProgressServiceImpl implements UserProgressService {
 
-    private final UserAchvProgressRepository progressRepository;
+    private final UserAchvProgressRepository userAchvProgressRepository;
+    private final UserProgressMapper userProgressMapper; // ✅ 추가
     private final RewardMapper rewardMapper;
     private final AchievementService achievementService;
 
     @Override
     public List<UserAchvProgressDto> getUserProgress(String userId) {
-        List<UserAchvProgressDto> result = progressRepository.findByUserId(userId).stream()
-                .map(p -> {
-                    String achvId = p.getAchv().getAchvId();
-                    List<RewardVO> rewards = rewardMapper.findRewardByAchvId(achvId);
+        // 먼저 JPA로 진행 데이터 조회
+        List<UserAchvProgress> progressList = userAchvProgressRepository.findByUserId(userId);
 
-                    log.info(p.toString());
+        if (!progressList.isEmpty()) {
+            // 진행 데이터가 있을 경우 JPA + 보상 수령 여부 계산
+            return progressList.stream().map(p -> {
+                String achvId = p.getAchv().getAchvId();
+                List<RewardVO> rewards = rewardMapper.findRewardByAchvId(achvId);
 
-                    log.info(rewards.toString());
-                    boolean claimed = true;
-                    if (!rewards.isEmpty()) {
-                        Long rewardId = rewards.get(0).getRewardId();
-                        claimed = rewardMapper.existsUserReward(userId, rewardId) > 0;
-                    }
+                boolean claimed = true;
+                if (!rewards.isEmpty()) {
+                    Long rewardId = rewards.get(0).getRewardId();
+                    claimed = rewardMapper.existsUserReward(userId, rewardId) > 0;
+                }
 
-                    log.info(String.valueOf(claimed));
-                    log.info(p.getAchv().getAchvTitle().toString());
+                return new UserAchvProgressDto(
+                        achvId,
+                        p.getAchv().getAchvTitle(),
+                        p.getAchv().getAchvContent(),
+                        p.getCurrentValue(),
+                        p.getAchv().getAchvMaxPoint(),
+                        claimed ? "Y" : "N"
+                );
+            }).collect(Collectors.toList());
+        }
 
-                    UserAchvProgressDto data = new UserAchvProgressDto(
-                            achvId,
-                            p.getAchv().getAchvTitle(),
-                            p.getAchv().getAchvContent(),
-                            p.getCurrentValue(),
-                            p.getAchv().getAchvMaxPoint(),
-                            claimed ? "Y" : "N"
+        // ✅ 진행 기록이 없으면 MyBatis 쿼리 결과 사용
+        return userProgressMapper.getUserProgress(userId).stream().map(dto -> {
+            String achvId = dto.getAchvId();
+            List<RewardVO> rewards = rewardMapper.findRewardByAchvId(achvId);
 
-                    );
-                    log.info(data.toString());
-                    return data;
-                })
-                .collect(Collectors.toList());
-        log.info(result.toString());
-        return  result;
+            boolean claimed = true;
+            if (!rewards.isEmpty()) {
+                Long rewardId = rewards.get(0).getRewardId();
+                claimed = rewardMapper.existsUserReward(userId, rewardId) > 0;
+            }
+
+            // 반환 객체에 claimed 상태 반영
+            return new UserAchvProgressDto(
+                    dto.getAchvId(),
+                    dto.getAchvTitle(),
+                    dto.getAchvContent(),
+                    dto.getCurrentValue(),
+                    dto.getAchvMaxPoint(),
+                    claimed ? "Y" : "N"
+            );
+        }).collect(Collectors.toList());
     }
 
     @Override
     public void updateProgress(String userId, String achvId, int progressValue) {
-        UserAchvProgress progress = progressRepository.findByUserIdAndAchvId(userId, achvId)
-                .orElseGet(() -> {
-                    UserAchvProgress newProgress = new UserAchvProgress();
-                    newProgress.setUserId(userId);
-                    newProgress.setAchvId(achvId);
-                    newProgress.setCurrentValue(0);
-                    newProgress.setIsCompleted("N");
-                    return newProgress;
-                });
 
-        int newValue = progress.getCurrentValue() + progressValue;
-        int maxPoint = achievementService.getMaxPointForAchievement(achvId);
-        progress.setCurrentValue(Math.min(newValue, maxPoint));
-
-        if (progress.getCurrentValue() >= maxPoint) {
-            progress.setIsCompleted("Y");
-        }
-
-        progressRepository.save(progress);
     }
 }
