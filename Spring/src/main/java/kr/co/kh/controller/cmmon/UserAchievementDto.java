@@ -42,6 +42,7 @@ public class UserAchievementDto {
         this.badgeName = badgeName;
         this.badgeImageUrl = badgeImageUrl;
         this.isComplete = isComplate;
+
     }
 
     public UserAchievementDto(String ignoredAchvId, String ignoredAchvTitle, String ignoredAchvContent, int ignoredCurrentValue, Integer ignoredAchvMaxPoint, String ignoredIsRewarded ) {

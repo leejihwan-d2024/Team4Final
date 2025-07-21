@@ -51,11 +51,14 @@
         A.ACHV_CONTENT AS achvContent,
         A.ACHV_MAX_POINT AS achvMaxPoint,
         NVL(P.CURRENT_VALUE, 0) AS currentValue,
-        NVL(P.IS_COMPLETED, 'N') AS isCompleted
+        NVL(P.IS_COMPLETED, 'N') AS isCompleted,
+        R.BADGE_NAME AS badgeName,
+        R.BADGE_IMAGE_URL AS badgeImageUrl
         FROM ACHV A
         LEFT OUTER JOIN USER_ACHV_PROGRESS P
-        ON A.ACHV_ID = P.ACHV_ID
-        AND P.USER_ID = #{userId, jdbcType=VARCHAR}
+        ON A.ACHV_ID = P.ACHV_ID AND P.USER_ID = #{userId, jdbcType=VARCHAR}
+        LEFT OUTER JOIN ACHV_REWARD R
+        ON A.ACHV_ID = R.ACHV_ID
     </select>
 
 </mapper>

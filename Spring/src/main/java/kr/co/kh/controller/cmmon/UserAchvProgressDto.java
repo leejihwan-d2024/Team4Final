@@ -20,6 +20,8 @@ public class UserAchvProgressDto {
         this.isCompleted = isCompleted;
     }
 
+
+
     public String getAchvId() {
         return achvId;
     }
