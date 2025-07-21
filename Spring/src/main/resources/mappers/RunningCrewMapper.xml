@@ -68,6 +68,7 @@
         rc.CREATED_AT                 AS createdAt,
         rc.IS_OVER_15                 AS isOver15,
         rc.LEADER_ID                  AS leaderId,
+        rc.LEADER_NN                 AS leaderNn,
         (SELECT COUNT(*)
         FROM CREW_MEMBER cm
         WHERE cm.CREW_ID = rc.CREW_ID) AS currentCount
