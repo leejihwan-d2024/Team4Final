@@ -1,4 +1,5 @@
 import React from "react";
+import MainMenu from "../mainpage/MainMenu";
 
 function MyPage() {
   const userStr = localStorage.getItem("user");
@@ -6,6 +7,7 @@ function MyPage() {
 
   return (
     <div style={{ padding: "40px" }}>
+      <MainMenu />
       <h2>🧑 프로필 페이지</h2>
       <span>
         사용자
@@ -26,6 +28,8 @@ function MyPage() {
           <span className="progress-text">59%</span>
         </div>
       </div>
+      <br />
+      dd
     </div>
   );
 }
