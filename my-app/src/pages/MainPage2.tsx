@@ -149,7 +149,7 @@ export default function MainPage2() {
           >
             <div className={styles.crewTitle}>{crew.crewTitle}</div>
             <div className={styles.crewInfo}>
-              현재 참여 인원: {crew.currentCount ?? 0}
+              현재 참여 인원: {(crew.currentCount ?? 0) + 1}
             </div>
           </div>
         ))}
