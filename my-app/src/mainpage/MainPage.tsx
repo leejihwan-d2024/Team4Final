@@ -119,8 +119,8 @@ function MainPage() {
             </Link>
           </li>
           <li>
-            <Link to="/" className="text-blue-700 hover:underline">
-              📞 -
+            <Link to="/mypage" className="text-blue-700 hover:underline">
+              📞 마이페이지
             </Link>
           </li>
         </ul>
