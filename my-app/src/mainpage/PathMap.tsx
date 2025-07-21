@@ -264,6 +264,13 @@ const PathMap: React.FC<PathMapProps> = ({ measurementId, setSt, CrewId }) => {
       alert("경로 불러오기 실패");
     }
   };
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      handleLoadCustomPath().catch(() => {});
+    }, 500); // 0.5초 후 실행
+
+    return () => clearTimeout(timer);
+  }, []);
   return (
     <>
       <div
