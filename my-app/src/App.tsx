@@ -37,6 +37,7 @@ import FindPasswordPage from "./pages/FindPasswordPage";
 import ResetPasswordPage from "./pages/ResetPasswordPage";
 import "./auth.css";
 import "./App.css";
+import MyPage from "./mypage/MyPage";
 function App() {
   const [posts, setPosts] = useState<Post[]>([]);
   const [selectedPost, setSelectedPost] = useState<Post | null>(null);
@@ -145,9 +146,11 @@ function App() {
               <Link to="/shop">러닝관련상품으로 이동</Link>
               <Link to="/info">러닝관련정보로 이동</Link>
               <br />
-              <Link to="/main">메인으로 이동</Link>
+
               <Link to="/testmain">임시 Main 으로 이동</Link>
               <Link to="/marathon">러닝대회정보로 이동</Link>
+              <br />
+              <Link to="/main">메인으로 이동</Link>
             </>
           }
         />
@@ -198,6 +201,7 @@ function App() {
         <Route path="/find-id" element={<FindIdPage />} />
         <Route path="/find-password" element={<FindPasswordPage />} />
         <Route path="/reset-password" element={<ResetPasswordPage />} />
+        <Route path="/mypage" element={<MyPage />} />
       </Routes>
     </BrowserRouter>
   );
