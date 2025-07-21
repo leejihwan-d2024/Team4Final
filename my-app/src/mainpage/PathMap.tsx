@@ -186,13 +186,14 @@ const PathMap: React.FC<PathMapProps> = ({ measurementId, setSt, CrewId }) => {
 
     try {
       // path_id 결정: 백엔드가 testuser_0, _1... 중 사용 가능한 것 자동 선택
-      const pathId =
-        currentPathId ??
-        (
-          await axios.get(
-            `https://200.200.200.62:8080/nextpathid?username=${username}`
-          )
-        ).data.pathId;
+      const pathId = CrewId
+        ? CrewId
+        : currentPathId ??
+          (
+            await axios.get(
+              `https://200.200.200.62:8080/nextpathid?username=${username}`
+            )
+          ).data.pathId;
 
       setCurrentPathId(pathId);
 
