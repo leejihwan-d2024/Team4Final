@@ -22,9 +22,10 @@ interface PathDataItem {
 interface PathMapProps {
   measurementId: number; // 측정 ID
   setSt?: React.Dispatch<SetStateAction<number[]>>;
+  CrewId?: string;
 }
 
-const PathMap: React.FC<PathMapProps> = ({ measurementId, setSt }) => {
+const PathMap: React.FC<PathMapProps> = ({ measurementId, setSt, CrewId }) => {
   const mapRef = useRef<HTMLDivElement | null>(null);
   const clickedPathRef = useRef<any[]>([]);
   const polylineRef = useRef<any>(null);
@@ -214,7 +215,9 @@ const PathMap: React.FC<PathMapProps> = ({ measurementId, setSt }) => {
     }
   };
   const handleLoadCustomPath = async () => {
-    const pathId = `testuser_${customPathIndex}`;
+    //const pathId = `testuser_${customPathIndex}`;
+    const pathId = CrewId ? `${CrewId}` : `testuser_${customPathIndex}`;
+
     const color = colors[customPathIndex % colors.length]; // 색 순환
 
     try {
@@ -356,6 +359,7 @@ const PathMap: React.FC<PathMapProps> = ({ measurementId, setSt }) => {
         >
           📂 불러오기
         </button>
+        <span>현재저장모드: {CrewId ?? 0}</span>
       </div>
     </>
   );
