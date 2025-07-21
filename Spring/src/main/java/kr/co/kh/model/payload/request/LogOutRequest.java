@@ -16,7 +16,6 @@ import javax.validation.constraints.NotNull;
 public class LogOutRequest {
 
     @Valid
-    @NotNull(message = "장치정보가 없습니다.")
     private DeviceInfo deviceInfo;
 
 }

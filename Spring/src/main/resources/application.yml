@@ -33,7 +33,7 @@ spring:
   output:
     ansi:
       enabled: always
-  # 이메일 설정
+  # 이메일 설정 (Gmail 기본, 네이버는 동적 선택)
   mail:
     host: smtp.gmail.com
     port: 587
@@ -49,6 +49,12 @@ spring:
           timeout: 50000
           connectiontimeout: 50000
           writetimeout: 50000
+    # 네이버 메일 설정 (EmailServiceImpl에서 동적 사용)
+    naver:
+      host: smtp.naver.com
+      port: 465
+      username: kgw1219@naver.com
+      password: TK1NJ65U8FXH
   datasource:
     driver-class-name: net.sf.log4jdbc.sql.jdbcapi.DriverSpy
     url: ENC(-4msIeRxFkf4pJ979SHFTDuduvKZuiDLuLWE7EAwzBBYQdyJ4dxSUCVSs3oB1zECJYqeuZs+OJL9bvKGOybx99g==)

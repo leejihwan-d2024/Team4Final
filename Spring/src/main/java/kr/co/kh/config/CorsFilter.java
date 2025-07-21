@@ -25,8 +25,8 @@ public class CorsFilter implements Filter {
         if (origin != null && !origin.isEmpty()) {
             response.setHeader("Access-Control-Allow-Origin", origin);
         } else {
-            // null origin인 경우 특별 처리
-            response.setHeader("Access-Control-Allow-Origin", "null");
+            // null origin인 경우 특별 처리 (모바일 브라우저 대응)
+            response.setHeader("Access-Control-Allow-Origin", "*");
         }
         
         // 자격 증명 허용
@@ -36,18 +36,20 @@ public class CorsFilter implements Filter {
         response.setHeader("Access-Control-Allow-Methods", 
             "GET, POST, PUT, DELETE, OPTIONS, PATCH, HEAD");
         
-        // 허용된 헤더
+        // 허용된 헤더 (모바일 특화 헤더 추가)
         response.setHeader("Access-Control-Allow-Headers", 
             "Origin, X-Requested-With, Content-Type, Accept, Authorization, " +
-            "Access-Control-Request-Method, Access-Control-Request-Headers");
+            "Access-Control-Request-Method, Access-Control-Request-Headers, " +
+            "User-Agent, Accept-Language, Accept-Encoding, Cache-Control, Pragma");
         
         // 노출할 헤더
         response.setHeader("Access-Control-Expose-Headers", 
             "Access-Control-Allow-Origin, Access-Control-Allow-Credentials, " +
-            "Access-Control-Allow-Methods, Access-Control-Allow-Headers, Authorization");
+            "Access-Control-Allow-Methods, Access-Control-Allow-Headers, Authorization, " +
+            "Content-Type, X-Requested-With");
         
-        // preflight 요청 캐시 시간
-        response.setHeader("Access-Control-Max-Age", "3600");
+        // preflight 요청 캐시 시간 (모바일에서 더 긴 시간 설정)
+        response.setHeader("Access-Control-Max-Age", "7200");
 
         // OPTIONS 요청에 대한 처리
         if ("OPTIONS".equalsIgnoreCase(request.getMethod())) {

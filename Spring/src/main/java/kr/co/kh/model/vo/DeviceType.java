@@ -18,6 +18,8 @@ public enum DeviceType {
     DEVICE_TYPE_MACOS("macos"),
     WEB("WEB"),
     web("web"),
+    MOBILE("MOBILE"),
+    TABLET("TABLET"),
     OTHER("other");
 
     private final String value;
