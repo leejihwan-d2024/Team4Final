@@ -8,8 +8,8 @@
     <select id="existsUserReward" parameterType="map" resultType="int">
         SELECT COUNT(*)
         FROM USER_ACHV_REWARD
-        WHERE USER_ID = #{userId}
-        AND REWARD_ID = #{rewardId}
+        WHERE USER_ID = #{userId, jdbcType=VARCHAR}
+        AND REWARD_ID = #{rewardId, jdbcType=VARCHAR}
     </select>
 
     <!-- 보상 지급 기록 삽입 -->
@@ -43,7 +43,7 @@
         BADGE_NAME      AS badgeName,
         BADGE_IMAGE_URL AS badgeImageUrl
         FROM ACHV_REWARD
-        WHERE ACHV_ID = #{achvId}
+        WHERE ACHV_ID = #{achvId, jdbcType=VARCHAR}
     </select>
 
     <!-- 보상 ID로 뱃지 정보 조회 -->
@@ -52,7 +52,7 @@
         BADGE_NAME AS badgeName,
         BADGE_IMAGE_URL AS badgeImageUrl
         FROM ACHV_REWARD
-        WHERE REWARD_ID = #{rewardId}
+        WHERE REWARD_ID = #{rewardId, jdbcType=VARCHAR}
     </select>
 
     <!-- 업적 ID로 보상 응답 정보 조회 -->
@@ -62,7 +62,7 @@
         BADGE_NAME AS badgeName,
         BADGE_IMAGE_URL AS badgeImageUrl
         FROM ACHV_REWARD
-        WHERE ACHV_ID = #{achvId}
+        WHERE ACHV_ID = #{achvId, jdbcType=VARCHAR}
     </select>
 
 </mapper>

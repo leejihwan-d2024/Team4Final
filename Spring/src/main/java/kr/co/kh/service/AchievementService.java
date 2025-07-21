@@ -3,6 +3,7 @@ package kr.co.kh.service;
 import kr.co.kh.achv.entity.Achv;
 import kr.co.kh.achv.entity.UserAchvProgress;
 import kr.co.kh.achv.entity.UserAchvProgressId;
+import kr.co.kh.controller.cmmon.UserAchvProgressDto;
 import kr.co.kh.repository.AchvRepository;
 import kr.co.kh.repository.UserAchvProgressRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -48,5 +49,9 @@ public class AchievementService {
         return Long.valueOf((String) Objects.requireNonNull(achvRepository.findById(achvId)
                 .map(Achv::getRewardId)
                 .orElse(null)));
+    }
+
+    public List<UserAchvProgressDto> getTestAchievements() {
+        return List.of();
     }
 }

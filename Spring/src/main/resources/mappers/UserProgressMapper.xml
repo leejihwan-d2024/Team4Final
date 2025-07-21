@@ -1,8 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
 <mapper namespace="kr.co.kh.mapper.UserProgressMapper">
+
+    <!-- 1. 유저가 기록한 업적 진행만 조회 -->
     <select id="selectProgressByUserId" parameterType="string" resultType="kr.co.kh.controller.cmmon.UserAchievementDto">
-        SELECT a.ACHV_ID AS achvId,
+        SELECT
+        a.ACHV_ID AS achvId,
         a.ACHV_TITLE AS achvTitle,
         a.ACHV_CONTENT AS achvContent,
         a.ACHV_MAX_POINT AS achvMaxPoint,
@@ -10,9 +16,10 @@
         up.IS_COMPLETED AS isCompleted
         FROM ACHV a
         JOIN USER_ACHV_PROGRESS up ON a.ACHV_ID = up.ACHV_ID
-        WHERE up.USER_ID = #{userId}
+        WHERE up.USER_ID = #{userId, jdbcType=VARCHAR}
     </select>
-    <!-- 사용자 업적 + 진행도 + 보상 + 뱃지 전체 정보 -->
+
+    <!-- 2. 사용자 업적 + 진행도 + 보상 + 뱃지 전체 정보 -->
     <select id="selectFullAchievementByUserId" parameterType="string" resultType="kr.co.kh.controller.cmmon.UserAchievementDto">
         SELECT
         A.ACHV_ID        AS achvId,
@@ -30,12 +37,25 @@
         CASE
         WHEN NVL(UAL.CURRENT_VALUE, 0) >= A.ACHV_MAX_POINT THEN 'Y'
         ELSE 'N'
-        END AS isComplete  <!-- ❌ 철자 오타!! -->
+        END AS isComplete
         FROM ACHV A
-        LEFT JOIN USER_ACHV_LIST UAL ON A.ACHV_ID = UAL.ACHV_ID AND UAL.USER_ID = #{userId}
+        LEFT JOIN USER_ACHV_LIST UAL ON A.ACHV_ID = UAL.ACHV_ID AND UAL.USER_ID = #{userId, jdbcType=VARCHAR}
         LEFT JOIN ACHV_REWARD R ON A.ACHV_ID = R.ACHV_ID
     </select>
 
-
+    <!-- 3. ✅ 유저 업적 전체 조회 (진행 없으면 기본값으로) -->
+    <select id="getUserProgress" parameterType="string" resultType="kr.co.kh.controller.cmmon.UserAchvProgressDto">
+        SELECT
+        A.ACHV_ID AS achvId,
+        A.ACHV_TITLE AS achvTitle,
+        A.ACHV_CONTENT AS achvContent,
+        A.ACHV_MAX_POINT AS achvMaxPoint,
+        NVL(P.CURRENT_VALUE, 0) AS currentValue,
+        NVL(P.IS_COMPLETED, 'N') AS isCompleted
+        FROM ACHV A
+        LEFT OUTER JOIN USER_ACHV_PROGRESS P
+        ON A.ACHV_ID = P.ACHV_ID
+        AND P.USER_ID = #{userId, jdbcType=VARCHAR}
+    </select>
 
 </mapper>
