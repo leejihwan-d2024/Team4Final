@@ -1,6 +1,7 @@
-import axiosInstance from "./axiosInstance";
-
 export const fetchPosts = async () => {
-  const response = await axiosInstance.get("posts"); // 자동으로 baseURL + posts
-  return response.data;
+  const res = await fetch(`${process.env.REACT_APP_HOST}posts`);
+
+  if (!res.ok) throw new Error("게시글 불러오기 실패");
+
+  return res.json();
 };

@@ -18,34 +18,51 @@
         VALUES (#{userId, jdbcType=VARCHAR}, #{rewardId, jdbcType=VARCHAR}, SYSDATE)
     </insert>
 
-    <insert id="insertUserAchvList">
+    <!-- ✅ 수정: jdbcType 명시로 null 안전 처리 -->
+    <insert id="insertUserAchvList" parameterType="map">
         INSERT INTO USER_ACHV_LIST (
         USER_ID, ACHV_ID, ACHIEVED_DATE, IS_REWARDED, REWARD_ID, BADGE_NAME, BADGE_IMAGE_URL
         ) VALUES (
-        #{userId}, #{achvId}, SYSDATE, 'Y', #{rewardId}, #{badgeName}, #{badgeImageUrl}
+        #{userId, jdbcType=VARCHAR},
+        #{achvId, jdbcType=VARCHAR},
+        SYSDATE,
+        'Y',
+        #{rewardId, jdbcType=INTEGER},
+        #{badgeName, jdbcType=VARCHAR},
+        #{badgeImageUrl, jdbcType=VARCHAR}
         )
     </insert>
 
     <!-- 업적 ID로 보상 조회 -->
     <select id="findRewardByAchvId" parameterType="string" resultType="kr.co.kh.model.vo.RewardVO">
         SELECT
-        REWARD_ID        AS rewardId,
-        ACHV_ID          AS achvId,
-        REWARD_TYPE      AS rewardType,
-        REWARD_VALUE     AS rewardValue,
-        BADGE_NAME       AS badgeName,
-        BADGE_IMAGE_URL  AS badgeImageUrl
+        REWARD_ID       AS rewardId,
+        ACHV_ID         AS achvId,
+        REWARD_TYPE     AS rewardType,
+        REWARD_VALUE    AS rewardValue,
+        BADGE_NAME      AS badgeName,
+        BADGE_IMAGE_URL AS badgeImageUrl
         FROM ACHV_REWARD
         WHERE ACHV_ID = #{achvId}
     </select>
 
     <!-- 보상 ID로 뱃지 정보 조회 -->
-    <select id="findBadgeByRewardId" parameterType="long" resultType="map">
+    <select id="findBadgeByRewardId" parameterType="string" resultType="map">
         SELECT
         BADGE_NAME AS badgeName,
         BADGE_IMAGE_URL AS badgeImageUrl
         FROM ACHV_REWARD
         WHERE REWARD_ID = #{rewardId}
+    </select>
+
+    <!-- 업적 ID로 보상 응답 정보 조회 -->
+    <select id="getRewardResponse" parameterType="map" resultType="kr.co.kh.model.dto.RewardResponse">
+        SELECT
+        'SUCCESS' AS result,
+        BADGE_NAME AS badgeName,
+        BADGE_IMAGE_URL AS badgeImageUrl
+        FROM ACHV_REWARD
+        WHERE ACHV_ID = #{achvId}
     </select>
 
 </mapper>

@@ -14,5 +14,7 @@ public class UserAchvProgress {
     private int currentValue;
     private int achvMaxPoint;
     private String isCompleted;
+    private String badgeName;
+    private String badgeImageUrl;
 
 }
