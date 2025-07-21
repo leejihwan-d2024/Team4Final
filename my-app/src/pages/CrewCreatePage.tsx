@@ -176,7 +176,7 @@ export default function CrewCreatePage() {
           value={startAddress}
           readOnly
         />
-        <PathMap measurementId={7} setSt={setSt} />
+        <PathMap measurementId={7} setSt={setSt} CrewId={form.crewId} />
         <input
           name="endLocation"
           value={form.endLocation}
