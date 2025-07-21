@@ -1,5 +1,6 @@
 import React from "react";
 import MainMenu from "../mainpage/MainMenu";
+import ToggleBox from "./ToggleBox";
 
 function MyPage() {
   const userStr = localStorage.getItem("user");
@@ -29,7 +30,7 @@ function MyPage() {
         </div>
       </div>
       <br />
-      dd
+      <ToggleBox />
     </div>
   );
 }
