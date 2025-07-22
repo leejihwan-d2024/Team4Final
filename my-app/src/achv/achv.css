@@ -73,6 +73,35 @@ body {
   background-color: rgba(255 255 255 / 0.25);
 }
 
+/* ✅ 필터 버튼 영역 */
+.filter-bar {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+  margin: 20px 0;
+}
+
+.filter-bar button {
+  padding: 8px 16px;
+  font-size: 0.95rem;
+  font-weight: 600;
+  border: 2px solid #3498db;
+  border-radius: 20px;
+  background-color: white;
+  color: #3498db;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.filter-bar button:hover {
+  background-color: #ecf5fc;
+}
+
+.filter-bar button.active {
+  background-color: #3498db;
+  color: white;
+}
+
 .achievement-list {
   display: flex;
   flex-direction: column;
@@ -153,28 +182,15 @@ body {
 }
 
 .progress-bar-fill {
-  background: linear-gradient(90deg, #3498db, #2980b9);
-  height: 100%;
   background: linear-gradient(to right, #4ade80, #22c55e);
-  text-align: right;
+  height: 100%;
   padding-right: 12px;
   color: white;
   font-weight: bold;
   line-height: 24px;
-  transition: width 0.4s ease;
-  border-radius: 9999px;
-  background-color: #4caf50;
-  text-align: center;
-  color: white;
-  font-weight: bold;
-  line-height: 20px; /* 높이와 같게 해서 텍스트 세로 중앙정렬 */
-  transition: width 0.3s ease;
-  color: white;
-  font-weight: 700;
-  text-align: center;
-  line-height: 24px;
   transition: width 0.5s ease-in-out;
   border-radius: 12px 0 0 12px;
+  text-align: center;
   white-space: nowrap;
   user-select: none;
 }
@@ -186,6 +202,7 @@ body {
   line-height: 1.4;
   user-select: text;
 }
+
 .loading {
   text-align: center;
   margin-top: 40px;
@@ -216,6 +233,7 @@ body {
     transform: translateY(0);
   }
 }
+
 /* 모달 배경 */
 .modal-overlay {
   position: fixed;
@@ -231,7 +249,7 @@ body {
   position: fixed;
   top: 50%;
   left: 50%;
-  transform: translate(-50%, -50%); /* ← 요놈이 정중앙 핵심 */
+  transform: translate(-50%, -50%);
   background: white;
   padding: 30px 40px;
   border-radius: 16px;

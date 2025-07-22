@@ -25,49 +25,57 @@ function Achv() {
   const [expandedId, setExpandedId] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [claimingId, setClaimingId] = useState<string | null>(null);
+  const [showCompletedOnly, setShowCompletedOnly] = useState(false); // ✅ 필터 상태 추가
 
-  // ✅ 모달 관련 상태 추가
+  // ✅ 모달 관련 상태
   const [showRewardModal, setShowRewardModal] = useState(false);
   const [rewardImageUrl, setRewardImageUrl] = useState<string | null>(null);
   const [rewardBadgeName, setRewardBadgeName] = useState<string | null>(null);
 
-  useEffect(() => {
-    const user = JSON.parse(localStorage.getItem("user") || "null");
+  // ✅ 업적 데이터 불러오기 (필터에 따라 API 다름)
+  const fetchAchievements = async () => {
     const token = localStorage.getItem("token");
 
-    const fetchAchievements = async () => {
-      try {
-        const response = await axios.get("/api/achievements/user", {
-          headers: { Authorization: `Bearer ${token}` },
-        });
+    try {
+      setLoading(true);
+      const url = showCompletedOnly
+        ? "/api/achievements/completed"
+        : "/api/achievements/user";
 
-        const data = response.data;
-        const mappedData = data.map((item: any) => ({
-          id: item.achvId?.toString() ?? item.achv_id ?? "없음",
-          title: item.achvTitle ?? item.achv_title ?? "제목 없음",
-          description: item.achvContent ?? "",
-          currentValue: parseInt(item.currentValue) || 0,
-          maxPoint: parseInt(item.achvMaxPoint) || 1,
-          claimed: item.isCompleted === "Y",
-        }));
+      const response = await axios.get(url, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
 
-        setAchievements(mappedData);
-      } catch (err) {
-        console.error("업적 데이터 로드 실패:", err);
-        alert("업적을 불러오는 데 실패했습니다.");
-      } finally {
-        setLoading(false);
-      }
-    };
+      const data = response.data;
+      const mappedData = data.map((item: any) => ({
+        id: item.achvId?.toString() ?? item.achv_id ?? "없음",
+        title: item.achvTitle ?? item.achv_title ?? "제목 없음",
+        description: item.achvContent ?? "",
+        currentValue: parseInt(item.currentValue) || 0,
+        maxPoint: parseInt(item.achvMaxPoint) || 1,
+        claimed: item.isCompleted === "Y",
+      }));
 
+      setAchievements(mappedData);
+    } catch (err) {
+      console.error("업적 데이터 로드 실패:", err);
+      alert("업적을 불러오는 데 실패했습니다.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // ✅ 최초 로딩 및 필터 변경 시 업적 다시 불러오기
+  useEffect(() => {
     fetchAchievements();
-  }, []);
+  }, [showCompletedOnly]);
 
   const getProgressPercent = (currentValue: number, maxPoint: number) => {
     if (!maxPoint || isNaN(currentValue) || isNaN(maxPoint)) return 0;
     return Math.min(100, Math.round((currentValue / maxPoint) * 100));
   };
 
+  // ✅ 보상 요청 처리
   const handleClaim = async (achvId: string) => {
     const user = JSON.parse(localStorage.getItem("user") || "null");
     const token = localStorage.getItem("token");
@@ -121,6 +129,22 @@ function Achv() {
         <h1>🏆 나의 업적</h1>
         <button className="menu-button" onClick={toggleMenu}>
           ☰
+        </button>
+      </div>
+
+      {/* ✅ 필터 버튼 추가 */}
+      <div className="filter-bar">
+        <button
+          className={!showCompletedOnly ? "active" : ""}
+          onClick={() => setShowCompletedOnly(false)}
+        >
+          전체 보기
+        </button>
+        <button
+          className={showCompletedOnly ? "active" : ""}
+          onClick={() => setShowCompletedOnly(true)}
+        >
+          달성한 업적만
         </button>
       </div>
 
@@ -212,7 +236,7 @@ function Achv() {
         </div>
       )}
 
-      {/* ✅ 모달 팝업 */}
+      {/* ✅ 뱃지 보상 모달 팝업 */}
       {showRewardModal && (
         <div
           className="modal-overlay"

@@ -61,4 +61,21 @@
         ON A.ACHV_ID = R.ACHV_ID
     </select>
 
+    <!-- 4. ✅ 완료된 업적(달성된 것만) 조회 -->
+    <select id="getCompletedAchievements" parameterType="string" resultType="kr.co.kh.controller.cmmon.UserAchvProgressDto">
+        SELECT
+        A.ACHV_ID AS achvId,
+        A.ACHV_TITLE AS achvTitle,
+        A.ACHV_CONTENT AS achvContent,
+        A.ACHV_MAX_POINT AS achvMaxPoint,
+        NVL(P.CURRENT_VALUE, 0) AS currentValue,
+        NVL(P.IS_COMPLETED, 'N') AS isCompleted,
+        R.BADGE_NAME AS badgeName,
+        R.BADGE_IMAGE_URL AS badgeImageUrl
+        FROM ACHV A
+        JOIN USER_ACHV_PROGRESS P ON A.ACHV_ID = P.ACHV_ID AND P.USER_ID = #{userId, jdbcType=VARCHAR}
+        LEFT JOIN ACHV_REWARD R ON A.ACHV_ID = R.ACHV_ID
+        WHERE P.IS_COMPLETED = 'Y'
+    </select>
+
 </mapper>
