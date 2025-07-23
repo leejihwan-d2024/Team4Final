@@ -20,7 +20,7 @@ interface PathDataItem {
 }
 
 interface PathMapProps {
-  measurementId: number; // 측정 ID
+  measurementId?: number; // 측정 ID
   setPathPoints?: React.Dispatch<
     SetStateAction<{ lat: number; lng: number }[]>
   >; // ← 수정됨
@@ -71,7 +71,7 @@ const PathMap: React.FC<PathMapProps> = ({
         });
         mapInstanceRef.current = map;
 
-        // 기존 경로 가져오기
+        if (!measurementId) return;
         try {
           const response = await axios.get<LatLngPoint[]>(
             `https://200.200.200.62:8080/getpath/${measurementId}`
@@ -265,9 +265,10 @@ const PathMap: React.FC<PathMapProps> = ({
     }
   };
   useEffect(() => {
+    console.log("HELLO");
     const timer = setTimeout(() => {
       CrewId ?? handleLoadCustomPath().catch(() => {});
-    }, 500); // 0.5초 후 실행
+    }, 1000); // 0.5초 후 실행
 
     return () => clearTimeout(timer);
   }, []);

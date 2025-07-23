@@ -104,7 +104,7 @@ export default function CrewDetailPage() {
           <strong>도착지 좌표:</strong> {crew.endLocation}
         </p>
 
-        <PathMap measurementId={7} CrewId={crew.crewId} />
+        <PathMap CrewId={crew.crewId} />
 
         <p>
           <strong>출발 위치 좌표:</strong> {crew.startLocationMapPoint}
