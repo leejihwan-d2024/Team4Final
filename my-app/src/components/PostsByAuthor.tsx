@@ -40,7 +40,7 @@ export default function PostsByAuthor({ userId }: PostsByAuthorProps) {
         posts.map((post) => (
           <div key={post.postId}>
             <span>
-              게시판 활동 - {new Date(post.createdAt).toLocaleDateString()}
+              📝 게시판 활동 - {new Date(post.createdAt).toLocaleDateString()}
             </span>
           </div>
         ))

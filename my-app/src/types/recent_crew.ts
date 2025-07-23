@@ -19,7 +19,7 @@ export const fetchRecentCrewsCombined = async (
 
   const joinData = joinResponse.data.map((item: any) => ({
     label: "크루 참가활동함",
-    timestamp: item.CREATED_TIME,
+    timestamp: item.JOINED_TIME,
   }));
 
   const createData = createResponse.data.map((item: any) => ({
