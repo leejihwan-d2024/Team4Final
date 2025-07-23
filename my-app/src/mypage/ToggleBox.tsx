@@ -1,11 +1,49 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import RecentMeasureList from "./RecentMeasureList";
 import PostsByAuthor from "../components/PostsByAuthor";
+import axios from "../api/axiosInstance";
+
 interface ToggleBoxProps {
   userId: string | undefined;
 }
+
+interface Badge {
+  achvTitle: string;
+  achievedDate: string;
+  badgeImageUrl: string;
+  badgeName: string;
+}
+
 const ToggleBox: React.FC<ToggleBoxProps> = ({ userId }) => {
   const [active, setActive] = useState<"최근활동" | "업적">("최근활동");
+  const [userBadges, setUserBadges] = useState<Badge[]>([]); // ✅ 뱃지 목록 상태 추가
+
+  const fetchUserBadges = async () => {
+    const token = localStorage.getItem("token");
+    try {
+      const response = await axios.get("/api/achievements/badges", {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+
+      const camelCaseBadges = response.data.map((item: any) => ({
+        achvTitle: item.ACHVTITLE ?? item.achvTitle ?? "제목 없음",
+        achievedDate: item.ACHIEVEDDATE ?? item.achievedDate ?? "",
+        badgeImageUrl: item.BADGEIMAGEURL ?? item.badgeImageUrl ?? "",
+        badgeName: item.BADGENAME ?? item.badgeName ?? "",
+      }));
+
+      setUserBadges(camelCaseBadges);
+    } catch (err) {
+      console.error("뱃지 목록 로딩 실패:", err);
+    }
+  };
+
+  // ✅ active가 "업적"일 때만 뱃지 가져오기
+  useEffect(() => {
+    if (active === "업적") {
+      fetchUserBadges();
+    }
+  }, [active]);
 
   return (
     <div
@@ -38,6 +76,7 @@ const ToggleBox: React.FC<ToggleBoxProps> = ({ userId }) => {
           </button>
         ))}
       </div>
+
       <div>
         {active === "최근활동" ? (
           <div>
@@ -45,9 +84,20 @@ const ToggleBox: React.FC<ToggleBoxProps> = ({ userId }) => {
             <PostsByAuthor userId={userId} />
           </div>
         ) : (
-          <div>B 내용</div>
+          <div>
+            {userBadges.map((badge, index) => (
+              <div key={index}>
+                <img
+                  src={badge.badgeImageUrl}
+                  alt={badge.badgeName}
+                  width={50}
+                />
+                <p>{badge.achvTitle}</p>
+                <p>{badge.achievedDate}</p>
+              </div>
+            ))}
+          </div>
         )}
-        {}
       </div>
     </div>
   );

@@ -79,30 +79,10 @@ function Achv() {
     }
   };
 
-  // ✅ [추가] 내가 받은 뱃지 목록 불러오기
-  const fetchUserBadges = async () => {
-    const token = localStorage.getItem("token");
-    try {
-      const response = await axios.get("/api/achievements/badges", {
-        headers: { Authorization: `Bearer ${token}` },
-      }); //
-
-      const camelCaseBadges = response.data.map((item: any) => ({
-        achvTitle: item.ACHVTITLE ?? item.achvTitle ?? "제목 없음",
-        achievedDate: item.ACHIEVEDDATE ?? item.achievedDate ?? "",
-        badgeImageUrl: item.BADGEIMAGEURL ?? item.badgeImageUrl ?? "",
-        badgeName: item.BADGENAME ?? item.badgeName ?? "",
-      }));
-
-      setUserBadges(camelCaseBadges);
-    } catch (err) {
-      console.error("뱃지 목록 로딩 실패:", err);
-    }
-  };
   // ✅ 필터 변경/초기 로딩 시 데이터 가져오기
   useEffect(() => {
     fetchAchievements();
-    fetchUserBadges();
+    //fetchUserBadges();
     // ✅ 뱃지도 같이 불러오기
   }, [showCompletedOnly]);
 
@@ -140,7 +120,7 @@ function Achv() {
             achv.id === achvId ? { ...achv, claimed: true } : achv
           )
         );
-        fetchUserBadges(); // ✅ 보상 받은 후 뱃지 다시 불러오기
+        //fetchUserBadges(); // ✅ 보상 받은 후 뱃지 다시 불러오기
       } else if (result.result === "ALREADY_CLAIMED") {
         alert("이미 보상을 받았습니다.");
       } else {
