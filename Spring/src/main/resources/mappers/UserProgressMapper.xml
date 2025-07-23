@@ -61,6 +61,7 @@
         ON A.ACHV_ID = R.ACHV_ID
     </select>
 
+
     <!-- 4. ✅ 완료된 업적(달성된 것만) 조회 -->
     <select id="getCompletedAchievements" parameterType="string" resultType="kr.co.kh.controller.cmmon.UserAchvProgressDto">
         SELECT

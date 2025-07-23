@@ -43,34 +43,23 @@ public class AchvController {
 
     // ✅ 현재 로그인한 유저의 전체 업적 진행 상태 조회
     @GetMapping("/user")
-    public List<UserAchvProgressDto> getUserProgress(@CurrentUser CustomUserDetails user) {
-        log.info("🔥 CurrentUser: {}", user);
-        if (user == null) {
-            throw new RuntimeException("로그인 정보가 없습니다.");
-        }
-        return userProgressService.getUserProgress(user.getUserId());
+    public List<UserAchvProgressDto> getUserProgress(@RequestParam String userId) {
+        return userProgressService.getUserProgress(userId);
     }
 
     // ✅ 현재 로그인한 유저의 "달성한" 업적만 조회
     @GetMapping("/completed")
-    public List<UserAchvProgressDto> getCompletedAchievements(@CurrentUser CustomUserDetails user) {
-        log.info("🔥 [완료 업적 조회] CurrentUser: {}", user);
-        if (user == null) {
-            throw new RuntimeException("로그인 정보가 없습니다.");
-        }
-        return userProgressService.getCompletedAchievements(user.getUserId());
+    public List<UserAchvProgressDto> getCompletedAchievements(@RequestParam String userId) {
+        return userProgressService.getCompletedAchievements(userId);
     }
 
     // ✅ 현재 로그인한 유저가 받은 뱃지 목록을 JSON으로 반환
     // name (업적명), date (달성일), badgeImageUrl (뱃지 이미지), badgeName (뱃지 이름)
     @GetMapping("/badges")
-    public List<Map<String, Object>> getUserBadges(@CurrentUser CustomUserDetails user) {
-        List<Map<String, Object>> badges = userProgressService.getUserBadges(user.getUserId());
-        for (Map<String, Object> badge : badges) {
-            log.info("🎖️ badge = {}", badge); // ✅ date 포함되어야 함
-        }
-        return badges;
+    public List<Map<String, Object>> getUserBadges(@RequestParam String userId) {
+        return userProgressService.getUserBadges(userId);
     }
+
 
 
     // ✅ 테스트용 임시 데이터 반환

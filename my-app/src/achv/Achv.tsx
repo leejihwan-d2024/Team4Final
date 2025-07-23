@@ -34,6 +34,7 @@ interface Badge {
 
 function Achv() {
   const navigate = useNavigate();
+  const userId = JSON.parse(localStorage.getItem("user") || "null")?.userId;
   const [achievements, setAchievements] = useState<Achievement[]>([]);
   const [userBadges, setUserBadges] = useState<Badge[]>([]); // ✅ 뱃지 목록 상태 추가
   const [menuOpen, setMenuOpen] = useState(false);
@@ -50,6 +51,7 @@ function Achv() {
   // ✅ 업적 데이터 조회
   const fetchAchievements = async () => {
     const token = localStorage.getItem("token");
+
     try {
       setLoading(true);
       const url = showCompletedOnly
@@ -58,9 +60,11 @@ function Achv() {
 
       const response = await axios.get(url, {
         headers: { Authorization: `Bearer ${token}` },
+        params: { userId }, // ✅ props로 받은 userId 명시
       });
 
       const data = response.data;
+
       const mappedData = data.map((item: any) => ({
         id: item.achvId?.toString() ?? item.achv_id ?? "없음",
         title: item.achvTitle ?? item.achv_title ?? "제목 없음",
@@ -71,9 +75,8 @@ function Achv() {
       }));
 
       setAchievements(mappedData);
-    } catch (err) {
-      console.error("업적 데이터 로드 실패:", err);
-      alert("업적을 불러오는 데 실패했습니다.");
+    } catch (error) {
+      console.error("❌ 업적 조회 실패:", error);
     } finally {
       setLoading(false);
     }
