@@ -1,16 +1,21 @@
-import React, { useState } from "react";
-import axios from "axios";
+import React, { useState, useEffect } from "react";
+import api from "../api/GG_axiosInstance";
 
 interface ProfileImageEditorProps {
   currentImageUrl?: string;
   userId: string;
   onImageUpdate?: (newUrl: string) => void;
+  onStatusChange?: (status: {
+    message: string;
+    type: "success" | "error" | "info";
+  }) => void;
 }
 
 const ProfileImageEditor: React.FC<ProfileImageEditorProps> = ({
   currentImageUrl = "http://img1.kakaocdn.net/thumb/R640x640.q70/?fname=http://t1.kakaocdn.net/account_images/default_profile.jpeg",
   userId,
   onImageUpdate,
+  onStatusChange,
 }) => {
   const [imageUrl, setImageUrl] = useState(currentImageUrl);
   const [newUrl, setNewUrl] = useState("");
@@ -21,6 +26,13 @@ const ProfileImageEditor: React.FC<ProfileImageEditorProps> = ({
     type: "success" | "error" | "info";
   } | null>(null);
   const [previewImage, setPreviewImage] = useState(currentImageUrl);
+
+  // status가 바뀔 때마다 onStatusChange 호출
+  useEffect(() => {
+    if (status && onStatusChange) {
+      onStatusChange(status);
+    }
+  }, [status, onStatusChange]);
 
   const isValidImageUrl = (url: string): boolean => {
     try {
@@ -107,11 +119,8 @@ const ProfileImageEditor: React.FC<ProfileImageEditorProps> = ({
 
     try {
       // 백엔드 API 호출
-      const response = await axios.post("/api/profile/update-url", null, {
-        params: {
-          userId: userId,
-          imageUrl: url,
-        },
+      const response = await api.put(`/api/profile/${userId}`, {
+        imageUrl: url,
       });
 
       if (response.data.success) {
@@ -151,18 +160,46 @@ const ProfileImageEditor: React.FC<ProfileImageEditorProps> = ({
     }
   };
 
-  const resetToDefault = () => {
+  const resetToDefault = async () => {
     const defaultUrl =
       "http://img1.kakaocdn.net/thumb/R640x640.q70/?fname=http://t1.kakaocdn.net/account_images/default_profile.jpeg";
-    setImageUrl(defaultUrl);
-    setPreviewImage(defaultUrl);
-    setStatus({
-      message: "프로필 이미지가 기본값으로 초기화되었습니다.",
-      type: "info",
-    });
 
-    if (onImageUpdate) {
-      onImageUpdate(defaultUrl);
+    setIsLoading(true);
+    setStatus({ message: "기본값으로 초기화하는 중...", type: "info" });
+
+    try {
+      // 백엔드 API 호출
+      const response = await api.put(`/api/profile/${userId}`, {
+        imageUrl: defaultUrl,
+      });
+
+      if (response.data.success) {
+        setImageUrl(defaultUrl);
+        setPreviewImage(defaultUrl);
+        setStatus({
+          message: "프로필 이미지가 기본값으로 초기화되었습니다.",
+          type: "success",
+        });
+
+        if (onImageUpdate) {
+          onImageUpdate(defaultUrl);
+        }
+      } else {
+        setStatus({
+          message: response.data.message || "기본값 초기화에 실패했습니다.",
+          type: "error",
+        });
+      }
+    } catch (error: any) {
+      console.error("Profile image reset error:", error);
+      setStatus({
+        message:
+          error.response?.data?.message ||
+          "기본값 초기화 중 오류가 발생했습니다.",
+        type: "error",
+      });
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -259,9 +296,10 @@ const ProfileImageEditor: React.FC<ProfileImageEditorProps> = ({
             </button>
             <button
               onClick={resetToDefault}
-              className="px-4 py-2 bg-gray-500 text-white rounded-full text-sm font-medium hover:bg-gray-600 transition-colors"
+              disabled={isLoading}
+              className="px-4 py-2 bg-gray-500 text-white rounded-full text-sm font-medium hover:bg-gray-600 transition-colors disabled:bg-gray-400"
             >
-              기본값으로 초기화
+              {isLoading ? "초기화 중..." : "기본값으로 초기화"}
             </button>
           </div>
         </div>

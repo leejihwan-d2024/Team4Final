@@ -1,6 +1,8 @@
 import React, { useState, useEffect, useRef, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import api from "../api/GG_axiosInstance";
+import PasswordChangeForm from "../components/PasswordChangeForm";
+import EmailChangeForm from "../components/EmailChangeForm";
 
 // 타입 정의
 interface User {
@@ -105,7 +107,7 @@ const ProfileImageEditor: React.FC<ProfileImageEditorProps> = ({
       const response = await api.delete(`/api/profile/${userId}`);
       if (response.data.success) {
         const defaultUrl =
-          "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTUwIiBoZWlnaHQ9IjE1MCIgdmlld0JveD0iMCAwIDE1MCAxNTAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIxNTAiIGhlaWdodD0iMTUwIiBmaWxsPSIjNjY3ZWVhIi8+Cjx0ZXh0IHg9Ijc1IiB5PSI4MCIgZm9udC1mYW1pbHk9IkFyaWFsLCBzYW5zLXNlcmlmIiBmb250LXNpemU9IjE0IiBmaWxsPSJ3aGl0ZSIgdGV4dC1hbmNob3I9Im1pZGRsZSI+7YWM7Zek7JqUPC90ZXh0Pgo8L3N2Zz4K";
+          "http://img1.kakaocdn.net/thumb/R640x640.q70/?fname=http://t1.kakaocdn.net/account_images/default_profile.jpeg";
         setImageUrl(defaultUrl);
         onImageUpdate(defaultUrl);
         onStatusChange({
@@ -188,13 +190,13 @@ const ProfileImageEditor: React.FC<ProfileImageEditorProps> = ({
           <img
             src={
               imageUrl ||
-              "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTUwIiBoZWlnaHQ9IjE1MCIgdmlld0JveD0iMCAwIDE1MCAxNTAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIxNTAiIGhlaWdodD0iMTUwIiBmaWxsPSIjNjY3ZWVhIi8+Cjx0ZXh0IHg9Ijc1IiB5PSI4MCIgZm9udC1mYW1pbHk9IkFyaWFsLCBzYW5zLXNlcmlmIiBmb250LXNpemU9IjE0IiBmaWxsPSJ3aGl0ZSIgdGV4dC1hbmNob3I9Im1pZGRsZSI+7YWM7Zek7JqUPC90ZXh0Pgo8L3N2Zz4K"
+              "http://img1.kakaocdn.net/thumb/R640x640.q70/?fname=http://t1.kakaocdn.net/account_images/default_profile.jpeg"
             }
             alt="프로필 미리보기"
             className="w-32 h-32 rounded-full object-cover border-2 border-gray-300"
             onError={(e) => {
               e.currentTarget.src =
-                "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTUwIiBoZWlnaHQ9IjE1MCIgdmlld0JveD0iMCAwIDE1MCAxNTAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIxNTAiIGhlaWdodD0iMTUwIiBmaWxsPSIjNjY3ZWVhIi8+Cjx0ZXh0IHg9Ijc1IiB5PSI4MCIgZm9udC1mYW1pbHk9IkFyaWFsLCBzYW5zLXNlcmlmIiBmb250LXNpemU9IjE0IiBmaWxsPSJ3aGl0ZSIgdGV4dC1hbmNob3I9Im1pZGRsZSI+7YWM7Zek7JqUPC90ZXh0Pgo8L3N2Zz4K";
+                "http://img1.kakaocdn.net/thumb/R640x640.q70/?fname=http://t1.kakaocdn.net/account_images/default_profile.jpeg";
             }}
           />
         </div>
@@ -270,7 +272,7 @@ const TestMain: React.FC = () => {
         console.log("API 성공했지만 데이터 없음");
         // API 호출은 성공했지만 데이터가 없는 경우 기본 이미지 설정
         const defaultImageUrl =
-          "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTUwIiBoZWlnaHQ9IjE1MCIgdmlld0JveD0iMCAwIDE1MCAxNTAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIxNTAiIGhlaWdodD0iMTUwIiBmaWxsPSIjNjY3ZWVhIi8+Cjx0ZXh0IHg9Ijc1IiB5PSI4MCIgZm9udC1mYW1pbHk9IkFyaWFsLCBzYW5zLXNlcmlmIiBmb250LXNpemU9IjE0IiBmaWxsPSJ3aGl0ZSIgdGV4dC1hbmNob3I9Im1pZGRsZSI+7YWM7Zek7JqUPC90ZXh0Pgo8L3N2Zz4K";
+          "http://img1.kakaocdn.net/thumb/R640x640.q70/?fname=http://t1.kakaocdn.net/account_images/default_profile.jpeg";
         setUserInfo((prev) => ({
           ...prev,
           profileImageUrl: defaultImageUrl,
@@ -294,7 +296,7 @@ const TestMain: React.FC = () => {
         console.log("서버 오류:", error.response?.data);
         // 서버 오류 시에도 기본 이미지 설정
         const defaultImageUrl =
-          "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTUwIiBoZWlnaHQ9IjE1MCIgdmlld0JveD0iMCAwIDE1MCAxNTAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIxNTAiIGhlaWdodD0iMTUwIiBmaWxsPSIjNjY3ZWVhIi8+Cjx0ZXh0IHg9Ijc1IiB5PSI4MCIgZm9udC1mYW1pbHk9IkFyaWFsLCBzYW5zLXNlcmlmIiBmb250LXNpemU9IjE0IiBmaWxsPSJ3aGl0ZSIgdGV4dC1hbmNob3I9Im1pZGRsZSI+7YWM7Zek7JqUPC90ZXh0Pgo8L3N2Zz4K";
+          "http://img1.kakaocdn.net/thumb/R640x640.q70/?fname=http://t1.kakaocdn.net/account_images/default_profile.jpeg";
         setUserInfo((prev) => ({
           ...prev,
           profileImageUrl: defaultImageUrl,
@@ -420,7 +422,7 @@ const TestMain: React.FC = () => {
           </div>
         )}
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           {/* 사용자 정보 섹션 */}
           <div className="bg-white rounded-xl shadow-lg p-6">
             <h2 className="text-xl font-semibold text-gray-800 mb-4">
@@ -438,13 +440,13 @@ const TestMain: React.FC = () => {
                   <img
                     src={
                       userInfo.profileImageUrl ||
-                      "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTUwIiBoZWlnaHQ9IjE1MCIgdmlld0JveD0iMCAwIDE1MCAxNTAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIxNTAiIGhlaWdodD0iMTUwIiBmaWxsPSIjNjY3ZWVhIi8+Cjx0ZXh0IHg9Ijc1IiB5PSI4MCIgZm9udC1mYW1pbHk9IkFyaWFsLCBzYW5zLXNlcmlmIiBmb250LXNpemU9IjE0IiBmaWxsPSJ3aGl0ZSIgdGV4dC1hbmNob3I9Im1pZGRsZSI+7YWM7Zek7JqUPC90ZXh0Pgo8L3N2Zz4K"
+                      "http://img1.kakaocdn.net/thumb/R640x640.q70/?fname=http://t1.kakaocdn.net/account_images/default_profile.jpeg"
                     }
                     alt="프로필 이미지"
                     className="w-20 h-20 rounded-full object-cover border-4 border-blue-500 shadow-lg"
                     onError={(e) => {
                       e.currentTarget.src =
-                        "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTUwIiBoZWlnaHQ9IjE1MCIgdmlld0JveD0iMCAwIDE1MCAxNTAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIxNTAiIGhlaWdodD0iMTUwIiBmaWxsPSIjNjY3ZWVhIi8+Cjx0ZXh0IHg9Ijc1IiB5PSI4MCIgZm9udC1mYW1pbHk9IkFyaWFsLCBzYW5zLXNlcmlmIiBmb250LXNpemU9IjE0IiBmaWxsPSJ3aGl0ZSIgdGV4dC1hbmNob3I9Im1pZGRsZSI+7YWM7Zek7JqUPC90ZXh0Pgo8L3N2Zz4K";
+                        "http://img1.kakaocdn.net/thumb/R640x640.q70/?fname=http://t1.kakaocdn.net/account_images/default_profile.jpeg";
                     }}
                   />
                   <div>
@@ -488,12 +490,53 @@ const TestMain: React.FC = () => {
             <ProfileImageEditor
               currentImageUrl={
                 userInfo.profileImageUrl ||
-                "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTUwIiBoZWlnaHQ9IjE1MCIgdmlld0JveD0iMCAwIDE1MCAxNTAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIxNTAiIGhlaWdodD0iMTUwIiBmaWxsPSIjNjY3ZWVhIi8+Cjx0ZXh0IHg9Ijc1IiB5PSI4MCIgZm9udC1mYW1pbHk9IkFyaWFsLCBzYW5zLXNlcmlmIiBmb250LXNpemU9IjE0IiBmaWxsPSJ3aGl0ZSIgdGV4dC1hbmNob3I9Im1pZGRsZSI+7YWM7Zek7JqUPC90ZXh0Pgo8L3N2Zz4K"
+                "http://img1.kakaocdn.net/thumb/R640x640.q70/?fname=http://t1.kakaocdn.net/account_images/default_profile.jpeg"
               }
               userId={userInfo.userId}
               onImageUpdate={handleProfileImageUpdate}
               onStatusChange={setStatus}
             />
+          </div>
+
+          {/* 계정 정보 변경 섹션 */}
+          <div className="bg-white rounded-xl shadow-lg p-6">
+            <h2 className="text-xl font-semibold text-gray-800 mb-4">
+              계정 정보 변경
+            </h2>
+            <div className="space-y-4">
+              {/* 비밀번호 변경 */}
+              <div>
+                <h3 className="text-lg font-medium text-gray-700 mb-3">
+                  비밀번호 변경
+                </h3>
+                <PasswordChangeForm
+                  userId={userInfo.userId}
+                  onStatusChange={(message, type) =>
+                    setStatus({ message, type })
+                  }
+                />
+              </div>
+
+              {/* 이메일 변경 */}
+              <div className="pt-4 border-t border-gray-200">
+                <h3 className="text-lg font-medium text-gray-700 mb-3">
+                  이메일 변경
+                </h3>
+                <EmailChangeForm
+                  userId={userInfo.userId}
+                  currentEmail={userInfo.userEmail}
+                  onStatusChange={(message, type) =>
+                    setStatus({ message, type })
+                  }
+                  onEmailChange={(newEmail) => {
+                    setUserInfo((prev) => ({
+                      ...prev,
+                      userEmail: newEmail,
+                    }));
+                  }}
+                />
+              </div>
+            </div>
           </div>
         </div>
 
@@ -509,8 +552,9 @@ const TestMain: React.FC = () => {
               <p className="text-sm text-blue-600">
                 이미지 URL의 유효성을 실시간으로 확인할 수 있습니다.
               </p>
+              
             </div>
-
+                  
             <div className="bg-green-50 rounded-lg p-4">
               <h3 className="font-semibold text-green-800 mb-2">
                 실시간 미리보기
