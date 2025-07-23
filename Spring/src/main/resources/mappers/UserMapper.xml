@@ -139,6 +139,13 @@
         WHERE USER_ID = #{userId,jdbcType=VARCHAR}
     </update>
 
+    <!-- Provider 업데이트 -->
+    <update id="updateProvider" parameterType="map">
+        UPDATE USERS SET
+            PROVIDER = #{provider,jdbcType=VARCHAR}
+        WHERE USER_ID = #{userId,jdbcType=VARCHAR}
+    </update>
+
     <!-- 프로필 이미지 URL 업데이트 -->
     <update id="updateProfileImageUrl" parameterType="map">
         UPDATE USERS SET

@@ -122,4 +122,10 @@ public class UserServiceImpl implements UserServiceInterface {
         log.info("마지막 로그인 시간 업데이트: userId={}", userId);
         userMapper.updateLastLoginTime(userId);
     }
+
+    @Override
+    public void updateProvider(String userId, String provider) {
+        log.info("Provider 업데이트: userId={}, provider={}", userId, provider);
+        userMapper.updateProvider(userId, provider);
+    }
 } 

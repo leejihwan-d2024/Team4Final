@@ -39,4 +39,7 @@ public interface UserServiceInterface {
     
     // 마지막 로그인 시간 업데이트
     void updateLastLoginTime(String userId);
+    
+    // Provider 업데이트
+    void updateProvider(String userId, String provider);
 } 

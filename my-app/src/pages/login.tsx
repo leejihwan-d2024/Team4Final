@@ -384,23 +384,37 @@ const Login: React.FC = () => {
         });
       });
 
+      // 백엔드로 전송할 데이터 준비
+      const kakaoLoginData = {
+        accessToken: response.access_token,
+        userInfo: {
+          id: userInfo.id,
+          email: userInfo.kakao_account?.email,
+          nickname:
+            userInfo.kakao_account?.profile?.nickname ||
+            userInfo.properties?.nickname,
+          profileImage:
+            userInfo.kakao_account?.profile?.profile_image_url ||
+            userInfo.properties?.profile_image,
+        },
+        // deviceInfo는 백엔드에서 자동 생성하므로 제외
+      } as KakaoLoginRequest;
+
+      console.log("=== 백엔드로 전송할 카카오 로그인 데이터 ===");
+      console.log("accessToken:", kakaoLoginData.accessToken);
+      console.log("userInfo.id:", kakaoLoginData.userInfo.id);
+      console.log("userInfo.email:", kakaoLoginData.userInfo.email);
+      console.log("userInfo.nickname:", kakaoLoginData.userInfo.nickname);
+      console.log(
+        "userInfo.profileImage:",
+        kakaoLoginData.userInfo.profileImage
+      );
+      console.log("================================");
+
       // 백엔드로 카카오 로그인 요청
       const loginResponse = await api.post<KakaoLoginResponse>(
         "/api/auth/kakao/login",
-        {
-          accessToken: response.access_token,
-          userInfo: {
-            id: userInfo.id,
-            email: userInfo.kakao_account?.email,
-            nickname:
-              userInfo.kakao_account?.profile?.nickname ||
-              userInfo.properties?.nickname,
-            profileImage:
-              userInfo.kakao_account?.profile?.profile_image_url ||
-              userInfo.properties?.profile_image,
-          },
-          // deviceInfo는 백엔드에서 자동 생성하므로 제외
-        } as KakaoLoginRequest
+        kakaoLoginData
       );
 
       if (loginResponse.status === 200) {

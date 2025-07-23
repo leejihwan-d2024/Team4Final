@@ -39,6 +39,9 @@ public interface UserMapper {
     // 마지막 로그인 시간 업데이트
     void updateLastLoginTime(String userId);
     
+    // Provider 업데이트
+    int updateProvider(String userId, String provider);
+    
     // 프로필 이미지 URL 업데이트
     int updateProfileImageUrl(String userId, String imageUrl);
     
