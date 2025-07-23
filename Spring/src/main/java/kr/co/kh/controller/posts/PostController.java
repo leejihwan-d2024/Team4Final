@@ -30,6 +30,11 @@ public class PostController {
         }
         return ResponseEntity.ok(post); // 정상 응답
     }
+    @GetMapping("/author/{author}")
+    public ResponseEntity<List<PostVO>> getPostsByAuthor(@PathVariable String author) {
+        List<PostVO> posts = postService.getPostByAuthor(author);
+        return ResponseEntity.ok(posts);
+    }
 
 
     @PostMapping

@@ -73,29 +73,33 @@ public class ProfileImageServiceImpl implements ProfileImageService {
         }
 
         try {
-            UserVO user = userMapper.selectUserById(userId).orElse(null);
-            if (user == null) {
+            // Map으로 반환되는 새로운 방식 사용
+            java.util.Map<String, Object> result = userMapper.getProfileImageUrl(userId);
+            if (result == null) {
                 log.warn("사용자를 찾을 수 없음: userId={}", userId);
                 return getDefaultProfileImageUrl();
             }
 
-            // 일반 사용자이고 USER_PROFILE_IMAGE_URL이 null이거나 비어있으면 카카오 기본 이미지 반환
-            if (!isKakaoUser(user) && (user.getUserProfileImageUrl() == null || user.getUserProfileImageUrl().trim().isEmpty())) {
-                log.info("일반 사용자 프로필 이미지가 null이므로 카카오 기본 이미지 반환: userId={}", userId);
+            String imageUrl = (String) result.get("USER_PROFILE_IMAGE_URL");
+            String provider = (String) result.get("PROVIDER");
+            
+            log.info("프로필 이미지 URL 조회 결과: userId={}, imageUrl={}, provider={}", userId, imageUrl, provider);
+
+            // provider가 KAKAO인 경우 카카오 사용자로 처리
+            if ("KAKAO".equals(provider)) {
+                if (imageUrl != null && !imageUrl.trim().isEmpty()) {
+                    return imageUrl;
+                }
+                // 카카오 사용자는 기본 이미지 사용
+                return getDefaultProfileImageUrl();
+            } else {
+                // 일반 사용자 (LOCAL)
+                if (imageUrl != null && !imageUrl.trim().isEmpty()) {
+                    return imageUrl;
+                }
+                // 일반 사용자도 기본 이미지 사용
                 return getDefaultProfileImageUrl();
             }
-
-            // 카카오 사용자는 기존 로직 유지
-            if (isKakaoUser(user)) {
-                if (user.getUserProfileImageUrl() != null && !user.getUserProfileImageUrl().trim().isEmpty()) {
-                    return user.getUserProfileImageUrl();
-                }
-                // 카카오 사용자는 카카오 프로필 이미지나 기본 이미지 사용
-                return user.getKakaoProfileImageUrl() != null ? user.getKakaoProfileImageUrl() : getDefaultProfileImageUrl();
-            }
-
-            // 일반 사용자의 경우 USER_PROFILE_IMAGE_URL 반환
-            return user.getUserProfileImageUrl() != null ? user.getUserProfileImageUrl() : getDefaultProfileImageUrl();
 
         } catch (Exception e) {
             log.error("프로필 이미지 URL 조회 실패: userId={}", userId, e);

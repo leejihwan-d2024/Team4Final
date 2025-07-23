@@ -104,5 +104,21 @@
         WHERE POST_ID = #{postId}
     </update>
 
+    <select id="getPostByAuthor" resultType="kr.co.kh.vo.PostVO">
+        SELECT
+            POST_ID AS postId,
+            TITLE AS title,
+            AUTHOR AS author,
+            CONTENT_TEXT AS contentText,
+            CREATED_AT AS createdAt,
+            VIEW_COUNT AS viewCount,
+            ATTACHMENT_URL AS attachmentUrl,
+            LIKE_COUNT AS likeCount,
+            UPDATED_AT AS updatedAt,
+            CATEGORY AS category
+        FROM BOARD_POSTS
+        WHERE AUTHOR = #{author}
+    </select>
+
 
 </mapper>

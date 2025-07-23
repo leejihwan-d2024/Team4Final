@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="kr.co.kh.mapper.RankingMapper">
+    <!-- 1. 이번주 활동왕 -->
+    <select id="getWeeklyDistanceRanking" resultType="kr.co.kh.vo.RankingVO">
+        SELECT
+        ua.USER_ID,
+        u.USER_NN AS userNn,
+        SUM(ua.DISTANCE) AS totalDistance
+        FROM USER_ACTIVITY ua
+        JOIN USERS u ON ua.USER_ID = u.USER_ID
+        WHERE ua.ACTIVITY_DATE >= TRUNC(SYSDATE, 'IW')
+        AND ua.ACTIVITY_DATE &lt; TRUNC(SYSDATE, 'IW') + 7
+        GROUP BY ua.USER_ID, u.USER_NN
+        ORDER BY totalDistance DESC
+        FETCH FIRST 3 ROWS ONLY
+    </select>
+
+    <!-- 2. 이번달 활동왕 -->
+    <select id="getMonthlyDistanceRanking" resultType="kr.co.kh.vo.RankingVO">
+        SELECT
+        ua.USER_ID,
+        u.USER_NN AS userNn,
+        SUM(ua.DISTANCE) AS totalDistance
+        FROM USER_ACTIVITY ua
+        JOIN USERS u ON ua.USER_ID = u.USER_ID
+        WHERE ua.ACTIVITY_DATE >= TRUNC(SYSDATE, 'MM')
+        AND ua.ACTIVITY_DATE &lt; ADD_MONTHS(TRUNC(SYSDATE, 'MM'), 1)
+        GROUP BY ua.USER_ID, u.USER_NN
+        ORDER BY totalDistance DESC
+        FETCH FIRST 3 ROWS ONLY
+    </select>
+
+
+    <!-- 3. 이번주 게시글 활동왕 -->
+    <select id="getWeeklyPostRanking" resultType="kr.co.kh.vo.RankingVO">
+        SELECT
+        bp.AUTHOR AS USER_ID,
+        u.USER_NN AS userNn,
+        COUNT(*) AS postCount
+        FROM BOARD_POSTS bp
+        JOIN USERS u ON bp.AUTHOR = u.USER_ID
+        WHERE bp.CREATED_AT >= TRUNC(SYSDATE, 'IW')
+        AND bp.CREATED_AT &lt; TRUNC(SYSDATE, 'IW') + 7
+        GROUP BY bp.AUTHOR, u.USER_NN
+        ORDER BY postCount DESC
+        FETCH FIRST 3 ROWS ONLY
+    </select>
+
+    <!-- 4. 업적왕 -->
+    <select id="getAchievementRanking" resultType="kr.co.kh.vo.RankingVO">
+        SELECT
+        up.USER_ID,
+        u.USER_NN AS userNn,
+        COUNT(*) AS achvCount,
+        SUM(a.ACHV_MAX_POINT) AS achvScore
+        FROM USER_ACHV_PROGRESS up
+        JOIN USERS u ON up.USER_ID = u.USER_ID
+        JOIN ACHV a ON up.ACHV_ID = a.ACHV_ID
+        WHERE up.IS_COMPLETED = 'Y'
+        GROUP BY up.USER_ID, u.USER_NN
+        ORDER BY achvScore DESC
+        FETCH FIRST 3 ROWS ONLY
+    </select>
+
+</mapper>

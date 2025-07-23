@@ -43,7 +43,7 @@ public interface UserMapper {
     int updateProfileImageUrl(String userId, String imageUrl);
     
     // 프로필 이미지 URL 조회
-    String getProfileImageUrl(String userId);
+    java.util.Map<String, Object> getProfileImageUrl(String userId);
     
     // 프로필 이미지 URL 저장 (새로운 URL 추가)
     int saveProfileImageUrl(String userId, String imageUrl);

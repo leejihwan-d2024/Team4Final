@@ -1,6 +1,9 @@
 import { useState } from "react";
-
-const ToggleBox: React.FC = () => {
+import RecentMeasureList from "./RecentMeasureList";
+interface ToggleBoxProps {
+  userId: string | undefined;
+}
+const ToggleBox: React.FC<ToggleBoxProps> = ({ userId }) => {
   const [active, setActive] = useState<"최근활동" | "업적">("최근활동");
 
   return (
@@ -34,7 +37,15 @@ const ToggleBox: React.FC = () => {
           </button>
         ))}
       </div>
-      <div>{active === "최근활동" ? <div>A 내용</div> : <div>B 내용</div>}</div>
+      <div>
+        {active === "최근활동" ? (
+          <div>
+            <RecentMeasureList userId={userId || ""} />
+          </div>
+        ) : (
+          <div>B 내용</div>
+        )}
+      </div>
     </div>
   );
 };

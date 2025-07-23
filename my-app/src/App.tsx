@@ -37,6 +37,8 @@ import ResetPasswordPage from "./pages/ResetPasswordPage";
 import "./auth.css";
 import "./App.css";
 import MyPage from "./mypage/MyPage";
+import RankingPage from "./components/RankingPage";
+import PostByAuthorWrapper from "./components/PostByAuthorWrapper";
 function App() {
   const [posts, setPosts] = useState<Post[]>([]);
   const [selectedPost, setSelectedPost] = useState<Post | null>(null);
@@ -132,6 +134,7 @@ function App() {
         <Route
           path=""
           element={
+            /*
             <>
               <Link to="FirstPage">첫페이지로</Link>
               <Link to="/MainPage2">2번째 매인</Link>
@@ -151,6 +154,8 @@ function App() {
               <br />
               <Link to="/main">메인으로 이동</Link>
             </>
+            */
+            <MainPage />
           }
         />
         <Route
@@ -201,6 +206,9 @@ function App() {
         <Route path="/find-password" element={<FindPasswordPage />} />
         <Route path="/reset-password" element={<ResetPasswordPage />} />
         <Route path="/mypage" element={<MyPage />} />
+        <Route path="/mypage/:UserId" element={<MyPage />} />
+        <Route path="/ranking" element={<RankingPage />} />
+        <Route path="/posts/author" element={<PostByAuthorWrapper />}></Route>
       </Routes>
     </BrowserRouter>
   );
