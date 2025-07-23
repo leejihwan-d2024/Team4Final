@@ -1,18 +1,15 @@
 package kr.co.kh.controller.cmmon;
 
-import kr.co.kh.achv.entity.Achv;
 import kr.co.kh.annotation.CurrentUser;
 import kr.co.kh.model.CustomUserDetails;
 import kr.co.kh.model.dto.RewardResponse;
 import kr.co.kh.service.AchievementService;
 import kr.co.kh.service.RewardService;
-import kr.co.kh.service.RewardService.RewardResult;
 import kr.co.kh.service.UserProgressService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -32,28 +29,51 @@ public class AchvController {
 
     @Autowired
     private RewardService rewardService;
+
     private String userId;
 
-    // 전체 유저 업적 리스트 조회
+    // ✅ 전체 유저 업적 리스트 조회 (userId가 없으면 전체, 있으면 특정 유저)
     @GetMapping
     public List<UserAchvProgressDto> getAllAchvevements(@RequestParam(required = false) String userId) {
         if (userId != null) {
-            return userProgressService.getUserProgress(userId); // ✅ 여기에 연결
+            return userProgressService.getUserProgress(userId);
         }
-        return achievementService.getAllAchvevements(); // 기본 전체 업적만
+        return achievementService.getAllAchvevements();
     }
 
-    // 특정 유저 업적 진행 상태 조회
+    // ✅ 현재 로그인한 유저의 전체 업적 진행 상태 조회
     @GetMapping("/user")
     public List<UserAchvProgressDto> getUserProgress(@CurrentUser CustomUserDetails user) {
-        log.info("🔥 CurrentUser: {}", user); // null 확인
+        log.info("🔥 CurrentUser: {}", user);
         if (user == null) {
             throw new RuntimeException("로그인 정보가 없습니다.");
         }
         return userProgressService.getUserProgress(user.getUserId());
     }
 
-    // 테스트용 임시 데이터 반환
+    // ✅ 현재 로그인한 유저의 "달성한" 업적만 조회
+    @GetMapping("/completed")
+    public List<UserAchvProgressDto> getCompletedAchievements(@CurrentUser CustomUserDetails user) {
+        log.info("🔥 [완료 업적 조회] CurrentUser: {}", user);
+        if (user == null) {
+            throw new RuntimeException("로그인 정보가 없습니다.");
+        }
+        return userProgressService.getCompletedAchievements(user.getUserId());
+    }
+
+    // ✅ 현재 로그인한 유저가 받은 뱃지 목록을 JSON으로 반환
+    // name (업적명), date (달성일), badgeImageUrl (뱃지 이미지), badgeName (뱃지 이름)
+    @GetMapping("/badges")
+    public List<Map<String, Object>> getUserBadges(@CurrentUser CustomUserDetails user) {
+        List<Map<String, Object>> badges = userProgressService.getUserBadges(user.getUserId());
+        for (Map<String, Object> badge : badges) {
+            log.info("🎖️ badge = {}", badge); // ✅ date 포함되어야 함
+        }
+        return badges;
+    }
+
+
+    // ✅ 테스트용 임시 데이터 반환
     @GetMapping("/test")
     public List<Map<String, Object>> getAllAchvevements() {
         return List.of(
@@ -78,7 +98,7 @@ public class AchvController {
         );
     }
 
-    // 업적 진행도 업데이트
+    // ✅ 업적 진행도 업데이트
     @PostMapping("/progress")
     public void updateProgress(
             @RequestParam String userId,
@@ -88,7 +108,6 @@ public class AchvController {
         userProgressService.updateProgress(userId, achvId, value);
     }
 
-    // ✅ 보상 요청 처리 (파라미터명 통일: achvId 사용)
     // ✅ 보상 요청 처리 - JSON 형태의 RewardResponse 반환
     @GetMapping("/reward")
     public ResponseEntity<RewardResponse> claimReward(

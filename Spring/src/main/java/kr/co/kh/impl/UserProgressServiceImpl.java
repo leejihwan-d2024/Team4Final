@@ -1,6 +1,5 @@
 package kr.co.kh.impl;
 
-
 import kr.co.kh.controller.cmmon.UserAchvProgressDto;
 import kr.co.kh.mapper.UserProgressMapper;
 import kr.co.kh.model.vo.RewardVO;
@@ -14,6 +13,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Service
@@ -22,17 +22,20 @@ import java.util.stream.Collectors;
 public class UserProgressServiceImpl implements UserProgressService {
 
     private final UserAchvProgressRepository userAchvProgressRepository;
-    private final UserProgressMapper userProgressMapper; // ✅ 추가
+    private final UserProgressMapper userProgressMapper; // ✅ MyBatis 매퍼
     private final RewardMapper rewardMapper;
     private final AchievementService achievementService;
 
+    /**
+     * ✅ 유저 전체 업적 진행 상태 조회
+     */
     @Override
     public List<UserAchvProgressDto> getUserProgress(String userId) {
         // 먼저 JPA로 진행 데이터 조회
         List<UserAchvProgress> progressList = userAchvProgressRepository.findByUserId(userId);
 
         if (!progressList.isEmpty()) {
-            // 진행 데이터가 있을 경우 JPA + 보상 수령 여부 계산
+            // JPA + 보상 수령 여부 계산
             return progressList.stream().map(p -> {
                 String achvId = p.getAchv().getAchvId();
                 List<RewardVO> rewards = rewardMapper.findRewardByAchvId(achvId);
@@ -77,8 +80,29 @@ public class UserProgressServiceImpl implements UserProgressService {
         }).collect(Collectors.toList());
     }
 
+    /**
+     * ✅ 유저가 완료한 업적(진행률 100%)만 필터링하여 조회
+     */
+    @Override
+    public List<UserAchvProgressDto> getCompletedAchievements(String userId) {
+        return getUserProgress(userId).stream()
+                .filter(dto -> dto.getCurrentValue() >= dto.getAchvMaxPoint()) // 완료 조건: 현재값 >= 최대값
+                .collect(Collectors.toList());
+    }
+
+    /**
+     * ✅ 업적 진행도 업데이트 (추가 누적 처리)
+     */
     @Override
     public void updateProgress(String userId, String achvId, int progressValue) {
+        // 이미 해당 유저의 해당 업적 진행도가 있는지 확인 후 업데이트 로직 수행
+        userProgressMapper.updateProgress(userId, achvId, progressValue);
+        log.info("✅ [{}]의 [{}] 업적 진행도 {}만큼 업데이트 완료", userId, achvId, progressValue);
+    }
 
+    @Override
+    public List<Map<String, Object>> getUserBadges(String userId) {
+        log.info("🎖️ 유저 뱃지 조회: {}", userId);
+        return userProgressMapper.getUserBadges(userId);
     }
 }
