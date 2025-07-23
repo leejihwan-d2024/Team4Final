@@ -132,7 +132,7 @@ const LocationTracker = () => {
           pointerEvents: tracking ? "auto" : "none", // 클릭 막기
         }}
       >
-        <PathMap measurementId={7} />
+        <PathMap />
       </div>
 
       {/* 버튼 + 타이머: 중앙 레이어 */}
