@@ -179,6 +179,9 @@ public class AuthService {
         log.info("사용자 이름: {}", customUserDetails.getName());
         log.info("================================");
         
+        // provider가 null인 사용자들을 LOCAL로 업데이트 (완전 비활성화 - 활성화시 코드를 다시 주석처리해도 자체 문제가 해결되지 않음. 영구봉인!!)
+        // updateProviderIfNullSimple(customUserDetails.getUserId());
+        
         String token = tokenProvider.generateToken(customUserDetails);
         
         log.info("=== AuthService: JWT 토큰 생성 완료 ===");
@@ -186,6 +189,101 @@ public class AuthService {
         log.info("================================");
         
         return token;
+    }
+
+    /**
+     * provider가 null인 사용자를 카카오/일반 사용자에 따라 업데이트
+     * @param userId
+     */
+    private void updateProviderIfNull(String userId) {
+        log.info("=== Provider 업데이트 시작: userId={} ===", userId);
+        try {
+            Optional<UserVO> userOpt = userServiceInterface.getUserById(userId);
+            if (userOpt.isPresent()) {
+                UserVO user = userOpt.get();
+                log.info("사용자 정보 조회 성공: userId={}, 현재 provider={}", userId, user.getProvider());
+                
+                if (user.getProvider() == null || user.getProvider().trim().isEmpty()) {
+                    String provider = determineProvider(userId);
+                    log.info("Provider가 null인 사용자 발견: userId={}, provider를 {}로 업데이트", userId, provider);
+                    
+                    // 업데이트 전 사용자 정보 로그
+                    log.info("업데이트 전 사용자 정보: userId={}, userNn={}, userEmail={}, provider={}", 
+                        user.getUserId(), user.getUserNn(), user.getUserEmail(), user.getProvider());
+                    
+                    user.setProvider(provider);
+                    log.info("Provider 설정 완료: {}", provider);
+                    
+                    try {
+                        userServiceInterface.updateUser(user);
+                        log.info("DB 업데이트 완료: userId={}, provider={}", userId, provider);
+                    } catch (Exception updateException) {
+                        log.error("updateUser 호출 중 오류: userId={}", userId, updateException);
+                        log.error("updateUser 오류 상세: {}", updateException.getMessage());
+                        throw updateException;
+                    }
+                } else {
+                    log.info("Provider가 이미 설정됨: userId={}, provider={}", userId, user.getProvider());
+                }
+            } else {
+                log.warn("사용자를 찾을 수 없음: userId={}", userId);
+            }
+        } catch (Exception e) {
+            log.error("Provider 업데이트 중 오류 발생: userId={}", userId, e);
+            log.error("오류 상세: {}", e.getMessage());
+            log.error("오류 스택 트레이스:", e);
+            // provider 업데이트 실패해도 로그인은 계속 진행
+        }
+        log.info("=== Provider 업데이트 종료: userId={} ===", userId);
+    }
+
+    /**
+     * userId를 기반으로 provider를 결정
+     * @param userId
+     * @return "KAKAO" 또는 "LOCAL"
+     */
+    private String determineProvider(String userId) {
+        // 카카오 사용자 ID 패턴: "kakao_" + 카카오ID
+        if (userId != null && userId.startsWith("kakao_")) {
+            return "KAKAO";
+        }
+        // 그 외는 일반 사용자
+        return "LOCAL";
+    }
+
+    /**
+     * provider가 null인 사용자를 간단한 방법으로 업데이트
+     * @param userId
+     */
+    private void updateProviderIfNullSimple(String userId) {
+        log.info("=== 간단한 Provider 업데이트 시작: userId={} ===", userId);
+        try {
+            // 사용자 정보 조회
+            Optional<UserVO> userOpt = userServiceInterface.getUserById(userId);
+            if (userOpt.isPresent()) {
+                UserVO user = userOpt.get();
+                log.info("사용자 정보 조회 성공: userId={}, 현재 provider={}", userId, user.getProvider());
+                
+                // provider가 null이거나 빈 문자열인 경우에만 업데이트
+                if (user.getProvider() == null || user.getProvider().trim().isEmpty()) {
+                    String provider = determineProvider(userId);
+                    log.info("Provider가 null인 사용자 발견: userId={}, provider를 {}로 업데이트", userId, provider);
+                    
+                    // 직접 provider만 업데이트
+                    userServiceInterface.updateProvider(userId, provider);
+                    log.info("Provider 업데이트 완료: userId={}, provider={}", userId, provider);
+                } else {
+                    log.info("Provider가 이미 설정됨: userId={}, provider={}", userId, user.getProvider());
+                }
+            } else {
+                log.warn("사용자를 찾을 수 없음: userId={}", userId);
+            }
+        } catch (Exception e) {
+            log.error("간단한 Provider 업데이트 중 오류 발생: userId={}", userId, e);
+            log.error("오류 상세: {}", e.getMessage());
+            // provider 업데이트 실패해도 로그인은 계속 진행
+        }
+        log.info("=== 간단한 Provider 업데이트 종료: userId={} ===", userId);
     }
 
     /**
@@ -227,7 +325,7 @@ public class AuthService {
             }
         }
 
-        // 기존 refresh token 삭제 (임시로 주석 처리)
+        // 기존 refresh token 삭제 (임시로 주석 처리)?
         // refreshTokenService.deleteByUserIdAndDeviceId(userId, deviceInfo.getDeviceId());
         log.info("기존 refresh token 삭제 완료");
 
@@ -779,6 +877,51 @@ public class AuthService {
         } catch (Exception e) {
             log.error("테스트 이메일 발송 실패: {}", email, e);
             return false;
+        }
+    }
+
+    /**
+     * 로그인 후 PROVIDER 업데이트 (비동기 호출용)
+     * @param userId 사용자 ID
+     * @param provider 업데이트할 PROVIDER 값
+     */
+    public void updateProviderAfterLogin(String userId, String provider) {
+        log.info("=== PROVIDER 업데이트 시작 ===");
+        log.info("사용자 ID: {}", userId);
+        log.info("업데이트할 PROVIDER: {}", provider);
+        
+        try {
+            // 사용자 정보 조회
+            Optional<UserVO> userOpt = userServiceInterface.getUserById(userId);
+            if (userOpt.isPresent()) {
+                UserVO user = userOpt.get();
+                log.info("현재 PROVIDER: {}", user.getProvider());
+                
+                // PROVIDER가 null이거나 다른 값인 경우에만 업데이트
+                if (user.getProvider() == null || !user.getProvider().equals(provider)) {
+                    user.setProvider(provider);
+                    userServiceInterface.updateUser(user);
+                    log.info("=== PROVIDER 업데이트 완료 ===");
+                    log.info("사용자 ID: {}", userId);
+                    log.info("업데이트된 PROVIDER: {}", provider);
+                    log.info("================================");
+                } else {
+                    log.info("=== PROVIDER 업데이트 불필요 ===");
+                    log.info("사용자 ID: {}", userId);
+                    log.info("현재 PROVIDER: {} (이미 올바른 값)", user.getProvider());
+                    log.info("================================");
+                }
+            } else {
+                log.error("=== PROVIDER 업데이트 실패 ===");
+                log.error("사용자를 찾을 수 없음: {}", userId);
+                log.error("================================");
+            }
+        } catch (Exception e) {
+            log.error("=== PROVIDER 업데이트 중 오류 발생 ===");
+            log.error("사용자 ID: {}", userId);
+            log.error("오류: {}", e.getMessage());
+            log.error("================================");
+            throw e;
         }
     }
 

@@ -38,6 +38,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import java.util.Optional;
+import java.util.concurrent.CompletableFuture;
 
 @RestController
 @CrossOrigin(origins = {"http://localhost:3000", "http://200.200.200.72:3000"})
@@ -168,6 +169,31 @@ public class AuthController {
                     log.info("Refresh 토큰 길이: {} characters", refreshToken.length());
                     log.info("토큰 만료 시간: {} ms", tokenProvider.getExpiryDuration());
                     log.info("================================");
+                    
+                    // 일반 사용자의 경우 PROVIDER를 비동기적으로 업데이트
+                    String userId = customUserDetails.getUserId();
+                    if (!userId.startsWith("kakao_")) {
+                        log.info("=== 일반 사용자 PROVIDER 업데이트 시작 ===");
+                        log.info("사용자 ID: {}", userId);
+                        log.info("업데이트할 PROVIDER: LOCAL");
+                        log.info("================================");
+                        
+                        // 비동기적으로 PROVIDER 업데이트
+                        CompletableFuture.runAsync(() -> {
+                            try {
+                                authService.updateProviderAfterLogin(userId, "LOCAL");
+                                log.info("=== 일반 사용자 PROVIDER 업데이트 완료 ===");
+                                log.info("사용자 ID: {}", userId);
+                                log.info("업데이트된 PROVIDER: LOCAL");
+                                log.info("================================");
+                            } catch (Exception e) {
+                                log.error("=== 일반 사용자 PROVIDER 업데이트 실패 ===");
+                                log.error("사용자 ID: {}", userId);
+                                log.error("오류: {}", e.getMessage());
+                                log.error("================================");
+                            }
+                        });
+                    }
                     
                     return ResponseEntity.ok(response);
                 })
@@ -361,9 +387,12 @@ public class AuthController {
     @PostMapping("/kakao/login")
     public ResponseEntity<?> kakaoLogin(@Valid @RequestBody KakaoLoginRequest kakaoLoginRequest) {
         log.info("=== 카카오 로그인 요청 시작 ===");
-        log.info("사용자 이메일: {}", kakaoLoginRequest.getUserInfo().getEmail());
+        log.info("액세스 토큰: {}", kakaoLoginRequest.getAccessToken());
+        log.info("액세스 토큰 길이: {} characters", kakaoLoginRequest.getAccessToken() != null ? kakaoLoginRequest.getAccessToken().length() : 0);
         log.info("카카오 ID: {}", kakaoLoginRequest.getUserInfo().getId());
-        log.info("액세스 토큰 길이: {} characters", kakaoLoginRequest.getAccessToken().length());
+        log.info("사용자 이메일: {}", kakaoLoginRequest.getUserInfo().getEmail());
+        log.info("사용자 닉네임: {}", kakaoLoginRequest.getUserInfo().getNickname());
+        log.info("프로필 이미지: {}", kakaoLoginRequest.getUserInfo().getProfileImage());
         log.info("================================");
         
         return authService.kakaoLogin(kakaoLoginRequest)
@@ -406,6 +435,30 @@ public class AuthController {
                                 log.info("Refresh 토큰 길이: {} characters", refreshToken.length());
                                 log.info("토큰 만료 시간: {} ms", tokenProvider.getExpiryDuration());
                                 log.info("================================");
+                                
+                                // 카카오 사용자의 경우 PROVIDER를 비동기적으로 업데이트
+                                if (userId.startsWith("kakao_")) {
+                                    log.info("=== 카카오 사용자 PROVIDER 업데이트 시작 ===");
+                                    log.info("사용자 ID: {}", userId);
+                                    log.info("업데이트할 PROVIDER: KAKAO");
+                                    log.info("================================");
+                                    
+                                    // 비동기적으로 PROVIDER 업데이트
+                                    CompletableFuture.runAsync(() -> {
+                                        try {
+                                            authService.updateProviderAfterLogin(userId, "KAKAO");
+                                            log.info("=== 카카오 사용자 PROVIDER 업데이트 완료 ===");
+                                            log.info("사용자 ID: {}", userId);
+                                            log.info("업데이트된 PROVIDER: KAKAO");
+                                            log.info("================================");
+                                        } catch (Exception e) {
+                                            log.error("=== 카카오 사용자 PROVIDER 업데이트 실패 ===");
+                                            log.error("사용자 ID: {}", userId);
+                                            log.error("오류: {}", e.getMessage());
+                                            log.error("================================");
+                                        }
+                                    });
+                                }
                                 
                                 return ResponseEntity.ok(response);
                             })
