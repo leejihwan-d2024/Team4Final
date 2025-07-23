@@ -9,15 +9,23 @@ import java.util.List;
 
 public interface PostService {
     List<PostVO> getAllPosts();
+
     PostVO getPostById(Long postId);
+
     void createPost(PostVO postVO);
+
     void updatePost(PostVO postVO);
+
     void deletePost(Long postId);
+
     void increaseLike(Long postId);
+
     void decreaseLike(Long postId);
 
     void deletePostWithComments(Long postId);
 
 
     void increaseViewCount(Long postId);
+
+    List<PostVO> getPostByAuthor(String author);
 }

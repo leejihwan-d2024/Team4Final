@@ -71,5 +71,9 @@ public class PostServiceImpl implements PostService {
         postMapper.increaseViewCount(postId);
     }
 
+    public List<PostVO> getPostByAuthor(String author){
+        return postMapper.getPostByAuthor(author);
+    }
+
 }
 

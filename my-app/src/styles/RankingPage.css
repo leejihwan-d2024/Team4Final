@@ -1,0 +1,47 @@
+.ranking-page {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 24px;
+  font-family: "Segoe UI", sans-serif;
+  color: #2c3e50;
+}
+
+.ranking-block {
+  background: #f9f9f9;
+  border-radius: 16px;
+  padding: 20px;
+  margin-bottom: 24px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+.ranking-block h2 {
+  margin-bottom: 12px;
+  color: #34495e;
+}
+
+.ranking-block ol {
+  list-style: none;
+  padding: 0;
+}
+
+.ranking-block li {
+  display: flex;
+  justify-content: space-between;
+  padding: 10px 6px;
+  border-bottom: 1px solid #eaeaea;
+  font-size: 1rem;
+}
+
+.rank-number {
+  width: 80px;
+  font-weight: bold;
+}
+
+.rank-name {
+  flex: 1;
+}
+
+.rank-value {
+  font-weight: 600;
+  color: #2980b9;
+}
