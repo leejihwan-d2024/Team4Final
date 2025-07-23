@@ -19,4 +19,12 @@ public class CrewMemberController {
         crewMemberService.joinCrew(crewMember);
         return ResponseEntity.ok("참가 완료");
     }
+    @GetMapping("/exists")
+    public ResponseEntity<Boolean> checkIfJoined(
+            @RequestParam String crewId,
+            @RequestParam String userId
+    ) {
+        boolean exists = crewMemberService.existsByCrewIdAndUserId(crewId, userId);
+        return ResponseEntity.ok(exists);
+    }
 }

@@ -25,6 +25,15 @@
   margin-bottom: 80px;
 }
 
+/* 버튼 공통 영역 */
+.buttonGroup {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+  margin-bottom: 100px; /* joinButton의 fixed 위치와 겹치지 않게 */
+}
+
+/* 참가하기 버튼 */
 .joinButton {
   position: fixed;
   bottom: 24px;
@@ -41,4 +50,49 @@
 
 .joinButton:hover {
   background-color: #115293;
+}
+
+/* 채팅방 버튼 */
+.chatButton {
+  padding: 12px 24px;
+  background-color: #4caf50;
+  color: white;
+  font-weight: bold;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+}
+
+.chatButton:hover {
+  background-color: #388e3c;
+}
+
+/* 수정 버튼 */
+.editButton {
+  padding: 12px 20px;
+  background-color: #ff9800;
+  color: white;
+  font-weight: bold;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+}
+
+.editButton:hover {
+  background-color: #f57c00;
+}
+
+/* 삭제 버튼 */
+.deleteButton {
+  padding: 12px 20px;
+  background-color: #f44336;
+  color: white;
+  font-weight: bold;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+}
+
+.deleteButton:hover {
+  background-color: #d32f2f;
 }

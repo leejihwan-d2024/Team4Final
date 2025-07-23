@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Map;
 
 @Service
 @RequiredArgsConstructor
@@ -39,5 +40,13 @@ public class RunningCrewService {
     public void deleteCrew(String crewId) { // 변경됨
         crewMapper.deleteCrewMembersByCrewId(crewId); // 변경됨
         crewMapper.deleteCrew(crewId);                // 변경됨
+    }
+
+    public List<Map<String, Object>> getRecentJoinedCrews(String userId) {
+        return crewMapper.getRecentJoinedCrews(userId);
+    }
+
+    public List<Map<String, Object>> getRecentCreatedCrews(String userId) {
+        return crewMapper.getRecentCreatedCrews(userId);
     }
 }

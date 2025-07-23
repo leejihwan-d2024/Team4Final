@@ -16,7 +16,7 @@
         ORDER BY SENT_AT DESC
     </select>
 
-    <insert id="insertChatMessage" parameterType="kr.co.kh.model.vo.ChatMessageVO" useGeneratedKeys="true" keyProperty="messageId">
+    <insert id="insertChatMessage" parameterType="kr.co.kh.model.vo.ChatMessageVO" useGeneratedKeys="true" keyProperty="messageId" keyColumn="MESSAGE_ID">
         INSERT INTO CREW_CHAT_MESSAGE (
         CREW_ID,
         SENDER_USER_ID,

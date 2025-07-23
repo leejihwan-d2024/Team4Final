@@ -3,8 +3,10 @@ package kr.co.kh.mapper;
 import kr.co.kh.model.vo.CrewMemberVO;
 import kr.co.kh.model.vo.RunningCrewVO;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
+import java.util.Map;
 
 @Mapper
 public interface RunningCrewMapper {
@@ -27,4 +29,10 @@ public interface RunningCrewMapper {
     void deleteCrew(String crewId);
     // 참가 크루 선삭제
     void deleteCrewMembersByCrewId(String crewId);
-}
+
+    boolean existsByCrewIdAndUserId(@Param("crewId") String crewId, @Param("userId") String userId);
+
+    List<Map<String, Object>> getRecentJoinedCrews(@Param("userId") String userId);
+
+    List<Map<String, Object>> getRecentCreatedCrews(@Param("userId") String userId);
+    }

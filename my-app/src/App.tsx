@@ -25,7 +25,6 @@ import CrewEditPage from "./pages/CrewEditPage";
 import RunningEventCreatePage from "./pages/RunningEventCreatePage"; //  추가
 import RunningEventDetailPage from "./pages/RunningEventDetailPage";
 import ChatRoom from "./pages/ChatRoom";
-import ChatRoomPage from "./pages/ChatRoomPage";
 import RunningInfo from "./components/RunningInfo";
 import Marathon from "./components/Marathon";
 import Login from "./pages/login";
@@ -194,7 +193,7 @@ function App() {
           element={<RunningEventCreatePage />}
         />{" "}
         <Route path="/events/detail/:id" element={<RunningEventDetailPage />} />
-        <Route path="/chat/:crewId" element={<ChatRoomPage />} />
+        <Route path="/chatroom/:crewId" element={<ChatRoom />} />
         <Route path="/shop" element={<NaverProductList />} />
         <Route path="/liked" element={<LikedProductList />} />
         <Route path="/info" element={<RunningInfo />} />
