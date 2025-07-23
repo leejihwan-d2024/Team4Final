@@ -1,9 +1,14 @@
 package kr.co.kh.vo;
 
 import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
+
 import java.util.Date;
 
 @Data
+@Getter
+@Setter
 public class UserVO {
     // 기본 사용자 정보
     private String userId;           // 사용자 고유 ID

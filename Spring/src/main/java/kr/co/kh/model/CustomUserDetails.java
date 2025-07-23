@@ -1,6 +1,8 @@
 package kr.co.kh.model;
 
 import kr.co.kh.vo.UserVO;
+import lombok.Getter;
+import lombok.Setter;
 import lombok.ToString;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -18,6 +20,8 @@ import java.util.Arrays;
  *
 */
 
+@Getter
+@Setter
 @ToString
 public class CustomUserDetails implements UserDetails {
 
@@ -60,6 +64,14 @@ public class CustomUserDetails implements UserDetails {
     public String getProvider() {
         return userVO.getProvider();
     }
+
+    public int getUserPoint() {
+        return userVO.getUserPoint();
+    }
+    public int getUserActivePoint() {
+        return userVO.getUserActivePoint();
+    }
+
 
     // UserService에서 사용하는 getId() 메서드
     public Long getId() {
