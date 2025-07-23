@@ -60,13 +60,6 @@ function Achv() {
         headers: { Authorization: `Bearer ${token}` },
       });
 
-      const camelCaseBadges = response.data.map((item: any) => ({
-        achvTitle: item.achvTitle ?? item.ACHVTITLE ?? "제목 없음",
-        achievedDate: item.achievedDate ?? item.ACHIEVEDDATE ?? "",
-        badgeImageUrl: item.badgeImageUrl ?? item.BADGEIMAGEURL ?? "",
-        badgeName: item.badgeName ?? item.BADGENAME ?? "",
-      }));
-      console.log("✅ 뱃지 데이터:", camelCaseBadges);
       const data = response.data;
       const mappedData = data.map((item: any) => ({
         id: item.achvId?.toString() ?? item.achv_id ?? "없음",
@@ -92,14 +85,20 @@ function Achv() {
     try {
       const response = await axios.get("/api/achievements/badges", {
         headers: { Authorization: `Bearer ${token}` },
-      });
-      console.log("✅ 뱃지 데이터:", response.data); // 여기
-      setUserBadges(response.data);
+      }); //
+
+      const camelCaseBadges = response.data.map((item: any) => ({
+        achvTitle: item.ACHVTITLE ?? item.achvTitle ?? "제목 없음",
+        achievedDate: item.ACHIEVEDDATE ?? item.achievedDate ?? "",
+        badgeImageUrl: item.BADGEIMAGEURL ?? item.badgeImageUrl ?? "",
+        badgeName: item.BADGENAME ?? item.badgeName ?? "",
+      }));
+
+      setUserBadges(camelCaseBadges);
     } catch (err) {
       console.error("뱃지 목록 로딩 실패:", err);
     }
   };
-
   // ✅ 필터 변경/초기 로딩 시 데이터 가져오기
   useEffect(() => {
     fetchAchievements();
@@ -304,11 +303,15 @@ function Achv() {
           <ul>
             {userBadges.map((badge, idx) => (
               <li key={idx} className="badge-item">
-                <img
-                  src={badge.badgeImageUrl}
-                  alt={badge.badgeName}
-                  className="badge-thumb"
-                />
+                {badge.badgeImageUrl ? (
+                  <img
+                    src={badge.badgeImageUrl}
+                    alt={badge.badgeName}
+                    className="badge-thumb"
+                  />
+                ) : (
+                  <div className="badge-thumb placeholder">No Image</div>
+                )}
                 <div className="badge-info">
                   <strong>{badge.achvTitle}</strong>
                   <span>
