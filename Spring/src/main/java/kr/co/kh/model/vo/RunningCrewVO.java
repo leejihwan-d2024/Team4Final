@@ -2,6 +2,7 @@ package kr.co.kh.model.vo;
 
 import lombok.*;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 @Getter
@@ -23,4 +24,5 @@ public class RunningCrewVO {
     private Integer isOver15;
     private String leaderId;
     private int currentCount;
+    private BigDecimal distance;
 }

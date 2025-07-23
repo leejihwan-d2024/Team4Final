@@ -273,7 +273,7 @@ export default function CrewCreatePage() {
         />
         <input
           name="duration"
-          placeholder="시간 (분)"
+          placeholder="목표시간 (분)"
           value={form.duration}
           onChange={handleChange}
           required
@@ -282,7 +282,7 @@ export default function CrewCreatePage() {
         />
         <input
           name="pace"
-          placeholder="페이스 (분/km)"
+          placeholder="페이스 (1km당 소요시간)"
           value={form.pace}
           onChange={handleChange}
           required

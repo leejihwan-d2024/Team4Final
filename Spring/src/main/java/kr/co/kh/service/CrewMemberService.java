@@ -15,4 +15,8 @@ public class CrewMemberService {
     }
 
 
+    public boolean existsByCrewIdAndUserId(String crewId, String userId) {
+        return crewMemberMapper.existsByCrewIdAndUserId(crewId, userId);
+    }
+
 }

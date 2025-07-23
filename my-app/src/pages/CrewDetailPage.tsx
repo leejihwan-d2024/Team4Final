@@ -29,7 +29,9 @@ export default function CrewDetailPage() {
 
   const [currentUserId, setCurrentUserId] = useState("");
   const [nickname, setNickname] = useState("");
+  const [hasJoined, setHasJoined] = useState(false);
 
+  // 사용자 정보 가져오기
   useEffect(() => {
     const user = localStorage.getItem("user");
     if (user) {
@@ -39,7 +41,7 @@ export default function CrewDetailPage() {
     }
   }, []);
 
-  // ✅ 크루 정보 가져오기
+  // 크루 정보 가져오기
   useEffect(() => {
     const fetchCrew = async () => {
       try {
@@ -53,18 +55,43 @@ export default function CrewDetailPage() {
     fetchCrew();
   }, [id]);
 
-  const handleJoin = async () => {
-    if (!crew) return;
-    try {
-      await api.post("/api/crew-members", {
-        crewId: crew.crewId,
-        userId: currentUserId,
-        status: 1,
-      });
-      alert(`"${crew.crewTitle}"에 참가했습니다!`);
-    } catch (error) {
-      console.error("❌ 참가 실패:", error);
-      alert("크루 참가 중 오류가 발생했습니다.");
+  // 참가 여부 확인
+  useEffect(() => {
+    const checkJoined = async () => {
+      if (crew && currentUserId) {
+        try {
+          const response = await api.get(
+            `/api/crew-members/exists?crewId=${crew.crewId}&userId=${currentUserId}`
+          );
+          setHasJoined(response.data); // true/false
+        } catch (error) {
+          console.error("❌ 참가 여부 확인 실패:", error);
+        }
+      }
+    };
+    checkJoined();
+  }, [crew, currentUserId]);
+
+  // 참가 or 채팅방 입장 함수
+  const handleJoinOrEnterChat = async () => {
+    if (!hasJoined) {
+      if (!crew) return;
+      try {
+        await api.post("/api/crew-members", {
+          crewId: crew.crewId,
+          userId: currentUserId,
+          status: 1,
+        });
+        alert(
+          `"${crew.crewTitle}"에 참가했습니다! 이제 채팅방에 입장할 수 있습니다.`
+        );
+        setHasJoined(true);
+      } catch (error) {
+        console.error("❌ 참가 실패:", error);
+        alert("크루 참가 중 오류가 발생했습니다.");
+      }
+    } else {
+      navigate(`/chatroom/${crew?.crewId}`);
     }
   };
 
@@ -85,7 +112,7 @@ export default function CrewDetailPage() {
 
   const handleEdit = () => {
     alert("수정 페이지로 이동합니다 (미구현)");
-    // 예: navigate(`/crews/${crew.crewId}/edit`);
+    // navigate(`/crews/${crew.crewId}/edit`);
   };
 
   if (!crew) return <div>로딩 중...</div>;
@@ -124,8 +151,6 @@ export default function CrewDetailPage() {
         <p>
           <strong>크루 리더:</strong> {crew.leaderNn}
         </p>
-
-        {/* 추가 정보 */}
         <p>
           <strong>거리:</strong> {crew.distance} km
         </p>
@@ -140,20 +165,26 @@ export default function CrewDetailPage() {
         </p>
       </div>
 
-      <button className={styles.joinButton} onClick={handleJoin}>
-        참가하기
-      </button>
-
-      {isLeader && (
-        <div className={styles.adminButtons}>
-          <button className={styles.editButton} onClick={handleEdit}>
-            ✏ 수정
+      {/* 버튼 렌더링 */}
+      <div className={styles.buttonGroup}>
+        {isLeader ? (
+          <>
+            <button className={styles.editButton} onClick={handleEdit}>
+              ✏ 수정
+            </button>
+            <button className={styles.deleteButton} onClick={handleDelete}>
+              🗑 삭제
+            </button>
+          </>
+        ) : (
+          <button
+            className={hasJoined ? styles.chatButton : styles.joinButton}
+            onClick={handleJoinOrEnterChat}
+          >
+            {hasJoined ? "💬 채팅방 입장" : "참가하기"}
           </button>
-          <button className={styles.deleteButton} onClick={handleDelete}>
-            🗑 삭제
-          </button>
-        </div>
-      )}
+        )}
+      </div>
     </div>
   );
 }
