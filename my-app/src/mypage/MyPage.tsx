@@ -19,8 +19,23 @@ function MyPage() {
     userEmail: user?.userEmail || "",
     userName: user?.userName || user?.userNn || "",
     profileImageUrl: user?.profileImageUrl || "",
+    userPoint: user?.userPoint || "",
+    userActivePoint: user?.userActivePoint || "",
   });
-
+  console.log(
+    userInfo?.userId +
+      "/" +
+      userInfo?.userNn +
+      "/" +
+      userInfo?.userEmail +
+      "/" +
+      userInfo?.userName +
+      "/" +
+      userInfo?.userPoint +
+      "/" +
+      userInfo?.userActivePoint
+  );
+  console.log(userInfo?.userActivePoint + "유저액티브포인트");
   // 로딩 상태 관리
   const [isLoading, setIsLoading] = useState(false);
 
@@ -57,6 +72,8 @@ function MyPage() {
           userName: userData.userNn || "",
           profileImageUrl:
             userData.userProfileImageUrl || profileImageUrl || "",
+          userPoint: user?.userPoint || "",
+          userActivePoint: user?.userActivePoint || "",
         });
       }
     } catch (error) {
@@ -112,11 +129,13 @@ function MyPage() {
         <div
           className="progress-bar-fill"
           style={{
-            width: `59%`,
+            width: `${user?.userActivePoint ?? 0}%`,
             background: "orange",
           }}
         >
-          <span className="progress-text">59%</span>
+          <span className="progress-text">
+            {user?.userActivePoint ?? "0"}점
+          </span>
         </div>
       </div>
       <br />
