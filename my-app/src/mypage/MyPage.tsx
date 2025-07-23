@@ -31,20 +31,7 @@ function MyPage() {
     userPoint: user?.userPoint || "",
     userActivePoint: user?.userActivePoint || "",
   });
-  console.log(
-    userInfo?.userId +
-      "/" +
-      userInfo?.userNn +
-      "/" +
-      userInfo?.userEmail +
-      "/" +
-      userInfo?.userName +
-      "/" +
-      userInfo.userPoint +
-      "/" +
-      userInfo.userActivePoint
-  );
-  console.log(userInfo?.userActivePoint + "유저액티브포인트");
+
   // 로딩 상태 관리
   const [isLoading, setIsLoading] = useState(false);
 
@@ -84,7 +71,6 @@ function MyPage() {
           userPoint: userData?.userPoint || "",
           userActivePoint: userData?.userActivePoint || "",
         });
-        console.log(userData?.userActivePoint + "포인트");
       }
     } catch (error) {
       console.error("사용자 정보 로드 실패:", error);
@@ -125,7 +111,6 @@ function MyPage() {
           userPoint: userData?.userPoint || "",
           userActivePoint: userData?.userActivePoint || "",
         });
-        console.log(userData?.userActivePoint + "포인트");
       }
     } catch (error) {
       console.error("사용자 정보 로드 실패:", error);
