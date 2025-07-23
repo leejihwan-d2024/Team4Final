@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import RecentMeasureList from "./RecentMeasureList";
 import PostsByAuthor from "../components/PostsByAuthor";
 import axios from "../api/axiosInstance";
+import RecentCrewJoinList from "./RecentCrewCreateList";
 
 function isValidDate(value: string) {
   const date = new Date(value);
@@ -100,6 +101,7 @@ const ToggleBox: React.FC<ToggleBoxProps> = ({ userId }) => {
           <div>
             <RecentMeasureList userId={userId || ""} />
             <PostsByAuthor userId={userId} />
+            <RecentCrewJoinList userId={userId || ""} />
           </div>
         ) : (
           <div>

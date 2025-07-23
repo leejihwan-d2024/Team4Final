@@ -265,7 +265,6 @@ const PathMap: React.FC<PathMapProps> = ({
     }
   };
   useEffect(() => {
-    console.log("HELLO");
     const timer = setTimeout(() => {
       CrewId ?? handleLoadCustomPath().catch(() => {});
     }, 1000); // 0.5초 후 실행
