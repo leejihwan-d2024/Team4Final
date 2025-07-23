@@ -2,12 +2,13 @@ import React, { useState, useEffect } from "react";
 import "./achv.css";
 import { useNavigate } from "react-router-dom";
 import axios from "../api/axiosInstance";
+import MainMenu from "../mainpage/MainMenu";
 
 function isValidDate(value: string) {
   const date = new Date(value);
   return !isNaN(date.getTime());
 }
-// 업적 데이터 구조
+
 interface Achievement {
   id: string;
   title: string;
@@ -17,14 +18,12 @@ interface Achievement {
   description: string;
 }
 
-// 보상 API 응답 구조
 interface BadgeRewardResponse {
   result: "SUCCESS" | "ALREADY_CLAIMED" | "NO_REWARD_MAPPING";
   badgeName?: string;
   badgeImageUrl?: string;
 }
 
-// ✅ [추가] 뱃지 조회 API 응답 구조
 interface Badge {
   achvTitle: string;
   achievedDate: string;
@@ -36,22 +35,42 @@ function Achv() {
   const navigate = useNavigate();
   const userId = JSON.parse(localStorage.getItem("user") || "null")?.userId;
   const [achievements, setAchievements] = useState<Achievement[]>([]);
-  const [userBadges, setUserBadges] = useState<Badge[]>([]); // ✅ 뱃지 목록 상태 추가
+  const [userBadges, setUserBadges] = useState<Badge[]>([]);
   const [menuOpen, setMenuOpen] = useState(false);
   const [expandedId, setExpandedId] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [claimingId, setClaimingId] = useState<string | null>(null);
   const [showCompletedOnly, setShowCompletedOnly] = useState(false);
 
-  // ✅ 모달 상태
   const [showRewardModal, setShowRewardModal] = useState(false);
   const [rewardImageUrl, setRewardImageUrl] = useState<string | null>(null);
   const [rewardBadgeName, setRewardBadgeName] = useState<string | null>(null);
 
-  // ✅ 업적 데이터 조회
+  const fetchUserBadges = async () => {
+    const token = localStorage.getItem("token");
+    if (!userId) return;
+
+    try {
+      const response = await axios.get("/api/achievements/badges", {
+        headers: { Authorization: `Bearer ${token}` },
+        params: { userId },
+      });
+
+      const camelCaseBadges = response.data.map((item: any) => ({
+        achvTitle: item.ACHVTITLE ?? item.achvTitle ?? "제목 없음",
+        achievedDate: item.ACHIEVEDDATE ?? item.achievedDate ?? "",
+        badgeImageUrl:
+          item.BADGEIMAGEURL?.trim() || item.badgeImageUrl?.trim() || "",
+        badgeName: item.BADGENAME?.trim() || item.badgeName?.trim() || "",
+      }));
+      setUserBadges(camelCaseBadges);
+    } catch (err) {
+      console.error("❌ 뱃지 목록 로딩 실패:", err);
+    }
+  };
+
   const fetchAchievements = async () => {
     const token = localStorage.getItem("token");
-
     try {
       setLoading(true);
       const url = showCompletedOnly
@@ -60,11 +79,10 @@ function Achv() {
 
       const response = await axios.get(url, {
         headers: { Authorization: `Bearer ${token}` },
-        params: { userId }, // ✅ props로 받은 userId 명시
+        params: { userId },
       });
 
       const data = response.data;
-
       const mappedData = data.map((item: any) => ({
         id: item.achvId?.toString() ?? item.achv_id ?? "없음",
         title: item.achvTitle ?? item.achv_title ?? "제목 없음",
@@ -73,7 +91,6 @@ function Achv() {
         maxPoint: parseInt(item.achvMaxPoint) || 1,
         claimed: item.isCompleted === "Y",
       }));
-
       setAchievements(mappedData);
     } catch (error) {
       console.error("❌ 업적 조회 실패:", error);
@@ -82,11 +99,9 @@ function Achv() {
     }
   };
 
-  // ✅ 필터 변경/초기 로딩 시 데이터 가져오기
   useEffect(() => {
     fetchAchievements();
-    //fetchUserBadges();
-    // ✅ 뱃지도 같이 불러오기
+    fetchUserBadges();
   }, [showCompletedOnly]);
 
   const getProgressPercent = (currentValue: number, maxPoint: number) => {
@@ -99,7 +114,7 @@ function Achv() {
     const token = localStorage.getItem("token");
 
     if (!user || !user.userId) {
-      alert("로그인이 필요합니다. 로그인 페이지로 이동합니다.");
+      alert("로그인이 필요합니다.");
       navigate("/login");
       return;
     }
@@ -123,35 +138,25 @@ function Achv() {
             achv.id === achvId ? { ...achv, claimed: true } : achv
           )
         );
-        //fetchUserBadges(); // ✅ 보상 받은 후 뱃지 다시 불러오기
-      } else if (result.result === "ALREADY_CLAIMED") {
-        alert("이미 보상을 받았습니다.");
+        fetchUserBadges();
       } else {
-        alert("보상 정보가 없습니다.");
+        alert("보상 수령 불가: " + result.result);
       }
     } catch (error) {
-      alert("보상 처리 중 오류가 발생했습니다.");
+      alert("보상 처리 오류");
       console.error(error);
     } finally {
       setClaimingId(null);
     }
   };
 
-  const toggleMenu = () => setMenuOpen((prev) => !prev);
-  const toggleExpand = (id: string) => {
-    setExpandedId((prev) => (prev === id ? null : id));
-  };
-
   return (
     <div className="achievement-page">
       <div className="header">
         <h1>🏆 나의 업적</h1>
-        <button className="menu-button" onClick={toggleMenu}>
-          ☰
-        </button>
+        <MainMenu />
       </div>
 
-      {/* ✅ 필터 버튼 */}
       <div className="filter-bar">
         <button
           className={!showCompletedOnly ? "active" : ""}
@@ -166,37 +171,6 @@ function Achv() {
           달성한 업적만
         </button>
       </div>
-
-      {menuOpen && (
-        <div className="menu-bar">
-          <ul>
-            <li
-              onClick={() => {
-                navigate("/profile");
-                setMenuOpen(false);
-              }}
-            >
-              프로필
-            </li>
-            <li
-              onClick={() => {
-                navigate("/settings");
-                setMenuOpen(false);
-              }}
-            >
-              설정
-            </li>
-            <li
-              onClick={() => {
-                alert("🔒 로그아웃 되었습니다!");
-                setMenuOpen(false);
-              }}
-            >
-              로그아웃
-            </li>
-          </ul>
-        </div>
-      )}
 
       {loading ? (
         <div className="loading">업적을 불러오는 중...</div>
@@ -213,7 +187,9 @@ function Achv() {
               <div
                 key={achv.id}
                 className="achievement-card"
-                onClick={() => toggleExpand(achv.id)}
+                onClick={() =>
+                  setExpandedId((prev) => (prev === achv.id ? null : achv.id))
+                }
               >
                 <div className="achievement-top">
                   <span className="achievement-label">{achv.title}</span>
@@ -224,11 +200,8 @@ function Achv() {
                     disabled={!isClaimable || claimingId === achv.id}
                     onClick={(e) => {
                       e.stopPropagation();
-                      if (!isClaimable) {
-                        alert("아직 조건이 충족되지 않았습니다.");
-                      } else {
-                        handleClaim(achv.id);
-                      }
+                      if (isClaimable) handleClaim(achv.id);
+                      else alert("아직 조건이 충족되지 않았습니다.");
                     }}
                   />
                 </div>
@@ -242,7 +215,7 @@ function Achv() {
                 </div>
                 {expandedId === achv.id && (
                   <div className="achievement-description">
-                    {achv.description?.trim() !== ""
+                    {achv.description?.trim()
                       ? achv.description
                       : "설명이 준비되지 않았습니다."}
                   </div>
@@ -253,7 +226,6 @@ function Achv() {
         </div>
       )}
 
-      {/* ✅ 보상 모달 */}
       {showRewardModal && (
         <div
           className="modal-overlay"
@@ -278,41 +250,22 @@ function Achv() {
         </div>
       )}
 
-      {/* ✅ 내가 획득한 뱃지 섹션 */}
-
       {userBadges.length > 0 && (
-        <div className="badge-section">
+        <div className="badge-list">
           <h2>🎖 내가 획득한 뱃지</h2>
-          <ul>
+          <div className="badge-grid">
             {userBadges.map((badge, idx) => (
-              <li key={idx} className="badge-item">
-                {badge.badgeImageUrl ? (
-                  <img
-                    src={badge.badgeImageUrl}
-                    alt={badge.badgeName}
-                    className="badge-thumb"
-                  />
-                ) : (
-                  <div className="badge-thumb placeholder">No Image</div>
-                )}
-                <div className="badge-info">
-                  <strong>{badge.achvTitle}</strong>
-                  <span>
-                    {isValidDate(badge.achievedDate)
-                      ? new Date(badge.achievedDate).toLocaleDateString(
-                          "ko-KR",
-                          {
-                            year: "numeric",
-                            month: "2-digit",
-                            day: "2-digit",
-                          }
-                        )
-                      : "날짜 없음"}
-                  </span>
+              <div key={idx} className="badge-item">
+                <img src={badge.badgeImageUrl} alt={badge.badgeName} />
+                <div className="badge-name">{badge.badgeName}</div>
+                <div className="badge-date">
+                  {isValidDate(badge.achievedDate)
+                    ? new Date(badge.achievedDate).toLocaleDateString("ko-KR")
+                    : "날짜 없음"}
                 </div>
-              </li>
+              </div>
             ))}
-          </ul>
+          </div>
         </div>
       )}
     </div>

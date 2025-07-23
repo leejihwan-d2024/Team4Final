@@ -299,6 +299,7 @@ body {
 }
 
 /* ✅ 하단 뱃지 리스트 영역 */
+/* ✅ 하단 뱃지 리스트 영역 */
 .badge-list {
   margin-top: 40px;
   padding-top: 20px;
@@ -312,18 +313,21 @@ body {
   margin-bottom: 16px;
 }
 
+/* ✅ 뱃지를 가로로 정렬 + 줄바꿈 처리 */
 .badge-grid {
   display: flex;
   flex-wrap: wrap;
-  justify-content: center;
+  justify-content: flex-start; /* ✅ center → flex-start 로 변경 */
   gap: 20px;
 }
 
+/* ✅ 뱃지 아이템 하나 */
 .badge-item {
   text-align: center;
   max-width: 120px;
 }
 
+/* ✅ 뱃지 이미지 */
 .badge-item img {
   width: 100px;
   height: 100px;

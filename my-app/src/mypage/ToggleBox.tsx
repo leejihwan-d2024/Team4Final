@@ -4,6 +4,11 @@ import RecentMeasureList from "./RecentMeasureList";
 import PostsByAuthor from "../components/PostsByAuthor";
 import axios from "../api/axiosInstance";
 
+function isValidDate(value: string) {
+  const date = new Date(value);
+  return !isNaN(date.getTime());
+}
+
 interface ToggleBoxProps {
   userId: string | undefined;
 }
@@ -98,17 +103,25 @@ const ToggleBox: React.FC<ToggleBoxProps> = ({ userId }) => {
           </div>
         ) : (
           <div>
-            {userBadges.map((badge, index) => (
-              <div key={index}>
-                <img
-                  src={badge.badgeImageUrl}
-                  alt={badge.badgeName}
-                  width={50}
-                />
-                <p>{badge.achvTitle}</p>
-                <p>{badge.achievedDate}</p>
+            {userBadges.length > 0 && (
+              <div className="badge-list">
+                <div className="badge-grid">
+                  {userBadges.map((badge, idx) => (
+                    <div key={idx} className="badge-item">
+                      <img src={badge.badgeImageUrl} alt={badge.badgeName} />
+                      <div className="badge-name">{badge.badgeName}</div>
+                      <div className="badge-date">
+                        {isValidDate(badge.achievedDate)
+                          ? new Date(badge.achievedDate).toLocaleDateString(
+                              "ko-KR"
+                            )
+                          : "날짜 없음"}
+                      </div>
+                    </div>
+                  ))}
+                </div>
               </div>
-            ))}
+            )}
           </div>
         )}
       </div>
