@@ -54,7 +54,11 @@ const ToggleBox: React.FC<ToggleBoxProps> = ({ userId }) => {
         height: "200px",
         padding: "10px",
         boxSizing: "border-box",
+        overflowY: "auto", // 수직 스크롤 가능
+        scrollbarWidth: "none", // Firefox용 스크롤바 숨김
+        msOverflowStyle: "none", // IE, Edge용 스크롤바 숨김
       }}
+      className="scroll-hidden"
     >
       <div style={{ display: "flex", gap: "10px", marginBottom: "10px" }}>
         {["최근활동", "업적"].map((label) => (
