@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+
 import RecentMeasureList from "./RecentMeasureList";
 import PostsByAuthor from "../components/PostsByAuthor";
 import axios from "../api/axiosInstance";
@@ -20,21 +21,29 @@ const ToggleBox: React.FC<ToggleBoxProps> = ({ userId }) => {
 
   const fetchUserBadges = async () => {
     const token = localStorage.getItem("token");
+
+    if (!userId) {
+      console.warn("❌ 유저 정보 없음, 뱃지 불러오기 중단");
+      return;
+    }
+
     try {
       const response = await axios.get("/api/achievements/badges", {
         headers: { Authorization: `Bearer ${token}` },
+        params: { userId },
       });
 
       const camelCaseBadges = response.data.map((item: any) => ({
         achvTitle: item.ACHVTITLE ?? item.achvTitle ?? "제목 없음",
         achievedDate: item.ACHIEVEDDATE ?? item.achievedDate ?? "",
-        badgeImageUrl: item.BADGEIMAGEURL ?? item.badgeImageUrl ?? "",
-        badgeName: item.BADGENAME ?? item.badgeName ?? "",
+        badgeImageUrl:
+          item.BADGEIMAGEURL?.trim() || item.badgeImageUrl?.trim() || "",
+        badgeName: item.BADGENAME?.trim() || item.badgeName?.trim() || "",
       }));
-
+      console.log("🔥 유저 뱃지", camelCaseBadges);
       setUserBadges(camelCaseBadges);
     } catch (err) {
-      console.error("뱃지 목록 로딩 실패:", err);
+      console.error("❌ 뱃지 목록 로딩 실패:", err);
     }
   };
 
