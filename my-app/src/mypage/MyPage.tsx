@@ -22,6 +22,15 @@ function MyPage() {
     userPoint: user?.userPoint || "",
     userActivePoint: user?.userActivePoint || "",
   });
+  const [OwneruserInfo, setOwnerUserInfo] = useState({
+    userId: user?.userId || "",
+    userNn: user?.userNn || "",
+    userEmail: user?.userEmail || "",
+    userName: user?.userName || user?.userNn || "",
+    profileImageUrl: user?.profileImageUrl || "",
+    userPoint: user?.userPoint || "",
+    userActivePoint: user?.userActivePoint || "",
+  });
   console.log(
     userInfo?.userId +
       "/" +
@@ -31,9 +40,9 @@ function MyPage() {
       "/" +
       userInfo?.userName +
       "/" +
-      userInfo?.userPoint +
+      userInfo.userPoint +
       "/" +
-      userInfo?.userActivePoint
+      userInfo.userActivePoint
   );
   console.log(userInfo?.userActivePoint + "유저액티브포인트");
   // 로딩 상태 관리
@@ -72,9 +81,51 @@ function MyPage() {
           userName: userData.userNn || "",
           profileImageUrl:
             userData.userProfileImageUrl || profileImageUrl || "",
-          userPoint: user?.userPoint || "",
-          userActivePoint: user?.userActivePoint || "",
+          userPoint: userData?.userPoint || "",
+          userActivePoint: userData?.userActivePoint || "",
         });
+        console.log(userData?.userActivePoint + "포인트");
+      }
+    } catch (error) {
+      console.error("사용자 정보 로드 실패:", error);
+      setStatus({
+        message: "사용자 정보를 불러오는데 실패했습니다.",
+        type: "error",
+      });
+    } finally {
+      setIsLoading(false);
+    }
+  };
+  const loadOwnerUserInfo = async (userId: string) => {
+    setIsLoading(true);
+    try {
+      // 사용자 기본 정보 조회
+      const userResponse = await api.get(`/api/user-profile/${UserId}`);
+      let profileImageUrl = "";
+
+      // 프로필 이미지 URL 조회
+      try {
+        const imageResponse = await api.get(`/api/profile/${UserId}`);
+        if (imageResponse.data.success) {
+          profileImageUrl = imageResponse.data.imageUrl;
+        }
+      } catch (imageError) {
+        console.log("프로필 이미지 URL 조회 실패, 기본값 사용");
+      }
+
+      if (userResponse.data.success) {
+        const userData = userResponse.data.userInfo;
+        setOwnerUserInfo({
+          userId: userData.userId || UserId,
+          userNn: userData.userNn || "",
+          userEmail: userData.userEmail || "",
+          userName: userData.userNn || "",
+          profileImageUrl:
+            userData.userProfileImageUrl || profileImageUrl || "",
+          userPoint: userData?.userPoint || "",
+          userActivePoint: userData?.userActivePoint || "",
+        });
+        console.log(userData?.userActivePoint + "포인트");
       }
     } catch (error) {
       console.error("사용자 정보 로드 실패:", error);
@@ -91,6 +142,9 @@ function MyPage() {
   useEffect(() => {
     if (userInfo.userId) {
       loadUserInfo(userInfo.userId);
+    }
+    if (UserId) {
+      loadOwnerUserInfo(UserId);
     }
   }, []);
 
@@ -129,12 +183,12 @@ function MyPage() {
         <div
           className="progress-bar-fill"
           style={{
-            width: `${user?.userActivePoint ?? 0}%`,
+            width: `${(OwneruserInfo?.userActivePoint ?? 0) / 100}%`,
             background: "orange",
           }}
         >
           <span className="progress-text">
-            {user?.userActivePoint ?? "0"}점
+            {OwneruserInfo?.userActivePoint ?? "0"}점
           </span>
         </div>
       </div>
