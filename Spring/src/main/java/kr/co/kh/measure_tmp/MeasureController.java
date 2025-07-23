@@ -14,6 +14,7 @@ import kr.co.kh.measure_tmp.PathDataCustomId;
 import kr.co.kh.measure_tmp.PathDataCustomRepository;
 
 import javax.transaction.Transactional;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 @CrossOrigin(origins = {"http://localhost:3000",
@@ -24,14 +25,20 @@ public class MeasureController {
 
     private final MeasurementDataRepository measurementRepo;
     private final PathDataRepository pathRepo;
-
+    @GetMapping("/getrecentmeasure/{userid}")
+    public List<MeasureSimpleDTO> getRecentMeasures(@PathVariable String userid) {
+        return measurementRepo.findByMemberId(userid).stream()
+                .map(m -> new MeasureSimpleDTO("측정 활동", m.getCreatedAt()))
+                .collect(Collectors.toList());
+    }
     @PostMapping("/savemeasure")
     public String saveMeasurement(@RequestBody SaveMeasureRequest request) {
-        System.out.println("memberid: " + request.getMemberid());
-        System.out.println("list size: " + request.getList().size());
+        //System.out.println("memberid: " + request.getMemberid());
+        //System.out.println("list size: " + request.getList().size());
         // 1. MEASUREMENT_DATA 저장
         MeasurementData measurement = new MeasurementData();
         measurement.setMemberId(request.getMemberid());
+        measurement.setCreatedAt(LocalDateTime.now());
         MeasurementData savedMeasurement = measurementRepo.save(measurement);
 
         // 2. PATH_DATA 저장

@@ -2,6 +2,8 @@ import { useState } from "react";
 import { Link } from "react-router-dom";
 function MainMenu() {
   const [menuOpen, setMenuOpen] = useState(false);
+  const userStr = localStorage.getItem("user");
+  const user = JSON.parse(userStr || "null");
   return (
     <>
       {/* 달리기, 메뉴 등은 기존 그대로 유지 */}
@@ -65,7 +67,10 @@ function MainMenu() {
             </Link>
           </li>
           <li>
-            <Link to="/mypage" className="text-blue-700 hover:underline">
+            <Link
+              to={`/mypage/${user?.userId}`}
+              className="text-blue-700 hover:underline"
+            >
               📞 마이페이지
             </Link>
           </li>
