@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import axios from "axios";
 
 interface Post {
@@ -9,44 +9,43 @@ interface Post {
   createdAt: string;
 }
 
-export default function PostsByAuthor() {
-  const [inputAuthor, setInputAuthor] = useState("");
+interface PostsByAuthorProps {
+  userId?: string;
+}
+
+export default function PostsByAuthor({ userId }: PostsByAuthorProps) {
   const [posts, setPosts] = useState<Post[]>([]);
 
-  const handleSearch = async () => {
-    if (!inputAuthor.trim()) return;
+  useEffect(() => {
+    const fetchPosts = async () => {
+      if (!userId) return; // userId 없으면 요청 안 함
 
-    try {
-      const res = await axios.get(
-        `${process.env.REACT_APP_HOST}posts/author/${inputAuthor}`
-      );
-      setPosts(res.data);
-    } catch (error) {
-      console.error("작성자 게시글 조회 실패", error);
-      setPosts([]);
-    }
-  };
+      try {
+        const res = await axios.get(
+          `${process.env.REACT_APP_HOST}posts/author/${userId}`
+        );
+        setPosts(res.data);
+      } catch (error) {
+        console.error("작성자 게시글 조회 실패", error);
+        setPosts([]);
+      }
+    };
+
+    fetchPosts();
+  }, [userId]);
 
   return (
     <div>
-      <h2>작성자 게시글 검색</h2>
-
-      <input
-        type="text"
-        placeholder="작성자 ID 입력"
-        value={inputAuthor}
-        onChange={(e) => setInputAuthor(e.target.value)}
-      />
-      <button onClick={handleSearch}>검색</button>
-
       {posts.length > 0 ? (
         posts.map((post) => (
           <div key={post.postId}>
-            <p>작성일시: {post.createdAt}</p>
+            <span>
+              게시판 활동 - {new Date(post.createdAt).toLocaleDateString()}
+            </span>
           </div>
         ))
       ) : (
-        <p>작성자 게시글이 없습니다.</p>
+        <>ㅇ</>
       )}
     </div>
   );

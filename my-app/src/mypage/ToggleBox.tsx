@@ -1,5 +1,6 @@
 import { useState } from "react";
 import RecentMeasureList from "./RecentMeasureList";
+import PostsByAuthor from "../components/PostsByAuthor";
 interface ToggleBoxProps {
   userId: string | undefined;
 }
@@ -41,10 +42,12 @@ const ToggleBox: React.FC<ToggleBoxProps> = ({ userId }) => {
         {active === "최근활동" ? (
           <div>
             <RecentMeasureList userId={userId || ""} />
+            <PostsByAuthor userId={userId} />
           </div>
         ) : (
           <div>B 내용</div>
         )}
+        {}
       </div>
     </div>
   );
