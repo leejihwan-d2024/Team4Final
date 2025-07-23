@@ -18,6 +18,7 @@ import java.security.SecureRandom;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
+import java.util.Map;
 
 @Slf4j
 @RestController
@@ -118,5 +119,16 @@ public class RunningCrewController {
         }
         crewService.deleteCrew(id);
         return ResponseEntity.ok("삭제 완료");
+    }
+
+    //최근 참가활동 조회
+    @GetMapping("/getrecentjoin/{userId}")
+    public ResponseEntity<List<Map<String, Object>>> getRecentJoinCrews(@PathVariable String userId) {
+        return ResponseEntity.ok(crewService.getRecentJoinedCrews(userId));
+    }
+    //최근 생성활동 조회
+    @GetMapping("/getrecentcreate/{userId}")
+    public ResponseEntity<List<Map<String, Object>>> getRecentCreatedCrews(@PathVariable String userId) {
+        return ResponseEntity.ok(crewService.getRecentCreatedCrews(userId));
     }
 }

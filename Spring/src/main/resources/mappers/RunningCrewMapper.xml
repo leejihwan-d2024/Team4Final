@@ -133,4 +133,29 @@
         AND USER_ID = #{userId}
     </select>
 
+
+    <!-- 유저가 참가한 크루 (CREW_MEMBER 기준) -->
+    <select id="getRecentJoinedCrews" resultType="map">
+        SELECT
+        RC.CREW_ID,
+        RC.CREW_TITLE,
+        CM.JOINED_AT AS JOINED_TIME
+        FROM CREW_MEMBER CM
+        JOIN RUNNING_CREW RC ON CM.CREW_ID = RC.CREW_ID
+        WHERE CM.USER_ID = #{userId}
+        ORDER BY CM.JOINED_AT DESC
+    </select>
+
+    <!-- 유저가 만든 크루 (RUNNING_CREW.LEADER_ID 기준) -->
+    <select id="getRecentCreatedCrews" resultType="map">
+        SELECT
+        RC.CREW_ID,
+        RC.CREW_TITLE,
+        RC.CREATED_AT AS CREATED_TIME
+        FROM RUNNING_CREW RC
+        WHERE RC.LEADER_ID = #{userId}
+        ORDER BY RC.CREATED_AT DESC
+    </select>
+
+
 </mapper>
