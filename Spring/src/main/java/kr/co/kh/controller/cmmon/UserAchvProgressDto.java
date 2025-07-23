@@ -9,6 +9,7 @@ public class UserAchvProgressDto {
     private String isCompleted;
     private String badgeName;
     private String badgeImageUrl;
+    private String achievedDate;
 
     public UserAchvProgressDto(String achvId, String achvTitle, String achvContent,
                                int currentValue, int achvMaxPoint, String isCompleted) {
@@ -61,6 +62,15 @@ public class UserAchvProgressDto {
     public void setBadgeImageUrl(String badgeImageUrl) {
         this.badgeImageUrl = badgeImageUrl;
     }
+
+    public String getAchievedDate() {
+        return achievedDate;
+    }
+
+    public void setAchievedDate(String achievedDate) {
+        this.achievedDate = achievedDate;
+    }
+
 
     // 필요하면 setter도 추가 가능
 }

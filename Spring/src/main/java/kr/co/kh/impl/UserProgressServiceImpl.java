@@ -13,6 +13,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Service
@@ -97,5 +98,11 @@ public class UserProgressServiceImpl implements UserProgressService {
         // 이미 해당 유저의 해당 업적 진행도가 있는지 확인 후 업데이트 로직 수행
         userProgressMapper.updateProgress(userId, achvId, progressValue);
         log.info("✅ [{}]의 [{}] 업적 진행도 {}만큼 업데이트 완료", userId, achvId, progressValue);
+    }
+
+    @Override
+    public List<Map<String, Object>> getUserBadges(String userId) {
+        log.info("🎖️ 유저 뱃지 조회: {}", userId);
+        return userProgressMapper.getUserBadges(userId);
     }
 }

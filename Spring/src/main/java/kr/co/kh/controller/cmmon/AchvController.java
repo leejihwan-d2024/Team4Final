@@ -32,7 +32,7 @@ public class AchvController {
 
     private String userId;
 
-    // ✅ 전체 유저 업적 리스트 조회
+    // ✅ 전체 유저 업적 리스트 조회 (userId가 없으면 전체, 있으면 특정 유저)
     @GetMapping
     public List<UserAchvProgressDto> getAllAchvevements(@RequestParam(required = false) String userId) {
         if (userId != null) {
@@ -60,6 +60,18 @@ public class AchvController {
         }
         return userProgressService.getCompletedAchievements(user.getUserId());
     }
+
+    // ✅ 현재 로그인한 유저가 받은 뱃지 목록을 JSON으로 반환
+    // name (업적명), date (달성일), badgeImageUrl (뱃지 이미지), badgeName (뱃지 이름)
+    @GetMapping("/badges")
+    public List<Map<String, Object>> getUserBadges(@CurrentUser CustomUserDetails user) {
+        List<Map<String, Object>> badges = userProgressService.getUserBadges(user.getUserId());
+        for (Map<String, Object> badge : badges) {
+            log.info("🎖️ badge = {}", badge); // ✅ date 포함되어야 함
+        }
+        return badges;
+    }
+
 
     // ✅ 테스트용 임시 데이터 반환
     @GetMapping("/test")

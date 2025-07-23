@@ -16,5 +16,6 @@ public class UserAchvProgress {
     private String isCompleted;
     private String badgeName;
     private String badgeImageUrl;
+    private String achievedDate;
 
 }

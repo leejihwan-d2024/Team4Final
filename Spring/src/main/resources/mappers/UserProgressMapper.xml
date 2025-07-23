@@ -78,4 +78,17 @@
         WHERE P.IS_COMPLETED = 'Y'
     </select>
 
+    <select id="getUserBadges" parameterType="string" resultType="map">
+        SELECT
+        A.ACHV_TITLE AS achvTitle,
+        TO_CHAR(UAL.ACHIEVED_DATE, 'YYYY-MM-DD') AS achievedDate,
+        AR.BADGE_IMAGE_URL AS badgeImageUrl,
+        AR.BADGE_NAME AS badgeName
+        FROM USER_ACHV_LIST UAL
+        JOIN ACHV A ON UAL.ACHV_ID = A.ACHV_ID
+        LEFT JOIN ACHV_REWARD AR ON A.ACHV_ID = AR.ACHV_ID
+        WHERE UAL.USER_ID = #{userId, jdbcType=VARCHAR}
+        ORDER BY UAL.ACHIEVED_DATE DESC
+    </select>
+
 </mapper>
