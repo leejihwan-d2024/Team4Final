@@ -16,7 +16,8 @@ const LocationTracker = () => {
   const locationList = useRef<LocationData[]>([]);
   const intervalId = useRef<NodeJS.Timeout | null>(null);
   const timerId = useRef<NodeJS.Timeout | null>(null);
-
+  const userStr = localStorage.getItem("user");
+  const user = JSON.parse(userStr || "null");
   // 시간 포맷팅 함수
   const formatTime = (seconds: number): string => {
     const hrs = String(Math.floor(seconds / 3600)).padStart(2, "0");
@@ -96,7 +97,7 @@ const LocationTracker = () => {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          memberid: "none",
+          memberid: user?.userId ?? "none",
           list: locationList.current,
         }),
       })

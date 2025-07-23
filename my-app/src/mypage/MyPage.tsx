@@ -43,7 +43,7 @@ function MyPage() {
         </div>
       </div>
       <br />
-      <ToggleBox />
+      <ToggleBox userId={UserId} />
     </div>
   );
 }
