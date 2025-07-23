@@ -133,6 +133,7 @@ function App() {
         <Route
           path=""
           element={
+            /*
             <>
               <Link to="FirstPage">첫페이지로</Link>
               <Link to="/MainPage2">2번째 매인</Link>
@@ -152,6 +153,8 @@ function App() {
               <br />
               <Link to="/main">메인으로 이동</Link>
             </>
+            */
+            <MainPage />
           }
         />
         <Route
@@ -202,6 +205,7 @@ function App() {
         <Route path="/find-password" element={<FindPasswordPage />} />
         <Route path="/reset-password" element={<ResetPasswordPage />} />
         <Route path="/mypage" element={<MyPage />} />
+        <Route path="/mypage/:UserId" element={<MyPage />} />
       </Routes>
     </BrowserRouter>
   );
