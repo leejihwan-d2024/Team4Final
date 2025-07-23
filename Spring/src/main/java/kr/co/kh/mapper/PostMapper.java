@@ -17,4 +17,6 @@ public interface PostMapper {
     void decreaseLike(Long postId);
     void increaseViewCount(Long postId);
 
+    List<PostVO> getPostByAuthor(String author);
+
 }

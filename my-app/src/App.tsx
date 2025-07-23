@@ -38,6 +38,8 @@ import ResetPasswordPage from "./pages/ResetPasswordPage";
 import "./auth.css";
 import "./App.css";
 import MyPage from "./mypage/MyPage";
+import RankingPage from "./components/RankingPage";
+import PostByAuthorWrapper from "./components/PostByAuthorWrapper";
 function App() {
   const [posts, setPosts] = useState<Post[]>([]);
   const [selectedPost, setSelectedPost] = useState<Post | null>(null);
@@ -206,6 +208,8 @@ function App() {
         <Route path="/reset-password" element={<ResetPasswordPage />} />
         <Route path="/mypage" element={<MyPage />} />
         <Route path="/mypage/:UserId" element={<MyPage />} />
+        <Route path="/ranking" element={<RankingPage />} />
+        <Route path="/posts/author" element={<PostByAuthorWrapper />}></Route>
       </Routes>
     </BrowserRouter>
   );
