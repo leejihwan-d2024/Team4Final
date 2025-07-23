@@ -8,7 +8,7 @@
         ua.USER_ID,
         u.USER_NN AS userNn,
         SUM(ua.DISTANCE) AS totalDistance
-        FROM USER_ACTIVITY ua
+        FROM RUNNING_CREW ua
         JOIN USERS u ON ua.USER_ID = u.USER_ID
         WHERE ua.ACTIVITY_DATE >= TRUNC(SYSDATE, 'IW')
         AND ua.ACTIVITY_DATE &lt; TRUNC(SYSDATE, 'IW') + 7
