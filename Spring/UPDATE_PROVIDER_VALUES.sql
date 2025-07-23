@@ -1,0 +1,37 @@
+-- 기존 사용자들의 PROVIDER 값 업데이트 스크립트
+-- 이 스크립트는 기존에 생성된 사용자들의 PROVIDER 필드를 적절한 값으로 설정합니다.
+
+-- 1. 카카오 사용자 (userId가 'kakao_'로 시작하는 사용자)를 KAKAO로 설정
+UPDATE USERS 
+SET PROVIDER = 'KAKAO' 
+WHERE USER_ID LIKE 'kakao_%' 
+AND (PROVIDER IS NULL OR PROVIDER != 'KAKAO');
+
+-- 2. 일반 사용자 (userId가 'kakao_'로 시작하지 않는 사용자)를 LOCAL로 설정
+UPDATE USERS 
+SET PROVIDER = 'LOCAL' 
+WHERE USER_ID NOT LIKE 'kakao_%' 
+AND (PROVIDER IS NULL OR PROVIDER != 'LOCAL');
+
+-- 3. 업데이트 결과 확인
+SELECT 
+    USER_ID,
+    USER_NN,
+    USER_EMAIL,
+    PROVIDER,
+    USER_PROFILE_IMAGE_URL
+FROM USERS 
+ORDER BY USER_SIGN_UP DESC;
+
+-- 4. PROVIDER가 NULL인 사용자가 있는지 확인
+SELECT COUNT(*) as NULL_PROVIDER_COUNT
+FROM USERS 
+WHERE PROVIDER IS NULL;
+
+-- 5. 각 PROVIDER별 사용자 수 확인
+SELECT 
+    PROVIDER,
+    COUNT(*) as USER_COUNT
+FROM USERS 
+GROUP BY PROVIDER
+ORDER BY PROVIDER; 

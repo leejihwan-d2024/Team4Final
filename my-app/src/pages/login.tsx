@@ -252,18 +252,67 @@ const Login: React.FC = () => {
       if (error.response && error.response.data) {
         const errorData = error.response.data;
         console.log("서버 에러 응답:", errorData);
+        console.log("에러 응답 타입:", typeof errorData);
+        console.log("에러 응답 키들:", Object.keys(errorData));
+        console.log("에러 응답 전체 구조:", JSON.stringify(errorData, null, 2));
 
-        if (errorData.error) {
-          setError(errorData.error);
-        } else if (errorData.message) {
-          setError(errorData.message);
-        } else if (errorData.details) {
-          setError(errorData.details);
+        // 백엔드에서 보내는 다양한 형태의 오류 메시지를 처리
+        let errorMessage = "";
+
+        // 417 상태 코드는 특별히 처리 (로그인 실패)
+        if (error.response.status === 417) {
+          // 모든 가능한 필드를 체크하여 메시지 찾기
+          const possibleMessageFields = [
+            "error",
+            "message",
+            "details",
+            "errorMessage",
+            "msg",
+            "error_msg",
+            "errorMessage",
+            "error_message",
+            "detail",
+            "reason",
+            "description",
+            "info",
+            "text",
+            "content",
+          ];
+
+          for (const field of possibleMessageFields) {
+            if (errorData[field] && typeof errorData[field] === "string") {
+              errorMessage = errorData[field];
+              console.log(`417 오류에서 메시지 발견 (${field}):`, errorMessage);
+              break;
+            }
+          }
+
+          // 메시지를 찾지 못한 경우 기본 메시지 사용
+          if (!errorMessage) {
+            errorMessage = "아이디 또는 비밀번호가 올바르지 않습니다.";
+            console.log("417 오류에서 메시지를 찾지 못해 기본 메시지 사용");
+          }
         } else {
-          setError(
-            `서버 오류: ${error.response.status} - ${error.response.statusText}`
-          );
+          // 다른 상태 코드의 경우 기존 로직 유지
+          if (errorData.error) {
+            errorMessage = errorData.error;
+          } else if (errorData.message) {
+            errorMessage = errorData.message;
+          } else if (errorData.details) {
+            errorMessage = errorData.details;
+          } else if (errorData.errorMessage) {
+            errorMessage = errorData.errorMessage;
+          } else if (errorData.msg) {
+            errorMessage = errorData.msg;
+          } else if (typeof errorData === "string") {
+            errorMessage = errorData;
+          } else {
+            errorMessage = `서버 오류: ${error.response.status} - ${error.response.statusText}`;
+          }
         }
+
+        console.log("최종 표시할 오류 메시지:", errorMessage);
+        setError(errorMessage);
       } else {
         setError("서버 연결에 실패했습니다.");
       }
@@ -414,7 +463,37 @@ const Login: React.FC = () => {
       console.error("오류 메시지:", error.message);
       console.error("오류 스택:", error.stack);
       console.error("================================");
-      setError("카카오 로그인에 실패했습니다: " + error.message);
+
+      // 카카오 로그인 오류 처리도 일반 로그인과 동일하게 개선
+      if (error.response && error.response.data) {
+        const errorData = error.response.data;
+        console.log("카카오 로그인 서버 에러 응답:", errorData);
+        console.log("카카오 에러 응답 타입:", typeof errorData);
+        console.log("카카오 에러 응답 키들:", Object.keys(errorData));
+
+        let errorMessage = "";
+
+        if (errorData.error) {
+          errorMessage = errorData.error;
+        } else if (errorData.message) {
+          errorMessage = errorData.message;
+        } else if (errorData.details) {
+          errorMessage = errorData.details;
+        } else if (errorData.errorMessage) {
+          errorMessage = errorData.errorMessage;
+        } else if (errorData.msg) {
+          errorMessage = errorData.msg;
+        } else if (typeof errorData === "string") {
+          errorMessage = errorData;
+        } else {
+          errorMessage = `카카오 로그인 오류: ${error.response.status} - ${error.response.statusText}`;
+        }
+
+        console.log("카카오 최종 표시할 오류 메시지:", errorMessage);
+        setError(errorMessage);
+      } else {
+        setError("카카오 로그인에 실패했습니다: " + error.message);
+      }
     }
   };
 

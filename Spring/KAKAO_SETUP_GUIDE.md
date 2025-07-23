@@ -111,6 +111,157 @@ curl -X POST http://localhost:8080/auth/kakao/login \
 - 동의항목이 올바르게 설정되었는지 확인
 - 앱이 활성화되어 있는지 확인
 
+## 🚨 **KOE101 오류 해결 방법**
+
+### **KOE101 오류란?**
+
+`KOE101`은 "앱 관리자 설정 오류"로, 카카오 개발자 콘솔에서 앱 설정에 문제가 있을 때 발생합니다.
+
+### **해결 방법 1: 카카오 개발자 콘솔 앱 상태 확인**
+
+1. **카카오 개발자 콘솔** → **내 애플리케이션** → **앱 선택**
+2. **앱 상태 확인**:
+   - ✅ **활성화**: 앱이 활성화되어 있는지 확인
+   - ✅ **플랫폼 설정**: Web 플랫폼이 올바르게 설정되어 있는지 확인
+   - ✅ **카카오 로그인**: 카카오 로그인이 활성화되어 있는지 확인
+
+### **해결 방법 2: 플랫폼 설정 수정**
+
+1. **플랫폼** → **Web** → **사이트 도메인**
+2. **다음 도메인들을 추가**:
+   ```
+   http://localhost:3000
+   http://localhost:3001
+   http://127.0.0.1:3000
+   http://127.0.0.1:3001
+   https://localhost:3000
+   https://localhost:3001
+   ```
+
+### **해결 방법 3: 카카오 로그인 설정 수정**
+
+1. **카카오 로그인** → **활성화**: **ON**
+2. **동의항목**:
+   - **필수 동의항목**:
+     - ✅ 닉네임 (profile_nickname)
+     - ✅ 이메일 (account_email)
+   - **선택 동의항목**:
+     - ✅ 프로필 사진 (profile_image)
+3. **보안**:
+   - **Client Secret**: 생성되어 있는지 확인
+   - **IP 주소**: 개발 환경에서는 비워두거나 `127.0.0.1` 추가
+
+### **해결 방법 4: JavaScript 키 확인**
+
+1. **앱 키** → **JavaScript 키** 복사
+2. **프론트엔드 `.env` 파일 확인**:
+   ```env
+   REACT_APP_KAKAO_APP_KEY=your_javascript_key_here
+   ```
+3. **키가 올바른지 확인**: JavaScript 키는 `REACT_APP_` 접두사가 필요
+
+### **해결 방법 5: REST API 키 확인**
+
+1. **앱 키** → **REST API 키** 복사
+2. **백엔드 `application.yml` 확인**:
+   ```yaml
+   kakao:
+     client-id: ${KAKAO_CLIENT_ID:your_rest_api_key_here}
+     client-secret: ${KAKAO_CLIENT_SECRET:your_client_secret_here}
+   ```
+
+### **해결 방법 6: 앱 삭제 후 재생성**
+
+만약 위의 방법들로 해결되지 않는다면:
+
+1. **기존 앱 삭제**
+2. **새 앱 생성**
+3. **위의 설정들을 다시 적용**
+
+### **해결 방법 7: 브라우저 캐시 및 쿠키 삭제**
+
+1. **브라우저 개발자 도구** → **Application** → **Storage**
+2. **Clear storage** 클릭
+3. **페이지 새로고침**
+
+### **해결 방법 8: 프론트엔드 코드 수정**
+
+```javascript
+// 카카오 SDK 초기화 확인
+useEffect(() => {
+  const initKakao = () => {
+    if (window.Kakao) {
+      const kakao = window.Kakao;
+      if (!kakao.isInitialized()) {
+        console.log("카카오 SDK 초기화 중...");
+        console.log("JavaScript 키:", process.env.REACT_APP_KAKAO_APP_KEY);
+        kakao.init(process.env.REACT_APP_KAKAO_APP_KEY);
+        console.log("카카오 SDK 초기화 완료:", kakao.isInitialized());
+      }
+    }
+  };
+
+  initKakao();
+}, []);
+```
+
+### **해결 방법 9: 디버깅 로그 추가**
+
+```javascript
+const handleKakaoLogin = async (): Promise<void> => {
+  try {
+    console.log("=== 카카오 로그인 디버깅 ===");
+    console.log("JavaScript 키:", process.env.REACT_APP_KAKAO_APP_KEY);
+    console.log("카카오 SDK 초기화 상태:", window.Kakao?.isInitialized());
+    console.log("브라우저 정보:", navigator.userAgent);
+    console.log("현재 URL:", window.location.href);
+    console.log("================================");
+
+    if (!window.Kakao) {
+      setError("카카오 SDK가 로드되지 않았습니다.");
+      return;
+    }
+
+    if (!window.Kakao.isInitialized()) {
+      setError("카카오 SDK가 초기화되지 않았습니다.");
+      return;
+    }
+
+    // 카카오 로그인 실행
+    const response: KakaoAuthResponse = await new Promise(
+      (resolve, reject) => {
+        window.Kakao.Auth.login({
+          throughTalk: false, // 웹 로그인만 사용
+          persistAccessToken: true,
+          success: (authResponse) => {
+            console.log("카카오 로그인 성공:", authResponse);
+            resolve(authResponse);
+          },
+          fail: (error) => {
+            console.error("카카오 로그인 실패:", error);
+            console.error("오류 코드:", error.error);
+            console.error("오류 메시지:", error.error_description);
+            reject(error);
+          },
+        });
+      }
+    );
+
+    // 나머지 로직...
+
+  } catch (error: any) {
+    console.error("=== 카카오 로그인 오류 상세 ===");
+    console.error("오류 타입:", error.constructor.name);
+    console.error("오류 메시지:", error.message);
+    console.error("오류 코드:", error.error);
+    console.error("오류 설명:", error.error_description);
+    console.error("오류 스택:", error.stack);
+    console.error("================================");
+    setError("카카오 로그인에 실패했습니다: " + error.message);
+  }
+};
+```
+
 ## 🚨 **카카오 로그인 오류 해결 방법**
 
 ### **"Failed to launch 'intent:#Intent;action=com.kakao.talk.intent.action.CAPRI_LOGGED_IN_ACTIVITY" 오류**
