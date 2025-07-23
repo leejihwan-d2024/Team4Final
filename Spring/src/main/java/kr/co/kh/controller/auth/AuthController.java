@@ -148,6 +148,8 @@ public class AuthController {
         log.info("사용자 ID: {}", customUserDetails.getUserId());
         log.info("사용자 이메일: {}", customUserDetails.getEmail());
         log.info("사용자 이름: {}", customUserDetails.getName());
+        log.info("사용자 포인트: {}", customUserDetails.getUserActivePoint());
+
         log.info("================================");
 
         SecurityContextHolder.getContext().setAuthentication(authentication);
