@@ -18,22 +18,22 @@ public class RankingController {
     }
 
     @GetMapping("/weekly-distance")
-    public List<kr.co.kh.vo.RankingVO> getWeeklyDistanceRanking() {
+    public List<RankingVO> getWeeklyDistanceRanking() {
         return rankingService.getWeeklyDistanceRanking();
     }
 
     @GetMapping("/monthly-distance")
-    public List<kr.co.kh.vo.RankingVO> getMonthlyDistanceRanking() {
+    public List<RankingVO> getMonthlyDistanceRanking() {
         return rankingService.getMonthlyDistanceRanking();
     }
 
     @GetMapping("/weekly-posts")
-    public List<kr.co.kh.vo.RankingVO> getWeeklyPostRanking() {
+    public List<RankingVO> getWeeklyPostRanking() {
         return rankingService.getWeeklyPostRanking();
     }
 
     @GetMapping("/achievements")
-    public List<kr.co.kh.vo.RankingVO> getAchievementRanking() {
+    public List<RankingVO> getAchievementRanking() {
         return rankingService.getAchievementRanking();
     }
 }

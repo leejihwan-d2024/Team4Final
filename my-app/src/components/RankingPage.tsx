@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import "../styles/RankingPage.css";
+import Layout from "./Layout";
 
 interface RankingVO {
   userId: string;
@@ -20,16 +21,44 @@ function RankingPage() {
   useEffect(() => {
     axios
       .get("https://localhost:8080/api/ranking/weekly-distance")
-      .then((res) => setWeeklyDistance(res.data));
+      .then((res) =>
+        setWeeklyDistance(
+          res.data.sort(
+            (a: RankingVO, b: RankingVO) =>
+              (b.totalDistance ?? 0) - (a.totalDistance ?? 0)
+          )
+        )
+      );
     axios
       .get("https://localhost:8080/api/ranking/monthly-distance")
-      .then((res) => setMonthlyDistance(res.data));
+      .then((res) =>
+        setMonthlyDistance(
+          res.data.sort(
+            (a: RankingVO, b: RankingVO) =>
+              (b.totalDistance ?? 0) - (a.totalDistance ?? 0)
+          )
+        )
+      );
     axios
       .get("https://localhost:8080/api/ranking/weekly-posts")
-      .then((res) => setWeeklyPosts(res.data));
+      .then((res) =>
+        setWeeklyPosts(
+          res.data.sort(
+            (a: RankingVO, b: RankingVO) =>
+              (b.postCount ?? 0) - (a.postCount ?? 0)
+          )
+        )
+      );
     axios
       .get("https://localhost:8080/api/ranking/achievements")
-      .then((res) => setAchievements(res.data));
+      .then((res) =>
+        setAchievements(
+          res.data.sort(
+            (a: RankingVO, b: RankingVO) =>
+              (b.achvScore ?? 0) - (a.achvScore ?? 0)
+          )
+        )
+      );
   }, []);
 
   const renderRanking = (
@@ -44,18 +73,18 @@ function RankingPage() {
           {data.map((user, index) => (
             <li key={user.userId}>
               <span className="rank-number">🏅 {index + 1}</span>
-              <span className="rank-name">{user.userNn}</span>
+              <span className="rank-name">{user?.userNn}</span>
               {type === "distance" && (
                 <span className="rank-value">
                   {user.totalDistance?.toFixed(1)} km
                 </span>
               )}
               {type === "post" && (
-                <span className="rank-value">{user.postCount}개</span>
+                <span className="rank-value">{user?.postCount}개</span>
               )}
               {type === "achievement" && (
                 <span className="rank-value">
-                  {user.achvCount}개 ({user.achvScore}점)
+                  {user.achvCount}개 ({user?.achvScore}점)
                 </span>
               )}
             </li>
@@ -66,13 +95,15 @@ function RankingPage() {
   };
 
   return (
-    <div className="ranking-page">
-      <h1>🏆 사용자 랭킹</h1>
-      {renderRanking("이번주 활동왕", weeklyDistance, "distance")}
-      {renderRanking("이번달 활동왕", monthlyDistance, "distance")}
-      {renderRanking("이번주 게시글 활동왕", weeklyPosts, "post")}
-      {renderRanking("업적왕", achievements, "achievement")}
-    </div>
+    <Layout>
+      <div className="ranking-page">
+        <h1>🏆 사용자 랭킹</h1>
+        {renderRanking("👑 이번주 활동왕 👑", weeklyDistance, "distance")}
+        {renderRanking("👑 이번달 활동왕 👑", monthlyDistance, "distance")}
+        {renderRanking("👑 이번주 게시글 활동왕 👑", weeklyPosts, "post")}
+        {renderRanking("👑 업적왕 👑", achievements, "achievement")}
+      </div>
+    </Layout>
   );
 }
 
