@@ -381,6 +381,10 @@ const TestMain: React.FC = () => {
     navigate("/FirstPage");
   };
 
+  const handleGoToMyPage = (): void => {
+    navigate("/mypage");
+  };
+
   // 카카오 로그인 여부 확인 (userId가 kakao_로 시작하거나, 닉네임이 카카오사용자_로 시작하는지 확인)
   const isKakaoUser =
     user?.userId?.startsWith("kakao_") ||
@@ -421,6 +425,46 @@ const TestMain: React.FC = () => {
             {status.message}
           </div>
         )}
+
+        {/* 네비게이션 섹션 */}
+        <div className="bg-white rounded-xl shadow-lg p-6 mb-6">
+          <h2 className="text-xl font-semibold text-gray-800 mb-4">
+            페이지 이동
+          </h2>
+
+          <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
+            <button
+              onClick={handleGoToLogin}
+              className="px-4 py-2 bg-indigo-500 text-white rounded-lg hover:bg-indigo-600 transition-colors"
+            >
+              로그인 페이지
+            </button>
+            <button
+              onClick={handleGoToJoin}
+              className="px-4 py-2 bg-purple-500 text-white rounded-lg hover:bg-purple-600 transition-colors"
+            >
+              메인 페이지
+            </button>
+            <button
+              onClick={handleGoToHome}
+              className="px-4 py-2 bg-teal-500 text-white rounded-lg hover:bg-teal-600 transition-colors"
+            >
+              첫 페이지
+            </button>
+            <button
+              onClick={handleGoToMyPage}
+              className="px-4 py-2 bg-orange-500 text-white rounded-lg hover:bg-orange-600 transition-colors"
+            >
+              마이페이지
+            </button>
+            <button
+              onClick={handleLogout}
+              className="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-colors"
+            >
+              로그아웃
+            </button>
+          </div>
+        </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           {/* 사용자 정보 섹션 */}
@@ -537,209 +581,6 @@ const TestMain: React.FC = () => {
                 />
               </div>
             </div>
-          </div>
-        </div>
-
-        {/* 추가 기능 섹션 */}
-        <div className="bg-white rounded-xl shadow-lg p-6 mt-6">
-          <h2 className="text-xl font-semibold text-gray-800 mb-4">
-            추가 기능
-          </h2>
-
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <div className="bg-blue-50 rounded-lg p-4">
-              <h3 className="font-semibold text-blue-800 mb-2">URL 테스트</h3>
-              <p className="text-sm text-blue-600">
-                이미지 URL의 유효성을 실시간으로 확인할 수 있습니다.
-              </p>
-              
-            </div>
-                  
-            <div className="bg-green-50 rounded-lg p-4">
-              <h3 className="font-semibold text-green-800 mb-2">
-                실시간 미리보기
-              </h3>
-              <p className="text-sm text-green-600">
-                입력한 URL의 이미지를 즉시 미리보기로 확인할 수 있습니다.
-              </p>
-            </div>
-
-            <div className="bg-purple-50 rounded-lg p-4">
-              <h3 className="font-semibold text-purple-800 mb-2">
-                기본값 초기화
-              </h3>
-              <p className="text-sm text-purple-600">
-                프로필 이미지를 기본 이미지로 되돌릴 수 있습니다.
-              </p>
-            </div>
-          </div>
-        </div>
-
-        {/* API 테스트 섹션 */}
-        <div className="bg-white rounded-xl shadow-lg p-6 mt-6">
-          <h2 className="text-xl font-semibold text-gray-800 mb-4">
-            API 테스트
-          </h2>
-
-          <div className="space-y-4">
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              <button
-                onClick={async () => {
-                  if (!userInfo.userId) {
-                    setStatus({
-                      message: "사용자 ID가 없습니다.",
-                      type: "error",
-                    });
-                    return;
-                  }
-                  try {
-                    const response = await api.get(
-                      `/api/profile/${userInfo.userId}`
-                    );
-                    setStatus({
-                      message: `조회 성공: ${response.data.imageUrl}`,
-                      type: "success",
-                    });
-                  } catch (error: any) {
-                    setStatus({
-                      message: `조회 실패: ${
-                        error.response?.data?.message || error.message
-                      }`,
-                      type: "error",
-                    });
-                  }
-                }}
-                className="px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 transition-colors"
-              >
-                프로필 조회 테스트
-              </button>
-
-              {/* 카카오 사용자가 아닌 경우에만 프로필 이미지 관련 버튼들 표시 */}
-              {userInfo.provider !== "KAKAO" && (
-                <>
-                  <button
-                    onClick={async () => {
-                      if (!userInfo.userId) {
-                        setStatus({
-                          message: "사용자 ID가 없습니다.",
-                          type: "error",
-                        });
-                        return;
-                      }
-                      try {
-                        const response = await api.put(
-                          `/api/profile/${userInfo.userId}`,
-                          {
-                            imageUrl: userInfo.profileImageUrl,
-                          }
-                        );
-                        setStatus({
-                          message: `업데이트 성공: ${response.data.message}`,
-                          type: "success",
-                        });
-                      } catch (error: any) {
-                        setStatus({
-                          message: `업데이트 실패: ${
-                            error.response?.data?.message || error.message
-                          }`,
-                          type: "error",
-                        });
-                      }
-                    }}
-                    className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors"
-                  >
-                    프로필 업데이트 테스트
-                  </button>
-
-                  <button
-                    onClick={async () => {
-                      if (!userInfo.userId) {
-                        setStatus({
-                          message: "사용자 ID가 없습니다.",
-                          type: "error",
-                        });
-                        return;
-                      }
-                      try {
-                        // 카카오 사용자 테스트용 이미지 URL
-                        const testImageUrl =
-                          "https://cdn.pixabay.com/photo/2023/07/30/00/12/cat-8157889_1280.png";
-                        const response = await api.put(
-                          `/api/profile/kakao/${userInfo.userId}`,
-                          {
-                            imageUrl: testImageUrl,
-                          }
-                        );
-                        setStatus({
-                          message: `카카오 프로필 업데이트 성공: ${response.data.message}`,
-                          type: "success",
-                        });
-                        // 성공 시 로컬 상태도 업데이트
-                        setUserInfo((prev) => ({
-                          ...prev,
-                          profileImageUrl: testImageUrl,
-                        }));
-                      } catch (error: any) {
-                        setStatus({
-                          message: `카카오 프로필 업데이트 실패: ${
-                            error.response?.data?.message || error.message
-                          }`,
-                          type: "error",
-                        });
-                      }
-                    }}
-                    className="px-4 py-2 bg-purple-500 text-white rounded-lg hover:bg-purple-600 transition-colors"
-                  >
-                    카카오 프로필 테스트
-                  </button>
-                </>
-              )}
-
-              {/* 카카오 사용자인 경우 안내 메시지 표시 */}
-              {userInfo.provider === "KAKAO" && (
-                <div className="px-4 py-2 bg-yellow-100 border border-yellow-400 text-yellow-800 rounded-lg">
-                  <p className="text-sm">
-                    <strong>카카오 사용자</strong>: 프로필 이미지는 카카오
-                    계정에서 관리됩니다.
-                  </p>
-                </div>
-              )}
-
-              <button
-                onClick={handleLogout}
-                className="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-colors"
-              >
-                로그아웃
-              </button>
-            </div>
-          </div>
-        </div>
-
-        {/* 네비게이션 섹션 */}
-        <div className="bg-white rounded-xl shadow-lg p-6 mt-6">
-          <h2 className="text-xl font-semibold text-gray-800 mb-4">
-            페이지 이동
-          </h2>
-
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-            <button
-              onClick={handleGoToLogin}
-              className="px-4 py-2 bg-indigo-500 text-white rounded-lg hover:bg-indigo-600 transition-colors"
-            >
-              로그인 페이지
-            </button>
-            <button
-              onClick={handleGoToJoin}
-              className="px-4 py-2 bg-purple-500 text-white rounded-lg hover:bg-purple-600 transition-colors"
-            >
-              메인 페이지
-            </button>
-            <button
-              onClick={handleGoToHome}
-              className="px-4 py-2 bg-teal-500 text-white rounded-lg hover:bg-teal-600 transition-colors"
-            >
-              첫 페이지
-            </button>
           </div>
         </div>
       </div>
