@@ -1,17 +1,7 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { useParams } from "react-router-dom";
-
-declare global {
-  interface Window {
-    kakao: any;
-  }
-}
-
-interface LatLngPoint {
-  x: number;
-  y: number;
-}
+import PathMap from "../mainpage/PathMap";
 
 interface MeasureSimpleDTO {
   label: string;
@@ -22,13 +12,9 @@ interface MeasureSimpleDTO {
 const MyMeasure = () => {
   const { UserId } = useParams<{ UserId: string }>();
   const [measures, setMeasures] = useState<MeasureSimpleDTO[]>([]);
-  const [customPathIndex, setCustomPathIndex] = useState(0);
   const [showModal, setShowModal] = useState(false);
   const [selectedMeasure, setSelectedMeasure] =
     useState<MeasureSimpleDTO | null>(null);
-  const mapContainerRef = useRef<HTMLDivElement>(null);
-
-  const colors = ["#FF0000", "#00AAFF", "#00C851", "#AA66CC"];
 
   useEffect(() => {
     if (!UserId) return;
@@ -37,70 +23,14 @@ const MyMeasure = () => {
       .get<MeasureSimpleDTO[]>(
         `https://200.200.200.62:8080/getrecentmeasure/${UserId}`
       )
-      .then((res) => {
-        setMeasures(res.data);
-      })
-      .catch((err) => {
-        console.error("측정 리스트 불러오기 실패:", err);
-      });
+      .then((res) => setMeasures(res.data))
+      .catch((err) => console.error("측정 리스트 불러오기 실패:", err));
   }, [UserId]);
 
-  const handleMeasureClick = async (measure: MeasureSimpleDTO) => {
+  const handleMeasureClick = (measure: MeasureSimpleDTO) => {
+    console.log("선택한 measurementId:", measure.measurementId); // 여기 추가
     setSelectedMeasure(measure);
     setShowModal(true);
-    const color = colors[customPathIndex % colors.length];
-
-    try {
-      const response = await axios.get<LatLngPoint[]>(
-        `https://200.200.200.62:8080/getpath/${measure.measurementId}`
-      );
-      const pathData = response.data;
-      if (!pathData || pathData.length === 0) return;
-
-      // 💡 지도를 약간 지연시켜서 DOM 완전히 그려진 후에 초기화
-      setTimeout(() => {
-        if (!window.kakao || !window.kakao.maps || !mapContainerRef.current)
-          return;
-
-        window.kakao.maps.load(() => {
-          const kakao = window.kakao;
-          const map = new kakao.maps.Map(mapContainerRef.current!, {
-            center: new kakao.maps.LatLng(pathData[0].y, pathData[0].x),
-            level: 5,
-          });
-
-          const linePath = pathData.map(
-            (point) => new kakao.maps.LatLng(point.y, point.x)
-          );
-
-          const polyline = new kakao.maps.Polyline({
-            path: linePath,
-            strokeWeight: 4,
-            strokeColor: color,
-            strokeOpacity: 0.9,
-            strokeStyle: "solid",
-          });
-
-          polyline.setMap(map);
-
-          new kakao.maps.Marker({
-            position: linePath[0],
-            title: "시작점",
-            map: map,
-          });
-
-          new kakao.maps.Marker({
-            position: linePath[linePath.length - 1],
-            title: "종료점",
-            map: map,
-          });
-        });
-      }, 300); // 최소 300ms 이상 권장
-      setCustomPathIndex((prev) => prev + 1);
-    } catch (err) {
-      console.error("경로 불러오기 실패:", err);
-      alert("경로 불러오기 실패");
-    }
   };
 
   return (
@@ -184,15 +114,11 @@ const MyMeasure = () => {
               📌 이 측정 경로는 사용자가 활동한 GPS 데이터를 기반으로
               시각화됩니다.
             </p>
-            <div
-              ref={mapContainerRef}
-              style={{
-                flex: 1,
-                border: "1px solid #ccc",
-                marginTop: "10px",
-                minHeight: "300px",
-              }}
-            ></div>
+
+            {/* ✅ 지도 컴포넌트로 대체됨 */}
+            <div style={{ flex: 1, marginTop: "10px", minHeight: "300px" }}>
+              <PathMap measurementId={selectedMeasure.measurementId} />
+            </div>
           </div>
         </div>
       )}

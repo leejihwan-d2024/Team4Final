@@ -23,7 +23,7 @@ interface PathMapProps {
   measurementId?: number; // 측정 ID
   setPathPoints?: React.Dispatch<
     SetStateAction<{ lat: number; lng: number }[]>
-  >; // ← 수정됨
+  >;
   CrewId?: string;
 }
 
@@ -40,8 +40,6 @@ const PathMap: React.FC<PathMapProps> = ({
   const mapInstanceRef = useRef<any>(null);
 
   const [currentPathId, setCurrentPathId] = useState<string | null>(null);
-
-  const username = "testuser";
   const [customPathIndex, setCustomPathIndex] = useState(0);
 
   const colors = [
@@ -71,47 +69,51 @@ const PathMap: React.FC<PathMapProps> = ({
         });
         mapInstanceRef.current = map;
 
-        if (!measurementId) return;
-        try {
-          const response = await axios.get<LatLngPoint[]>(
-            `https://200.200.200.62:8080/getpath/${measurementId}`
-          );
-
-          const pathData = response.data;
-          if (pathData && pathData.length > 0) {
-            const linePath = pathData.map(
-              (point) => new kakao.maps.LatLng(point.y, point.x)
+        if (measurementId) {
+          try {
+            const response = await axios.get<LatLngPoint[]>(
+              `https://200.200.200.62:8080/getpath/${measurementId}`
             );
 
-            map.setCenter(linePath[0]);
+            const pathData = response.data;
+            if (pathData && pathData.length > 0) {
+              const linePath = pathData.map(
+                (point) => new kakao.maps.LatLng(point.y, point.x)
+              );
 
-            const polyline = new kakao.maps.Polyline({
-              path: linePath,
-              strokeWeight: 5,
-              strokeColor: "#0000FF",
-              strokeOpacity: 0.7,
-              strokeStyle: "solid",
-            });
+              map.setCenter(linePath[0]);
 
-            polyline.setMap(map);
+              const polyline = new kakao.maps.Polyline({
+                path: linePath,
+                strokeWeight: 5,
+                strokeColor: "#0000FF",
+                strokeOpacity: 0.7,
+                strokeStyle: "solid",
+              });
 
-            new kakao.maps.Marker({
-              position: linePath[0],
-              title: "시작점",
-              map: map,
-            });
+              polyline.setMap(map);
 
-            new kakao.maps.Marker({
-              position: linePath[linePath.length - 1],
-              title: "종료점",
-              map: map,
-            });
+              new kakao.maps.Marker({
+                position: linePath[0],
+                title: "시작점",
+                map: map,
+              });
+
+              new kakao.maps.Marker({
+                position: linePath[linePath.length - 1],
+                title: "종료점",
+                map: map,
+              });
+            }
+          } catch (error) {
+            console.error("경로 데이터 로드 실패:", error);
           }
-        } catch (error) {
-          console.error("경로 데이터 로드 실패:", error);
+        } else {
+          // measurementId 없으면 기본 지도 상태 (필요시 구현)
+          map.setCenter(new kakao.maps.LatLng(37.565235, 126.98583));
         }
 
-        // 클릭 이벤트
+        // 클릭 이벤트 등록 (기존 로직 유지)
         kakao.maps.event.addListener(map, "click", function (mouseEvent: any) {
           const latlng = mouseEvent.latLng;
 
@@ -160,7 +162,6 @@ const PathMap: React.FC<PathMapProps> = ({
             map: map,
           });
 
-          // 외부 상태 전달 (좌표 배열 넘김) ← 수정됨
           if (typeof setPathPoints === "function") {
             const arr = clickedPathRef.current.map((point) => ({
               lat: point.getLat(),
@@ -184,30 +185,28 @@ const PathMap: React.FC<PathMapProps> = ({
       return;
     }
 
-    try {
-      // path_id 결정: 백엔드가 testuser_0, _1... 중 사용 가능한 것 자동 선택
-      const pathId = CrewId
-        ? CrewId
-        : currentPathId ??
-          (
-            await axios.get(
-              `https://200.200.200.62:8080/nextpathid?username=${username}`
-            )
-          ).data.pathId;
+    let pathId: string | undefined;
+    if (CrewId) {
+      pathId = CrewId;
+    } else if (measurementId) {
+      pathId = measurementId.toString();
+    } else {
+      alert("저장할 경로 ID가 없습니다.");
+      return;
+    }
 
+    try {
       setCurrentPathId(pathId);
 
-      // path list 변환
       const pathData: PathDataItem[] = clickedPathRef.current.map(
         (point, index) => ({
-          path_id: pathId,
+          path_id: pathId!,
           path_order: index,
           location_x: point.getLng(),
           location_y: point.getLat(),
         })
       );
 
-      // 저장 요청
       await axios.post("https://200.200.200.62:8080/savecustompath", pathData);
       alert(`경로가 성공적으로 저장되었습니다. (ID: ${pathId})`);
     } catch (err) {
@@ -215,16 +214,27 @@ const PathMap: React.FC<PathMapProps> = ({
       alert("경로 저장에 실패했습니다.");
     }
   };
-  const handleLoadCustomPath = async () => {
-    //const pathId = `testuser_${customPathIndex}`;
-    const pathId = CrewId ? `${CrewId}` : `testuser_${customPathIndex}`;
 
-    const color = colors[customPathIndex % colors.length]; // 색 순환
+  const handleLoadCustomPath = async () => {
+    let pathId: string | undefined;
+
+    if (CrewId) {
+      pathId = CrewId;
+    } else if (measurementId) {
+      pathId = measurementId.toString();
+    } else {
+      // 불러올 경로 ID가 없으면 그냥 종료
+      return;
+    }
+
+    const color = colors[customPathIndex % colors.length];
 
     try {
       const response = await axios.get<LatLngPoint[]>(
-        `https://200.200.200.62:8080/getcustompath/${pathId}`
+        `https://200.200.200.62:8080/getpath/${pathId}`
       );
+      const apiUrl = `https://200.200.200.62:8080/getpath/${pathId}`;
+      console.log("불러오기 API 호출:", apiUrl); // ← 여기 추가
 
       const kakao = window.kakao;
       const pathData = response.data;
@@ -258,27 +268,32 @@ const PathMap: React.FC<PathMapProps> = ({
         map: mapInstanceRef.current,
       });
 
-      setCustomPathIndex((prev) => prev + 1); // 다음 클릭을 위해 증가
+      setCustomPathIndex((prev) => prev + 1);
     } catch (err) {
       console.error("커스텀 경로 불러오기 실패:", err);
       alert("경로 불러오기 실패");
     }
   };
+
   useEffect(() => {
     const timer = setTimeout(() => {
-      CrewId ?? handleLoadCustomPath().catch(() => {});
-    }, 1000); // 0.5초 후 실행
+      // CrewId가 없고 measurementId가 있으면 불러오기 실행
+      if (!CrewId && measurementId) {
+        handleLoadCustomPath().catch(() => {});
+      }
+    }, 1000);
 
     return () => clearTimeout(timer);
-  }, []);
+  }, [CrewId, measurementId]);
+
   return (
     <>
       <div
         ref={mapRef}
         style={{
-          width: "100vw", // 화면 가로 전체
-          height: "calc(100vw * 0.6667)", // 가로 비율에 따라 세로 3:2
-          maxHeight: "100vh", // 너무 높으면 화면 넘치지 않게
+          width: "100vw",
+          height: "calc(100vw * 0.6667)",
+          maxHeight: "100vh",
         }}
       />
       <div id="result" style={{ marginTop: "10px", fontWeight: "bold" }} />
@@ -312,7 +327,6 @@ const PathMap: React.FC<PathMapProps> = ({
                 endMarkerRef.current.setMap(null);
                 endMarkerRef.current = null;
               }
-              // 외부 상태 업데이트 (경로 초기화) ← 수정됨
               if (typeof setPathPoints === "function") {
                 setPathPoints([]);
               }
@@ -340,7 +354,6 @@ const PathMap: React.FC<PathMapProps> = ({
               map: mapInstanceRef.current,
             });
 
-            // 외부 상태 업데이트 (경로 좌표 변경) ← 수정됨
             if (typeof setPathPoints === "function") {
               const arr = clickedPathRef.current.map((point) => ({
                 lat: point.getLat(),
@@ -380,7 +393,7 @@ const PathMap: React.FC<PathMapProps> = ({
         >
           📂 불러오기
         </button>
-        <span>현재저장모드: {CrewId ?? 0}</span>
+        <span>현재저장모드: {CrewId ?? measurementId ?? "없음"}</span>
       </div>
     </>
   );

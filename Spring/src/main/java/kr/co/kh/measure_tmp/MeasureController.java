@@ -58,7 +58,7 @@ public class MeasureController {
 
     @GetMapping("/getpath/{id}")
     public List<PathDTO> getPathByMeasurementId(@PathVariable Long id) {
-        id=7L;
+        
         return pathRepo.findByMeasurementData_MeasurementId(id).stream()
                 .map(path -> new PathDTO(path.getLocationY(), path.getLocationX()))
                 .collect(Collectors.toList());
