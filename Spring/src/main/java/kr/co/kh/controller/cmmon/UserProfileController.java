@@ -226,4 +226,44 @@ public class UserProfileController {
             return ResponseEntity.internalServerError().body(response);
         }
     }
+
+    /**
+     * 사용자 정보(닉네임, 이메일, 전화번호 등) 수정
+     */
+    @PutMapping("/{userId}")
+    public ResponseEntity<Map<String, Object>> updateUserInfo(
+            @PathVariable String userId,
+            @RequestBody Map<String, String> requestBody) {
+        log.info("=== 사용자 정보 수정 요청 ===");
+        log.info("사용자 ID: {}", userId);
+        Map<String, Object> response = new HashMap<>();
+        try {
+            Optional<UserVO> userOpt = userService.getUserById(userId);
+            if (userOpt.isEmpty()) {
+                response.put("success", false);
+                response.put("message", "사용자를 찾을 수 없습니다.");
+                return ResponseEntity.badRequest().body(response);
+            }
+            UserVO user = userOpt.get();
+            // 닉네임, 이메일, 전화번호 등 업데이트
+            if (requestBody.containsKey("userNn")) {
+                user.setUserNn(requestBody.get("userNn"));
+            }
+            if (requestBody.containsKey("userEmail")) {
+                user.setUserEmail(requestBody.get("userEmail"));
+            }
+            if (requestBody.containsKey("userPhoneno")) {
+                user.setUserPhoneno(requestBody.get("userPhoneno"));
+            }
+            userService.updateUser(user);
+            response.put("success", true);
+            response.put("message", "사용자 정보가 성공적으로 수정되었습니다.");
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
+            log.error("사용자 정보 수정 실패: {}", e.getMessage());
+            response.put("success", false);
+            response.put("message", "사용자 정보 수정 중 오류가 발생했습니다.");
+            return ResponseEntity.internalServerError().body(response);
+        }
+    }
 } 
