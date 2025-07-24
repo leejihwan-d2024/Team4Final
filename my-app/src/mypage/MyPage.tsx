@@ -143,10 +143,14 @@ function MyPage() {
     if (userInfo.userId) {
       loadUserInfo(userInfo.userId);
     }
+  }, []);
+
+  // UserId가 변경될 때마다 해당 사용자 정보 로드
+  useEffect(() => {
     if (UserId) {
       loadOwnerUserInfo(UserId);
     }
-  }, []);
+  }, [UserId]);
 
   // 프로필 이미지 업데이트 핸들러
   const handleProfileImageUpdate = (newImageUrl: string) => {
