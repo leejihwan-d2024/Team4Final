@@ -10,4 +10,7 @@ import java.time.LocalDateTime;
 public class MeasureSimpleDTO {
     private String label; // "측정 활동"
     private LocalDateTime timestamp; // createdAt
+    private Long measurementId; // 추가
+
+
 }
