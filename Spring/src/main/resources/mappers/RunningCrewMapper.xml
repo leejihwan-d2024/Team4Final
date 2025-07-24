@@ -20,7 +20,8 @@
         IS_OVER_15,
         LEADER_ID,
         LEADER_NN,
-        DISTANCE
+        DISTANCE,
+        DESCRIPTION
         ) VALUES (
         #{crewId},
         #{crewTitle},
@@ -34,7 +35,8 @@
         #{isOver15},
         #{leaderId},
         #{leaderNn},
-        #{distance}
+        #{distance},
+        #{description}
         )
     </insert>
 
@@ -52,6 +54,7 @@
         rc.IS_OVER_15                AS isOver15,
         rc.LEADER_NN                 AS leaderNn,
         rc.DISTANCE                  AS distance,
+        rc.DESCRIPTION               AS description,
         (
         SELECT COUNT(*)
         FROM CREW_MEMBER cm
@@ -76,6 +79,7 @@
         rc.LEADER_ID                 AS leaderId,
         rc.LEADER_NN                 AS leaderNn,
         rc.DISTANCE                  AS distance,
+        rc.DESCRIPTION               AS description,
         (
         SELECT COUNT(*)
         FROM CREW_MEMBER cm
@@ -111,7 +115,8 @@
         END_LOCATION_MAP_POINT = #{endLocationMapPoint},
         DISTRICT = #{district},
         IS_OVER_15 = #{isOver15},
-        DISTANCE = #{distance}
+        DISTANCE = #{distance},
+        DESCRIPTION = #{description}
         WHERE CREW_ID = #{crewId}
     </update>
 
@@ -157,5 +162,12 @@
         ORDER BY RC.CREATED_AT DESC
     </select>
 
+    <select id="selectCrewsByUserId" resultType="kr.co.kh.model.vo.RunningCrewVO" parameterType="string">
+        SELECT rc.*
+        FROM RUNNING_CREW rc
+        JOIN CREW_MEMBER cm ON rc.CREW_ID = cm.CREW_ID
+        WHERE cm.USER_ID = #{userId}
+        ORDER BY cm.JOINED_AT DESC
+    </select>
 
 </mapper>
