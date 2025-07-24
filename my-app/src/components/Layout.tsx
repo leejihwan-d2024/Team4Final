@@ -172,7 +172,18 @@ function Layout({ children }: LayoutProps) {
             마이페이지
             <ul className="submenu">
               <li>업적</li>
-              <li>랭킹확인</li>
+              <li
+                onClick={() => {
+                  if (!isLoggedIn) {
+                    localStorage.setItem("redirectAfterLogin", "/ranking");
+                    navigate("/login");
+                  } else {
+                    navigate("/ranking");
+                  }
+                }}
+              >
+                랭킹확인
+              </li>
               <li>마이페이지</li>
             </ul>
           </li>
