@@ -6,10 +6,12 @@ import kr.co.kh.controller.cmmon.UserAchievementDto;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
+import org.springframework.stereotype.Repository;
 
 import java.util.List;
 import java.util.Optional;
 
+@Repository
 public interface UserAchvProgressRepository extends JpaRepository<UserAchvProgress, UserAchvProgressId> {
 
     Optional<UserAchvProgress> findByUserIdAndAchvId(String userId, String achvId);
@@ -19,8 +21,6 @@ public interface UserAchvProgressRepository extends JpaRepository<UserAchvProgre
             "p.currentValue, p.achv.achvMaxPoint, p.isCompleted) " +
             "FROM UserAchvProgress p WHERE p.userId = :userId")
     List<UserAchievementDto> findUserProgressDtoByUserId(@Param("userId") String userId);
-
-    List<UserAchvProgress> findRewardByAchvId(String userId);
 
     List<UserAchvProgress> findByUserId(String userId);
 }

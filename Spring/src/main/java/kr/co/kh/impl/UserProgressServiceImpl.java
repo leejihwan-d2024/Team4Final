@@ -1,6 +1,7 @@
 package kr.co.kh.impl;
 
 import kr.co.kh.controller.cmmon.UserAchvProgressDto;
+import kr.co.kh.mapper.UserAuthorityMapper;
 import kr.co.kh.mapper.UserProgressMapper;
 import kr.co.kh.model.vo.RewardVO;
 import kr.co.kh.repository.UserAchvProgressRepository;
@@ -8,9 +9,13 @@ import kr.co.kh.mapper.RewardMapper;
 import kr.co.kh.service.AchievementService;
 import kr.co.kh.service.UserProgressService;
 import kr.co.kh.achv.entity.UserAchvProgress;
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
 
 import java.util.List;
 import java.util.Map;
@@ -21,10 +26,16 @@ import java.util.stream.Collectors;
 @Slf4j
 public class UserProgressServiceImpl implements UserProgressService {
 
+    @Autowired
     private final UserAchvProgressRepository userAchvProgressRepository;
     private final UserProgressMapper userProgressMapper; // ✅ MyBatis 매퍼
     private final RewardMapper rewardMapper;
+    @Getter
     private final AchievementService achievementService;
+    @Getter
+    private final UserAuthorityMapper progressRepository;
+    @Setter
+    private Object achvId;
 
     /**
      * ✅ 유저 전체 업적 진행 상태 조회
@@ -105,4 +116,17 @@ public class UserProgressServiceImpl implements UserProgressService {
         log.info("🎖️ 유저 뱃지 조회: {}", userId);
         return userProgressMapper.getUserBadges(userId);
     }
+
+    @Override
+    public void increaseUserProgress(String userId) {
+        userProgressMapper.increaseUserProgress(userId);
+
+    }
+
+    @Override
+    public void increaseUserProgress(String achvId, String userId) {
+        userProgressMapper.increaseUserProgress(achvId, userId);
+    }
+
+
 }

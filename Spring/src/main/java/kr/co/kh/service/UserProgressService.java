@@ -12,5 +12,7 @@ public interface UserProgressService {
     List<UserAchvProgressDto> getCompletedAchievements(String userId);
     void updateProgress(String userId, String achvId, int progressValue);
     List<Map<String, Object>> getUserBadges(String userId);
+    void increaseUserProgress(String userId);
 
+    void increaseUserProgress(String achvId, String userId);
 }

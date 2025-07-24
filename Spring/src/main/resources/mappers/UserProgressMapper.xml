@@ -74,10 +74,13 @@
         R.BADGE_NAME AS badgeName,
         R.BADGE_IMAGE_URL AS badgeImageUrl
         FROM ACHV A
-        JOIN USER_ACHV_PROGRESS P ON A.ACHV_ID = P.ACHV_ID AND P.USER_ID = #{userId, jdbcType=VARCHAR}
+        LEFT OUTER JOIN USER_ACHV_PROGRESS P
+        ON A.ACHV_ID = P.ACHV_ID
+        AND P.USER_ID = #{userId, jdbcType=VARCHAR}
         LEFT JOIN ACHV_REWARD R ON A.ACHV_ID = R.ACHV_ID
-        WHERE P.IS_COMPLETED = 'Y'
+        WHERE NVL(P.IS_COMPLETED, 'N') = 'Y'
     </select>
+
 
     <select id="getUserBadges" parameterType="string" resultType="map">
         SELECT
@@ -91,5 +94,12 @@
         WHERE UAL.USER_ID = #{userId, jdbcType=VARCHAR}
         ORDER BY UAL.ACHIEVED_DATE DESC
     </select>
+    <update id="increaseUserProgress" parameterType="map">
+        UPDATE USER_ACHV_PROGRESS
+        SET CURRENT_VALUE = CURRENT_VALUE + 1
+        WHERE USER_ID = #{userId, jdbcType=VARCHAR}
+        AND ACHV_ID = #{achvId}
+    </update>
+
 
 </mapper>

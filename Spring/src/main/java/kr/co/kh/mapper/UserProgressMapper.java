@@ -17,4 +17,6 @@ public interface UserProgressMapper {
 
     List<Map<String, Object>> getUserBadges(String userId);
 
+    void increaseUserProgress(String userId);
+    void increaseUserProgress(String achvId,String userId);
 }

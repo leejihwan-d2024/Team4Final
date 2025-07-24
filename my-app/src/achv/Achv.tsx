@@ -65,7 +65,7 @@ function Achv() {
       }));
       setUserBadges(camelCaseBadges);
     } catch (err) {
-      console.error("❌ 뱃지 목록 로딩 실패:", err);
+      console.error("❌ 볃지 목록 로드 실패:", err);
     }
   };
 
@@ -130,7 +130,7 @@ function Achv() {
       const result: BadgeRewardResponse = response.data;
 
       if (result.result === "SUCCESS") {
-        setRewardBadgeName(result.badgeName ?? "획득한 뱃지");
+        setRewardBadgeName(result.badgeName ?? "획득한 볃지");
         setRewardImageUrl(result.badgeImageUrl ?? null);
         setShowRewardModal(true);
         setAchievements((prev) =>
@@ -172,6 +172,34 @@ function Achv() {
         </button>
       </div>
 
+      {/* ✅ 테스트용 진행도 증가 버튼 */}
+      {achievements.map((achv) => {
+        return (
+          <div key={achv.id}>
+            <div>{achv.title}</div>
+
+            <button
+              onClick={async () => {
+                const token = localStorage.getItem("token");
+                try {
+                  await axios.post("/api/achievements/increase", null, {
+                    headers: { Authorization: `Bearer ${token}` },
+                    params: { achvId: achv.id },
+                  });
+                  alert("해당 업적 진행도가 +1 증가했습니다.");
+                  fetchAchievements();
+                } catch (err) {
+                  console.error("업적 증가 실패", err);
+                  alert("업적 증가 중 오류 발생");
+                }
+              }}
+            >
+              +1 테스트
+            </button>
+          </div>
+        );
+      })}
+
       {loading ? (
         <div className="loading">업적을 불러오는 중...</div>
       ) : (
@@ -201,7 +229,7 @@ function Achv() {
                     onClick={(e) => {
                       e.stopPropagation();
                       if (isClaimable) handleClaim(achv.id);
-                      else alert("아직 조건이 충족되지 않았습니다.");
+                      else alert("아직 조건이 충출되지 않았습니다.");
                     }}
                   />
                 </div>
@@ -236,7 +264,7 @@ function Achv() {
             {rewardImageUrl && (
               <img
                 src={rewardImageUrl}
-                alt={rewardBadgeName ?? "뱃지"}
+                alt={rewardBadgeName ?? "볃지"}
                 className="reward-image"
               />
             )}
@@ -252,7 +280,7 @@ function Achv() {
 
       {userBadges.length > 0 && (
         <div className="badge-list">
-          <h2>🎖 내가 획득한 뱃지</h2>
+          <h2>🎖 나가 획득한 볃지</h2>
           <div className="badge-grid">
             {userBadges.map((badge, idx) => (
               <div key={idx} className="badge-item">

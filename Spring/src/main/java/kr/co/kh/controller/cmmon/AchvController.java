@@ -60,6 +60,19 @@ public class AchvController {
         return userProgressService.getUserBadges(userId);
     }
 
+    @PostMapping("/increase")
+    public ResponseEntity<?> increaseProgress(
+            @CurrentUser CustomUserDetails user,
+            @RequestParam String achvId
+    ) {
+        if (user == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("로그인이 필요합니다.");
+        }
+        userProgressService.increaseUserProgress(achvId, user.getUserId());
+        return ResponseEntity.ok("업적 진행도 +1 완료");
+    }
+
+
 
 
     // ✅ 테스트용 임시 데이터 반환

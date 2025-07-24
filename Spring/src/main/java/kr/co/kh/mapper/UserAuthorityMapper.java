@@ -1,5 +1,6 @@
 package kr.co.kh.mapper;
 
+import kr.co.kh.achv.entity.UserAchvProgress;
 import kr.co.kh.model.vo.UserAuthorityVO;
 import org.apache.ibatis.annotations.Mapper;
 
@@ -10,7 +11,7 @@ public interface UserAuthorityMapper {
 
     void save(UserAuthorityVO userAuthorityVO);
     
-    List<UserAuthorityVO> findByUserId(String userId);
-    
-    void deleteByUserId(String userId);
+    List<UserAchvProgress> findByUserId(String userId);
+
+    void save(UserAchvProgress progress);
 }
