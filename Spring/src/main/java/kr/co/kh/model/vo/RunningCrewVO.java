@@ -25,4 +25,5 @@ public class RunningCrewVO {
     private String leaderId;
     private int currentCount;
     private BigDecimal distance;
+    private String description;
 }

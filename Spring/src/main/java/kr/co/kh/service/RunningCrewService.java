@@ -49,4 +49,8 @@ public class RunningCrewService {
     public List<Map<String, Object>> getRecentCreatedCrews(String userId) {
         return crewMapper.getRecentCreatedCrews(userId);
     }
+
+    public List<RunningCrewVO> getCrewsByUserId(String userId) {
+        return crewMapper.selectCrewsByUserId(userId);
+    }
 }

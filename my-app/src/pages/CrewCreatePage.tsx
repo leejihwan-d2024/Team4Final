@@ -24,7 +24,6 @@ export default function CrewCreatePage() {
     endLocationMapPoint: "",
   });
 
-  // 전체 경로 좌표 배열 (위도,경도)
   const [pathPoints, setPathPoints] = useState<{ lat: number; lng: number }[]>(
     []
   );
@@ -32,7 +31,8 @@ export default function CrewCreatePage() {
   const [startAddress, setStartAddress] = useState("");
   const [endAddress, setEndAddress] = useState("");
 
-  // 사용자 정보 로드
+  const [isAutoDescription, setIsAutoDescription] = useState(true); // ✅ 설명 자동입력 여부
+
   useEffect(() => {
     const storedUser = localStorage.getItem("user");
     if (storedUser) {
@@ -44,7 +44,6 @@ export default function CrewCreatePage() {
     }
   }, []);
 
-  // 기본 크루 ID 가져오기
   useEffect(() => {
     async function fetchDefaultId() {
       try {
@@ -59,14 +58,13 @@ export default function CrewCreatePage() {
     fetchDefaultId();
   }, []);
 
-  // 거리 계산 함수 (haversine 공식)
   function calculateDistance(
     lat1: number,
     lon1: number,
     lat2: number,
     lon2: number
   ) {
-    const R = 6371; // 지구 반경 (km)
+    const R = 6371;
     const dLat = ((lat2 - lat1) * Math.PI) / 180;
     const dLon = ((lon2 - lon1) * Math.PI) / 180;
     const a =
@@ -78,7 +76,6 @@ export default function CrewCreatePage() {
     return R * c;
   }
 
-  // 전체 경로 총 거리 계산
   function calculateTotalDistance(points: { lat: number; lng: number }[]) {
     let total = 0;
     for (let i = 0; i < points.length - 1; i++) {
@@ -92,14 +89,12 @@ export default function CrewCreatePage() {
     return total;
   }
 
-  // pathPoints 배열이 바뀔 때마다 거리 자동 계산 후 form.distance에 반영
   useEffect(() => {
     if (pathPoints.length < 2) return;
     const totalDistance = calculateTotalDistance(pathPoints);
     setForm((prev) => ({ ...prev, distance: totalDistance.toFixed(2) }));
   }, [pathPoints]);
 
-  // 출발지 주소 역지오코딩
   useEffect(() => {
     if (pathPoints.length === 0) return;
     const start = pathPoints[0];
@@ -128,7 +123,6 @@ export default function CrewCreatePage() {
       .catch(() => setStartAddress("오류 발생"));
   }, [pathPoints]);
 
-  // 도착지 주소 역지오코딩
   useEffect(() => {
     if (pathPoints.length === 0) return;
     const end = pathPoints[pathPoints.length - 1];
@@ -157,7 +151,6 @@ export default function CrewCreatePage() {
       .catch(() => setEndAddress("오류 발생"));
   }, [pathPoints]);
 
-  // 시간(duration)이나 거리(distance)가 바뀌면 페이스 자동 계산 (분/km)
   useEffect(() => {
     const durationNum = Number(form.duration);
     const distanceNum = Number(form.distance);
@@ -174,21 +167,34 @@ export default function CrewCreatePage() {
     }));
   }, [form.duration, form.distance]);
 
-  // 입력값 핸들링 (페이스 직접 입력도 가능)
+  // ✅ 설명 자동입력 로직
+  useEffect(() => {
+    if (!isAutoDescription) return;
+    if (form.duration && form.pace) {
+      setForm((prev) => ({
+        ...prev,
+        description: `러닝시간: ${prev.duration}분 / 페이스: ${prev.pace}/\n 그 외 추가사항을 입력해주세요!`,
+      }));
+    }
+  }, [form.duration, form.pace, isAutoDescription]);
+
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
     const { name, value } = e.target;
 
-    // 페이스는 숫자만 받도록 필터링
     if (name === "pace") {
       if (!/^\d*\.?\d*$/.test(value)) return;
+    }
+
+    // 사용자가 설명을 직접 수정하면 자동입력 중단
+    if (name === "description") {
+      setIsAutoDescription(false);
     }
 
     setForm((prev) => ({ ...prev, [name]: value }));
   };
 
-  // 크루 생성 제출
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
@@ -205,7 +211,7 @@ export default function CrewCreatePage() {
         isOver15: form.isOver15 ? 1 : 0,
         leaderId: currentUser.userId,
         leaderNn: currentUser.nickname,
-        distance: form.distance, // 보내도 되고, 안 보내도 됨
+        distance: form.distance,
         duration: form.duration,
         pace: form.pace,
         description: form.description,
@@ -235,8 +241,8 @@ export default function CrewCreatePage() {
         <input
           name="startLocation"
           value={form.startLocation}
-          onChange={handleChange}
           hidden
+          readOnly
         />
         <input
           name="startLocationString"
@@ -251,12 +257,7 @@ export default function CrewCreatePage() {
           CrewId={form.crewId}
         />
 
-        <input
-          name="endLocation"
-          value={form.endLocation}
-          onChange={handleChange}
-          hidden
-        />
+        <input name="endLocation" value={form.endLocation} hidden readOnly />
         <input
           name="endLocationString"
           placeholder="도착지 지역명"

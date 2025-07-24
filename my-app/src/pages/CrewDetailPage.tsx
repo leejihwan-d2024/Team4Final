@@ -111,8 +111,12 @@ export default function CrewDetailPage() {
   };
 
   const handleEdit = () => {
-    alert("수정 페이지로 이동합니다 (미구현)");
-    // navigate(`/crews/${crew.crewId}/edit`);
+    if (!crew) {
+      alert("크루 정보가 없습니다.");
+      return;
+    }
+    alert("수정 페이지로 이동합니다");
+    navigate(`/crews/${crew.crewId}/edit`);
   };
 
   if (!crew) return <div>로딩 중...</div>;
@@ -155,12 +159,6 @@ export default function CrewDetailPage() {
           <strong>거리:</strong> {crew.distance} km
         </p>
         <p>
-          <strong>시간:</strong> {crew.duration} 분
-        </p>
-        <p>
-          <strong>페이스:</strong> {crew.pace} 분/km
-        </p>
-        <p>
           <strong>설명:</strong> {crew.description}
         </p>
       </div>
@@ -169,6 +167,12 @@ export default function CrewDetailPage() {
       <div className={styles.buttonGroup}>
         {isLeader ? (
           <>
+            <button
+              className={hasJoined ? styles.chatButton : styles.joinButton}
+              onClick={handleJoinOrEnterChat}
+            >
+              💬 채팅방 입장
+            </button>
             <button className={styles.editButton} onClick={handleEdit}>
               ✏ 수정
             </button>

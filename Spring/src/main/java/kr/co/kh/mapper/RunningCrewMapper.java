@@ -35,4 +35,6 @@ public interface RunningCrewMapper {
     List<Map<String, Object>> getRecentJoinedCrews(@Param("userId") String userId);
 
     List<Map<String, Object>> getRecentCreatedCrews(@Param("userId") String userId);
+
+    List<RunningCrewVO> selectCrewsByUserId(@Param("userId") String userId);
     }

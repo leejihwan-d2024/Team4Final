@@ -131,4 +131,13 @@ public class RunningCrewController {
     public ResponseEntity<List<Map<String, Object>>> getRecentCreatedCrews(@PathVariable String userId) {
         return ResponseEntity.ok(crewService.getRecentCreatedCrews(userId));
     }
+
+    // 상단고정용
+    @GetMapping("/joined")
+    public ResponseEntity<List<RunningCrewVO>> getJoinedCrews(@RequestParam String userId) {
+        List<RunningCrewVO> crews = crewService.getCrewsByUserId(userId);
+        return ResponseEntity.ok(crews);
+    }
+
+
 }

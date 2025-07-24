@@ -102,6 +102,26 @@
   font-weight: 500;
 }
 
+.crewTitle .pinIcon {
+  margin-left: 8px;
+  font-size: 1.2rem;
+  color: #1e88e5;
+}
+
+.crewInfo .joinedText {
+  font-size: 0.75rem;
+  color: #4caf50;
+  margin-left: 10px;
+  font-weight: 600;
+  user-select: none;
+  display: inline-block;
+}
+
+.crewItem.joined {
+  border: 2px solid #4caf50;
+  box-shadow: 0 4px 14px rgba(76, 175, 80, 0.3);
+}
+
 .createButton {
   position: fixed;
   bottom: 30px;

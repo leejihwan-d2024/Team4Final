@@ -1,17 +1,16 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
-import styles from "./MainPage.module.css";
 import axios from "axios";
+import styles from "./MainPage.module.css";
 
-// 크루 타입
 type Crew = {
-  crewId: number;
+  crewId: string;
   crewTitle: string;
   currentCount: number;
+  isJoined?: boolean;
 };
 
-// 러닝 이벤트 타입
 type RunningEvent = {
   id: number;
   title: string;
@@ -19,17 +18,26 @@ type RunningEvent = {
   location: string;
 };
 
-export default function MainPage2() {
+export default function MainPage() {
   const navigate = useNavigate();
   const [crewList, setCrewList] = useState<Crew[]>([]);
   const [todayEvent, setTodayEvent] = useState<RunningEvent | null>(null);
   const [offsetY, setOffsetY] = useState(0);
   const [regionName, setRegionName] = useState("내 지역");
 
-  // 내 위치 기반으로 Kakao REST API 호출해서 지역명 가져오기
+  const [userId, setUserId] = useState<string>("");
+
   useEffect(() => {
+    const user = localStorage.getItem("user");
+    if (user) {
+      const parsed = JSON.parse(user);
+      setUserId(parsed.userId);
+    }
+  }, []);
+
+  useEffect(() => {
+    // 지역 가져오기
     if (!navigator.geolocation) {
-      console.error("위치 정보 지원 안됨");
       setRegionName("위치 지원 안됨");
       return;
     }
@@ -49,42 +57,50 @@ export default function MainPage2() {
             }
           );
           const data = await res.json();
-
-          if (!data.documents || data.documents.length === 0) {
-            setRegionName("주소 정보 없음");
-            return;
-          }
-          // 보통 0번째가 가장 정확한 주소라 봐도 됨
-          const region2 = data.documents[0].region_2depth_name; // 구
-
-          setRegionName(`${region2}`);
-        } catch (error) {
-          console.error("주소 정보 가져오기 실패", error);
-          setRegionName("주소 정보 오류");
+          const region2 =
+            data.documents?.[0]?.region_2depth_name || "알 수 없음";
+          setRegionName(region2);
+        } catch (err) {
+          setRegionName("주소 오류");
         }
       },
       (err) => {
-        console.error("위치 접근 실패", err);
-        setRegionName("위치 접근 거부됨");
+        console.error("❌ 위치 접근 실패:", err);
+        setRegionName("접근 거부");
       }
     );
 
     const onScroll = () => setOffsetY(window.scrollY);
     window.addEventListener("scroll", onScroll);
-
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
-  // 크루 목록 & 오늘 이벤트 fetch
   useEffect(() => {
     const fetchCrews = async () => {
       try {
-        const { data } = await axios.get<Crew[]>(
-          "https://localhost:8080/api/crews"
-        );
-        setCrewList(data);
-      } catch (e) {
-        console.error("❌ 크루 목록 불러오기 실패:", e);
+        const [allRes, joinedRes] = await Promise.all([
+          axios.get<Crew[]>("https://localhost:8080/api/crews"),
+          axios.get<Crew[]>(
+            `https://localhost:8080/api/crews/joined?userId=${userId}`
+          ),
+        ]);
+
+        const joinedCrewIds = new Set(joinedRes.data.map((c) => c.crewId));
+
+        const allWithJoinStatus = allRes.data.map((crew) => ({
+          ...crew,
+          isJoined: joinedCrewIds.has(crew.crewId),
+        }));
+
+        const sorted = allWithJoinStatus.sort((a, b) => {
+          if (a.isJoined && !b.isJoined) return -1;
+          if (!a.isJoined && b.isJoined) return 1;
+          return 0;
+        });
+
+        setCrewList(sorted);
+      } catch (err) {
+        console.error("❌ 크루 목록 로딩 실패:", err);
         alert("크루 목록을 불러오지 못했습니다.");
       }
     };
@@ -95,21 +111,20 @@ export default function MainPage2() {
           "https://localhost:8080/api/events"
         );
         if (data.length > 0) setTodayEvent(data[0]);
-      } catch (e) {
-        console.error("이벤트 불러오기 실패", e);
+      } catch (err) {
+        console.error("❌ 이벤트 로딩 실패:", err);
       }
     };
 
-    fetchCrews();
-    fetchTodayEvent();
-  }, []);
+    if (userId) {
+      fetchCrews();
+      fetchTodayEvent();
+    }
+  }, [userId]);
 
   const handleClickTodayEvent = () => {
-    if (todayEvent) {
-      navigate(`/events/${todayEvent.id}`);
-    } else {
-      alert("오늘의 이벤트가 없습니다.");
-    }
+    if (todayEvent) navigate(`/events/${todayEvent.id}`);
+    else alert("오늘의 이벤트가 없습니다.");
   };
 
   return (
@@ -144,12 +159,20 @@ export default function MainPage2() {
         {crewList.map((crew) => (
           <div
             key={crew.crewId}
-            className={styles.crewItem}
+            className={`${styles.crewItem} ${
+              crew.isJoined ? styles.joined : ""
+            }`}
             onClick={() => navigate(`/crew/${crew.crewId}`)}
           >
-            <div className={styles.crewTitle}>{crew.crewTitle}</div>
+            <div className={styles.crewTitle}>
+              {crew.crewTitle}
+              {crew.isJoined && <span className={styles.pinIcon}>📌</span>}
+            </div>
             <div className={styles.crewInfo}>
               현재 참여 인원: {(crew.currentCount ?? 0) + 1}
+              {crew.isJoined && (
+                <span className={styles.joinedText}>참가중!</span>
+              )}
             </div>
           </div>
         ))}
