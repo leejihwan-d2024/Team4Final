@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import MainMenu from "../mainpage/MainMenu";
 import AdminPage_Status from "./AdminPage_Status";
+import UserTable from "./UserTable";
 
 function AdminPage() {
   const [selectedTab, setSelectedTab] = useState<"user" | "post" | "status">(
@@ -10,7 +11,11 @@ function AdminPage() {
   const renderContent = () => {
     switch (selectedTab) {
       case "user":
-        return <div>회원목록입니다</div>;
+        return (
+          <div>
+            <UserTable />
+          </div>
+        );
       case "post":
         return <div>게시글목록입니다</div>;
       case "status":
