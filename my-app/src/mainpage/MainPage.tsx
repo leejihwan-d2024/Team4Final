@@ -3,13 +3,45 @@ import styled from "styled-components";
 import "../App.css";
 import LocationTracker from "./LocationTracker";
 import PathMap from "./PathMap";
-import { Link } from "react-router-dom";
 import MainMenu from "./MainMenu";
 
+const Wrapper = styled.div`
+  max-width: 360px;
+  height: 640px;
+  margin: auto;
+  padding: 16px;
+  box-sizing: border-box;
+  background: #f9f9f9;
+  font-size: 14px;
+
+  position: relative; // ✅ 메뉴 기준 위치를 잡기 위해 필요
+  overflow: visible; // ✅ 팝업 메뉴가 잘리지 않도록
+`;
+
+const LocationBox = styled.div`
+  margin-bottom: 12px;
+  font-weight: bold;
+`;
+
+const FullWidthButton = styled.button`
+  width: 100%;
+  padding: 12px;
+  margin-bottom: 16px;
+  font-size: 16px;
+  background-color: #2563eb;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+
+  &:hover {
+    background-color: #1e40af;
+  }
+`;
+
 function MainPage() {
-  const [getRunning, setRunning] = useState(-1);
   const [location, setLocation] = useState("불러오는 중...");
-  const [menuOpen, setMenuOpen] = useState(false);
+
   useEffect(() => {
     if (!navigator.geolocation) {
       setLocation("위치 정보 지원 안됨");
@@ -21,13 +53,12 @@ function MainPage() {
         const lat = position.coords.latitude;
         const lng = position.coords.longitude;
 
-        // Kakao API 호출
         fetch(
           `https://dapi.kakao.com/v2/local/geo/coord2regioncode.json?x=${lng}&y=${lat}`,
           {
             method: "GET",
             headers: {
-              Authorization: "KakaoAK 940ad44b82d7651f1eafdd0d4758cc07", // REST API 키
+              Authorization: "KakaoAK 940ad44b82d7651f1eafdd0d4758cc07",
             },
           }
         )
@@ -53,22 +84,13 @@ function MainPage() {
   }, []);
 
   return (
-    <div className="App">
-      <div className="LocationDataArea">
-        <span>현재 위치 : </span>
-        <span>{location}</span>
-      </div>
+    <Wrapper>
+      <LocationBox>현재 위치 : {location}</LocationBox>
 
       <MainMenu />
-      <button
-        type="button"
-        className="text-white bg-blue-700 hover:bg-blue-800 px-4 py-2 rounded"
-        onClick={() => alert("커뮤니티")}
-      >
-        (커뮤니티버튼)
-      </button>
+
       <LocationTracker />
-    </div>
+    </Wrapper>
   );
 }
 

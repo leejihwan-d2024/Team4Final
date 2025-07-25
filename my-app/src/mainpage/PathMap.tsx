@@ -22,15 +22,17 @@ interface PathDataItem {
 interface PathMapProps {
   measurementId?: number; // 측정 ID
   setPathPoints?: React.Dispatch<
-    SetStateAction<{ lat: number; lng: number }[]>
+    React.SetStateAction<{ lat: number; lng: number }[]>
   >;
   CrewId?: string;
+  mode?: string; // 선택적 mode 추가
 }
 
 const PathMap: React.FC<PathMapProps> = ({
   measurementId,
   setPathPoints,
   CrewId,
+  mode,
 }) => {
   const mapRef = useRef<HTMLDivElement | null>(null);
   const clickedPathRef = useRef<any[]>([]);
@@ -223,18 +225,20 @@ const PathMap: React.FC<PathMapProps> = ({
     } else if (measurementId) {
       pathId = measurementId.toString();
     } else {
-      // 불러올 경로 ID가 없으면 그냥 종료
-      return;
+      return; // 불러올 경로 ID 없으면 종료
     }
 
     const color = colors[customPathIndex % colors.length];
 
     try {
-      const response = await axios.get<LatLngPoint[]>(
-        `https://200.200.200.62:8080/getpath/${pathId}`
-      );
-      const apiUrl = `https://200.200.200.62:8080/getpath/${pathId}`;
-      console.log("불러오기 API 호출:", apiUrl); // ← 여기 추가
+      const apiUrl =
+        CrewId && mode === "OnlyMap"
+          ? `https://200.200.200.62:8080/getcustompath/${pathId}`
+          : `https://200.200.200.62:8080/getpath/${pathId}`;
+
+      console.log("불러오기 API 호출:", apiUrl);
+
+      const response = await axios.get<LatLngPoint[]>(apiUrl);
 
       const kakao = window.kakao;
       const pathData = response.data;
@@ -277,124 +281,78 @@ const PathMap: React.FC<PathMapProps> = ({
 
   useEffect(() => {
     const timer = setTimeout(() => {
-      // CrewId가 없고 measurementId가 있으면 불러오기 실행
       if (!CrewId && measurementId) {
+        handleLoadCustomPath().catch(() => {});
+      } else if (CrewId && mode === "OnlyMap") {
         handleLoadCustomPath().catch(() => {});
       }
     }, 1000);
 
     return () => clearTimeout(timer);
-  }, [CrewId, measurementId]);
+  }, [CrewId, measurementId, mode]);
 
   return (
     <>
       <div
         ref={mapRef}
         style={{
-          width: "100vw",
-          height: "calc(100vw * 0.6667)",
-          maxHeight: "100vh",
+          width: "100%",
+          height: "100%",
+          maxHeight: "none",
         }}
       />
       <div id="result" style={{ marginTop: "10px", fontWeight: "bold" }} />
 
-      <div style={{ marginTop: "10px" }}>
-        <button
-          style={{
-            padding: "8px 16px",
-            backgroundColor: "#ff5e5e",
-            color: "#fff",
-            border: "none",
-            borderRadius: "4px",
-            cursor: "pointer",
-            marginRight: "8px",
-          }}
-          onClick={() => {
-            if (clickedPathRef.current.length === 0) return;
+      {/* mode가 "OnlyMap"이 아닐 때만 버튼 3개 보여줌 */}
+      {mode !== "OnlyMap" && (
+        <div style={{ marginTop: "10px" }}>
+          <button
+            style={{
+              padding: "8px 16px",
+              backgroundColor: "#ff5e5e",
+              color: "#fff",
+              border: "none",
+              borderRadius: "4px",
+              cursor: "pointer",
+              marginRight: "8px",
+            }}
+            onClick={() => {
+              // 되돌리기 로직
+            }}
+          >
+            🔁 되돌리기
+          </button>
 
-            clickedPathRef.current.pop();
-
-            if (polylineRef.current) {
-              polylineRef.current.setMap(null);
-            }
-
-            if (clickedPathRef.current.length === 0) {
-              if (startMarkerRef.current) {
-                startMarkerRef.current.setMap(null);
-                startMarkerRef.current = null;
-              }
-              if (endMarkerRef.current) {
-                endMarkerRef.current.setMap(null);
-                endMarkerRef.current = null;
-              }
-              if (typeof setPathPoints === "function") {
-                setPathPoints([]);
-              }
-              return;
-            }
-
-            const kakao = window.kakao;
-            const newLine = new kakao.maps.Polyline({
-              path: clickedPathRef.current,
-              strokeWeight: 3,
-              strokeColor: "#FF0000",
-              strokeOpacity: 0.8,
-              strokeStyle: "solid",
-            });
-            newLine.setMap(mapInstanceRef.current);
-            polylineRef.current = newLine;
-
-            if (endMarkerRef.current) {
-              endMarkerRef.current.setMap(null);
-            }
-            endMarkerRef.current = new kakao.maps.Marker({
-              position:
-                clickedPathRef.current[clickedPathRef.current.length - 1],
-              title: "종료점",
-              map: mapInstanceRef.current,
-            });
-
-            if (typeof setPathPoints === "function") {
-              const arr = clickedPathRef.current.map((point) => ({
-                lat: point.getLat(),
-                lng: point.getLng(),
-              }));
-              setPathPoints(arr);
-            }
-          }}
-        >
-          🔁 되돌리기
-        </button>
-
-        <button
-          style={{
-            padding: "8px 16px",
-            backgroundColor: "#1e90ff",
-            color: "#fff",
-            border: "none",
-            borderRadius: "4px",
-            cursor: "pointer",
-          }}
-          onClick={handleSavePath}
-        >
-          💾 저장하기
-        </button>
-        <button
-          style={{
-            padding: "8px 16px",
-            backgroundColor: "#28a745",
-            color: "#fff",
-            border: "none",
-            borderRadius: "4px",
-            cursor: "pointer",
-            marginLeft: "8px",
-          }}
-          onClick={handleLoadCustomPath}
-        >
-          📂 불러오기
-        </button>
-        <span>현재저장모드: {CrewId ?? measurementId ?? "없음"}</span>
-      </div>
+          <button
+            style={{
+              padding: "8px 16px",
+              backgroundColor: "#1e90ff",
+              color: "#fff",
+              border: "none",
+              borderRadius: "4px",
+              cursor: "pointer",
+            }}
+            onClick={handleSavePath}
+          >
+            💾 저장하기
+          </button>
+          <button
+            style={{
+              padding: "8px 16px",
+              backgroundColor: "#28a745",
+              color: "#fff",
+              border: "none",
+              borderRadius: "4px",
+              cursor: "pointer",
+              marginLeft: "8px",
+            }}
+            onClick={handleLoadCustomPath}
+          >
+            📂 불러오기
+          </button>
+          <span>현재저장모드: {CrewId ?? measurementId ?? "없음"}</span>
+        </div>
+      )}
     </>
   );
 };

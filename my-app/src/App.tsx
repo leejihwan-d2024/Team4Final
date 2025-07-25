@@ -40,6 +40,7 @@ import MyPage from "./mypage/MyPage";
 import RankingPage from "./components/RankingPage";
 import PostByAuthorWrapper from "./components/PostByAuthorWrapper";
 import MyMeasurement from "./mypage/MyMeasurement";
+import AdminPage from "./adminpage/AdminPage";
 function App() {
   const [posts, setPosts] = useState<Post[]>([]);
   const [selectedPost, setSelectedPost] = useState<Post | null>(null);
@@ -212,6 +213,7 @@ function App() {
         <Route path="/mymeasure/:UserId" element={<MyMeasurement />} />
         <Route path="/ranking" element={<RankingPage />} />
         <Route path="/posts/author" element={<PostByAuthorWrapper />}></Route>
+        <Route path="/admin" element={<AdminPage />}></Route>
       </Routes>
     </BrowserRouter>
   );

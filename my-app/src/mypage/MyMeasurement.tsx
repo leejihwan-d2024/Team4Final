@@ -28,13 +28,25 @@ const MyMeasure = () => {
   }, [UserId]);
 
   const handleMeasureClick = (measure: MeasureSimpleDTO) => {
-    console.log("선택한 measurementId:", measure.measurementId); // 여기 추가
+    console.log("선택한 measurementId:", measure.measurementId);
     setSelectedMeasure(measure);
     setShowModal(true);
   };
 
   return (
-    <div style={{ padding: "20px" }}>
+    <div
+      style={{
+        padding: "20px",
+        width: "100%",
+        maxWidth: "360px",
+        height: "100%",
+        maxHeight: "640px",
+        overflowY: "auto",
+        boxSizing: "border-box",
+        margin: "0 auto",
+        backgroundColor: "#fff",
+      }}
+    >
       <h2 style={{ fontSize: "24px", fontWeight: "bold" }}>
         📍 나의 측정 기록
       </h2>
@@ -48,6 +60,8 @@ const MyMeasure = () => {
             margin: "8px 0",
             padding: "8px",
             cursor: "pointer",
+            borderRadius: "8px",
+            backgroundColor: "#f9f9f9",
           }}
         >
           <p>제목: {item.label}</p>
@@ -55,7 +69,6 @@ const MyMeasure = () => {
         </div>
       ))}
 
-      {/* 모달 */}
       {showModal && selectedMeasure && (
         <div
           style={{
@@ -69,19 +82,24 @@ const MyMeasure = () => {
             alignItems: "center",
             justifyContent: "center",
             zIndex: 1000,
+            padding: "10px",
+            boxSizing: "border-box",
           }}
         >
           <div
             style={{
               backgroundColor: "white",
-              borderRadius: "10px",
-              padding: "20px",
-              width: "90%",
-              maxWidth: "800px",
-              height: "600px",
+              borderRadius: "12px",
+              padding: "16px",
+              width: "100%",
+              maxWidth: "360px",
+              height: "100%",
+              maxHeight: "640px",
               display: "flex",
               flexDirection: "column",
               position: "relative",
+              boxShadow: "0 4px 12px rgba(0,0,0,0.2)",
+              overflow: "hidden",
             }}
           >
             <button
@@ -100,24 +118,34 @@ const MyMeasure = () => {
             </button>
             <h3
               style={{
-                fontSize: "20px",
+                fontSize: "18px",
                 fontWeight: "bold",
-                marginBottom: "10px",
+                marginBottom: "8px",
+                marginTop: "30px",
               }}
             >
               {selectedMeasure.label}
             </h3>
-            <p>
+            <p style={{ fontSize: "14px", marginBottom: "4px" }}>
               📅 측정일: {new Date(selectedMeasure.timestamp).toLocaleString()}
             </p>
-            <p>
-              📌 이 측정 경로는 사용자가 활동한 GPS 데이터를 기반으로
-              시각화됩니다.
+            <p style={{ fontSize: "13px", color: "#555" }}>
+              📌 사용자의 GPS 활동 데이터를 기반으로 시각화됩니다.
             </p>
 
-            {/* ✅ 지도 컴포넌트로 대체됨 */}
-            <div style={{ flex: 1, marginTop: "10px", minHeight: "300px" }}>
-              <PathMap measurementId={selectedMeasure.measurementId} />
+            <div
+              style={{
+                flex: 1,
+                marginTop: "10px",
+                border: "1px solid #ccc",
+                borderRadius: "8px",
+                overflow: "hidden",
+              }}
+            >
+              <PathMap
+                measurementId={selectedMeasure.measurementId}
+                mode="OnlyMap"
+              />
             </div>
           </div>
         </div>

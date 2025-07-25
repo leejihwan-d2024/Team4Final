@@ -131,7 +131,9 @@ export default function CrewDetailPage() {
           <strong>도착지 좌표:</strong> {crew.endLocation}
         </p>
 
-        <PathMap CrewId={crew.crewId} />
+        <div style={{ width: "100%", height: 400, margin: "20px 0" }}>
+          <PathMap CrewId={crew.crewId} mode="OnlyMap" />
+        </div>
 
         <p>
           <strong>출발 위치 좌표:</strong> {crew.startLocationMapPoint}

@@ -6,7 +6,7 @@ function MainMenu() {
   const [menuOpen, setMenuOpen] = useState(false);
   const userStr = localStorage.getItem("user");
   const user = JSON.parse(userStr || "null");
-  const [isLoading, setIsLoading] = useState(false);
+
   const [userInfo, setUserInfo] = useState({
     userId: user?.userId || "",
     userNn: user?.userNn || "",
@@ -17,25 +17,18 @@ function MainMenu() {
     userActivePoint: user?.userActivePoint || "",
     userStatus: user?.userStatus || "",
   });
-  // 상태 메시지 관리
-  const [status, setStatus] = useState<{
-    message: string;
-    type: "success" | "error" | "info";
-  } | null>(null);
+
   const loadUserInfo = async (userId: string) => {
-    setIsLoading(true);
     try {
-      // 사용자 기본 정보 조회
       const userResponse = await api.get(`/api/user-profile/${userId}`);
       let profileImageUrl = "";
 
-      // 프로필 이미지 URL 조회
       try {
         const imageResponse = await api.get(`/api/profile/${userId}`);
         if (imageResponse.data.success) {
           profileImageUrl = imageResponse.data.imageUrl;
         }
-      } catch (imageError) {
+      } catch {
         console.log("프로필 이미지 URL 조회 실패, 기본값 사용");
       }
 
@@ -55,36 +48,41 @@ function MainMenu() {
       }
     } catch (error) {
       console.error("사용자 정보 로드 실패:", error);
-      setStatus({
-        message: "사용자 정보를 불러오는데 실패했습니다.",
-        type: "error",
-      });
-    } finally {
-      setIsLoading(false);
     }
   };
+
   useEffect(() => {
     if (userInfo.userId) {
       loadUserInfo(userInfo.userId);
     }
   }, []);
+
   return (
-    <>
-      {/* 달리기, 메뉴 등은 기존 그대로 유지 */}
+    <div style={{ position: "relative" }}>
+      {/* 메뉴 버튼 */}
       <button
         type="button"
-        className="fixed top-4 right-4 z-50 text-white bg-blue-700 hover:bg-blue-800 px-4 py-2 rounded"
-        onClick={() => setMenuOpen(true)}
+        className="absolute top-4 right-4 z-40 text-white bg-blue-700 hover:bg-blue-800 px-4 py-2 rounded"
+        onClick={() => {
+          console.log("메뉴 열기 클릭됨");
+          setMenuOpen(true);
+        }}
       >
         메뉴
       </button>
+
+      {/* 메뉴 패널 */}
       <div
-        className={`fixed top-0 right-0 h-full w-64 bg-white shadow-lg transform transition-transform duration-300 z-50 ${
+        className={`absolute top-0 right-0 h-full w-64 shadow-xl transition-transform duration-300 z-50 ${
           menuOpen ? "translate-x-0" : "translate-x-full"
         }`}
+        style={{
+          pointerEvents: menuOpen ? "auto" : "none",
+          visibility: menuOpen ? "visible" : "hidden",
+          backgroundColor: "white", // bg-white 대신 인라인 지정
+        }}
       >
-        <div className="p-4 border-b font-bold text-lg">📋 메뉴</div>
-        <ul className="p-4 space-y-4">
+        <ul className="p-4 space-y-4 text-sm bg-white">
           <li>
             <Link to="/" className="text-blue-700 hover:underline">
               홈
@@ -143,20 +141,16 @@ function MainMenu() {
               마이페이지
             </Link>
           </li>
-          {userInfo ? (
-            userInfo.userStatus === 2 ? (
-              <li>
-                <Link to={`/`} className="text-blue-700 hover:underline">
-                  관리자페이지
-                </Link>
-              </li>
-            ) : (
-              <></>
-            )
-          ) : (
-            <span>유저 정보 없음</span>
+          {userInfo && userInfo.userNn === "1111" && (
+            <li>
+              <Link to="/admin" className="text-blue-700 hover:underline">
+                관리자페이지
+              </Link>
+            </li>
           )}
         </ul>
+
+        {/* 닫기 버튼 */}
         <button
           className="absolute top-4 right-4 text-gray-600 hover:text-black"
           onClick={() => setMenuOpen(false)}
@@ -164,7 +158,7 @@ function MainMenu() {
           ✖
         </button>
       </div>
-    </>
+    </div>
   );
 }
 
