@@ -71,6 +71,9 @@ public class CustomUserDetails implements UserDetails {
     public int getUserActivePoint() {
         return userVO.getUserActivePoint();
     }
+    public int getUserStatus() {
+        return userVO.getUserStatus();
+    }
 
 
     // UserService에서 사용하는 getId() 메서드

@@ -18,6 +18,7 @@ const LocationTracker = () => {
   const timerId = useRef<NodeJS.Timeout | null>(null);
   const userStr = localStorage.getItem("user");
   const user = JSON.parse(userStr || "null");
+
   // 시간 포맷팅 함수
   const formatTime = (seconds: number): string => {
     const hrs = String(Math.floor(seconds / 3600)).padStart(2, "0");
@@ -109,12 +110,13 @@ const LocationTracker = () => {
         .catch((err) => console.error("전송 실패:", err));
     }
   };
+
   return (
     <div
       style={{
         position: "relative",
-        width: "100vw",
-        height: "100vh",
+        width: "100%", // 부모 너비 100%
+        height: "100%", // 부모 높이 100%
         overflow: "hidden",
       }}
     >
@@ -126,26 +128,28 @@ const LocationTracker = () => {
           left: 0,
           width: "100%",
           height: "100%",
-          opacity: tracking ? 1 : 0, // 투명 처리
+          opacity: tracking ? 1 : 0,
           transition: "opacity 0.3s ease-in-out",
           zIndex: 0,
-          pointerEvents: tracking ? "auto" : "none", // 클릭 막기
+          pointerEvents: tracking ? "auto" : "none",
         }}
       >
-        <PathMap />
+        <PathMap mode="OnlyMap" />
       </div>
 
-      {/* 버튼 + 타이머: 중앙 레이어 */}
+      {/* 버튼 + 타이머: 부모 기준 간단 가운데 정렬 */}
       <div
         style={{
           position: "absolute",
-          top: "50%",
-          left: "50%",
-          transform: "translate(-50%, -50%)",
+          top: 0,
+          left: 0,
+          width: "100%",
+          height: "100%",
           zIndex: 1,
           display: "flex",
-          flexDirection: "column",
+          justifyContent: "center",
           alignItems: "center",
+          flexDirection: "column",
         }}
       >
         <button

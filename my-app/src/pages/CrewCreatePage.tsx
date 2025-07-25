@@ -250,20 +250,14 @@ export default function CrewCreatePage() {
           value={startAddress}
           readOnly
         />
-
-        <PathMap
-          measurementId={7}
-          setPathPoints={setPathPoints}
-          CrewId={form.crewId}
-        />
-
+        <div style={{ width: "100%", height: 400, marginBottom: "40px" }}>
+          <PathMap
+            measurementId={7}
+            setPathPoints={setPathPoints}
+            CrewId={form.crewId}
+          />
+        </div>
         <input name="endLocation" value={form.endLocation} hidden readOnly />
-        <input
-          name="endLocationString"
-          placeholder="도착지 지역명"
-          value={endAddress}
-          readOnly
-        />
 
         <input
           name="distance"

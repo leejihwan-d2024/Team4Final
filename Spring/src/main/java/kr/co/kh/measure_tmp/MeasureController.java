@@ -28,7 +28,7 @@ public class MeasureController {
     @GetMapping("/getrecentmeasure/{userid}")
     public List<MeasureSimpleDTO> getRecentMeasures(@PathVariable String userid) {
         return measurementRepo.findByMemberId(userid).stream()
-                .map(m -> new MeasureSimpleDTO("측정 활동", m.getCreatedAt()))
+                .map(m -> new MeasureSimpleDTO("측정 활동", m.getCreatedAt(),m.getMeasurementId()))
                 .collect(Collectors.toList());
     }
     @PostMapping("/savemeasure")
@@ -58,7 +58,7 @@ public class MeasureController {
 
     @GetMapping("/getpath/{id}")
     public List<PathDTO> getPathByMeasurementId(@PathVariable Long id) {
-        id=7L;
+        
         return pathRepo.findByMeasurementData_MeasurementId(id).stream()
                 .map(path -> new PathDTO(path.getLocationY(), path.getLocationX()))
                 .collect(Collectors.toList());

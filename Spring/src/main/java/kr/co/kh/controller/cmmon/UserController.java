@@ -49,7 +49,7 @@ public class UserController {
         userProfile.put("userId", currentUser.getId());
         userProfile.put("userPoint", currentUser.getUserPoint());
         userProfile.put("userActivePoint", currentUser.getUserActivePoint());
-        
+        userProfile.put("userStatus",currentUser.getUserStatus());
         // provider 정보 추가 (카카오 사용자 구분용)
         if (currentUser.getProvider() != null) {
             userProfile.put("provider", currentUser.getProvider());

@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from "react";
 import MainMenu from "../mainpage/MainMenu";
 import ToggleBox from "./ToggleBox";
-import { useParams } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import PasswordChangeForm from "../components/PasswordChangeForm";
 import EmailChangeForm from "../components/EmailChangeForm";
 import ProfileImageEditor from "../components/ProfileImageEditor";
 import api from "../api/GG_axiosInstance";
+import MyMeasure from "./MyMeasurement";
 
 function MyPage() {
   const { UserId } = useParams<{ UserId: string }>();
@@ -22,6 +23,7 @@ function MyPage() {
     profileImageUrl: user?.profileImageUrl || "",
     userPoint: user?.userPoint || "",
     userActivePoint: user?.userActivePoint || "",
+    userStatus: user?.userStatus || "",
   });
   const [OwneruserInfo, setOwnerUserInfo] = useState({
     userId: user?.userId || "",
@@ -84,6 +86,7 @@ function MyPage() {
             userData.userProfileImageUrl || profileImageUrl || "",
           userPoint: userData?.userPoint || "",
           userActivePoint: userData?.userActivePoint || "",
+          userStatus: userData?.userStatus || "",
         });
       }
     } catch (error) {
@@ -174,7 +177,12 @@ function MyPage() {
     <div style={{ padding: "40px" }}>
       <MainMenu />
       <h2>🧑 프로필 페이지</h2>
-
+      <Link
+        to={`/mymeasure/${UserId}`}
+        className="text-blue-700 hover:underline"
+      >
+        📞 측정데이터
+      </Link>
       {/* 사용자 정보 섹션 */}
       <div className="bg-white rounded-xl shadow-lg p-6 mb-6">
         <h2 className="text-xl font-semibold text-gray-800 mb-4">
@@ -276,6 +284,19 @@ function MyPage() {
         <span>✅ 나의 마이페이지</span>
       ) : (
         <span>❌ 다른 유저의 마이페이지</span>
+      )}
+      {userInfo ? (
+        userInfo.userStatus === 0 ? (
+          <span>(탈퇴회원)</span>
+        ) : userInfo.userStatus === 1 ? (
+          <span>(일반회원)</span>
+        ) : userInfo.userStatus === 2 ? (
+          <span>(관리자)</span>
+        ) : (
+          <span>알 수 없는 상태입니다</span>
+        )
+      ) : (
+        <span>유저 정보 없음</span>
       )}
       <span>
         사용자
