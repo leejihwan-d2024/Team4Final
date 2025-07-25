@@ -3,11 +3,24 @@ import { useParams } from "react-router-dom";
 import { Post } from "../types/post";
 import "../styles/PostDetail.css";
 import Comment from "./Comment";
+import styled from "styled-components";
 
 function PostDetail() {
   const { id } = useParams();
   const [post, setPost] = useState<Post | null>(null);
   const [error, setError] = useState<string | null>(null); // 🔹 에러 상태
+  const Wrapper = styled.div`
+    max-width: 360px;
+    height: 640px;
+    margin: auto;
+    padding: 16px;
+    box-sizing: border-box;
+    background: #f9f9f9;
+    font-size: 14px;
+
+    position: relative; // ✅ 메뉴 기준 위치를 잡기 위해 필요
+    overflow: visible; // ✅ 팝업 메뉴가 잘리지 않도록
+  `;
 
   useEffect(() => {
     const fetchDetail = async () => {
@@ -30,17 +43,19 @@ function PostDetail() {
   if (!post) return <div>불러오는 중...</div>;
 
   return (
-    <div className="post-detail-container">
-      <h2>제목: {post.title}</h2>
-      <div className="detail-box">
-        <p>작성자: {post.author}</p>
-        <p className="content"> {post.contentText}</p>
+    <Wrapper>
+      <div className="post-detail-container">
+        <h2>제목: {post.title}</h2>
+        <div className="detail-box">
+          <p>작성자: {post.author}</p>
+          <p className="content"> {post.contentText}</p>
+        </div>
+        <p>카테고리: {post.category}</p>
+        <p>날짜: {post.createdAt}</p>
+        <hr></hr>
+        <Comment postId={post.postId} />
       </div>
-      <p>카테고리: {post.category}</p>
-      <p>날짜: {post.createdAt}</p>
-      <hr></hr>
-      <Comment postId={post.postId} />
-    </div>
+    </Wrapper>
   );
 }
 

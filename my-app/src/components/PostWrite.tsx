@@ -2,6 +2,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { Post } from "../types/post";
 import "../styles/PostWrite.css";
+import styled from "styled-components";
 
 interface PostWriteProps {
   onSubmit: (post: Post) => void;
@@ -21,6 +22,18 @@ function PostWrite({ onSubmit }: PostWriteProps) {
   const currentUserId = currentUser?.userId || "익명";
 
   const [author, setAuthor] = useState(currentUserId);
+  const Wrapper = styled.div`
+    max-width: 360px;
+    height: 640px;
+    margin: auto;
+    padding: 16px;
+    box-sizing: border-box;
+    background: #f9f9f9;
+    font-size: 14px;
+
+    position: relative; // ✅ 메뉴 기준 위치를 잡기 위해 필요
+    overflow: visible; // ✅ 팝업 메뉴가 잘리지 않도록
+  `;
 
   // 수정 시 기존 게시글 불러오기
   useEffect(() => {
@@ -57,28 +70,30 @@ function PostWrite({ onSubmit }: PostWriteProps) {
   };
 
   return (
-    <form onSubmit={handleSubmit}>
-      <h2>{id ? "게시글 수정" : "게시글 작성"}</h2>
+    <Wrapper>
+      <form onSubmit={handleSubmit}>
+        <h2>{id ? "게시글 수정" : "게시글 작성"}</h2>
 
-      <input
-        placeholder="제목"
-        value={title}
-        onChange={(e) => setTitle(e.target.value)}
-      />
-      <textarea
-        placeholder="본문"
-        value={content}
-        onChange={(e) => setContent(e.target.value)}
-      />
-      <select value={category} onChange={(e) => setCategory(e.target.value)}>
-        <option value="러닝">러닝</option>
-        <option value="스포츠">스포츠</option>
-        <option value="잡담">잡담</option>
-        <option value="이슈">이슈</option>
-      </select>
+        <input
+          placeholder="제목"
+          value={title}
+          onChange={(e) => setTitle(e.target.value)}
+        />
+        <textarea
+          placeholder="본문"
+          value={content}
+          onChange={(e) => setContent(e.target.value)}
+        />
+        <select value={category} onChange={(e) => setCategory(e.target.value)}>
+          <option value="러닝">러닝</option>
+          <option value="스포츠">스포츠</option>
+          <option value="잡담">잡담</option>
+          <option value="이슈">이슈</option>
+        </select>
 
-      <button type="submit">{id ? "수정" : "작성"} 완료</button>
-    </form>
+        <button type="submit">{id ? "수정" : "작성"} 완료</button>
+      </form>
+    </Wrapper>
   );
 }
 

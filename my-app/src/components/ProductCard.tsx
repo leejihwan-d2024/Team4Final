@@ -1,6 +1,7 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
 import { Product } from "../components/NaverProductList";
+import styled from "styled-components";
 
 function ProductCard({
   product,

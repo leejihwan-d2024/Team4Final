@@ -4,6 +4,7 @@ import { ReactNode, useState } from "react";
 import NaverProductList from "./NaverProductList";
 import RunningInfo from "./RunningInfo";
 import Marathon from "./Marathon";
+import MainMenu from "../mainpage/MainMenu";
 
 interface LayoutProps {
   children: ReactNode;
@@ -45,11 +46,8 @@ function Layout({ children }: LayoutProps) {
 
   return (
     <div className="layout">
-      <div className="layout-header" onClick={() => navigate("/main")}>
-        RUNNING <br /> CREW
-      </div>
       <div style={{ float: "right", fontSize: "14px" }}>
-        {isLoggedIn ? (
+        {/* {isLoggedIn ? (
           <>
             <span style={{ marginRight: "10px" }} className="name">
               {user.userNn}님
@@ -71,15 +69,16 @@ function Layout({ children }: LayoutProps) {
           >
             로그인
           </button>
-        )}
+        )} */}
       </div>
       <div className="search-area">
         <input className="search-input" placeholder="검색 창" />
         <button type="submit" className="searchBtn">
           검색
         </button>
+        <MainMenu />
       </div>
-      <nav className="navbar">
+      {/* <nav className="navbar">
         <ul className="menu">
           <li className="menu-item">
             러닝참여
@@ -188,7 +187,7 @@ function Layout({ children }: LayoutProps) {
             </ul>
           </li>
         </ul>
-      </nav>
+      </nav> */}
       <div className="layout-content">{children}</div>
     </div>
   );

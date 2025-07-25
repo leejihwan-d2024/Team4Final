@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import "../styles/RankingPage.css";
 import Layout from "./Layout";
+import styled from "styled-components";
 
 interface RankingVO {
   userId: string;
@@ -17,6 +18,18 @@ function RankingPage() {
   const [monthlyDistance, setMonthlyDistance] = useState<RankingVO[]>([]);
   const [weeklyPosts, setWeeklyPosts] = useState<RankingVO[]>([]);
   const [achievements, setAchievements] = useState<RankingVO[]>([]);
+  const Wrapper = styled.div`
+    max-width: 360px;
+    height: 640px;
+    margin: auto;
+    padding: 16px;
+    box-sizing: border-box;
+    background: #f9f9f9;
+    font-size: 14px;
+
+    position: relative; // ✅ 메뉴 기준 위치를 잡기 위해 필요
+    overflow: visible; // ✅ 팝업 메뉴가 잘리지 않도록
+  `;
 
   useEffect(() => {
     axios
@@ -95,15 +108,17 @@ function RankingPage() {
   };
 
   return (
-    <Layout>
-      <div className="ranking-page">
-        <h1>🏆 사용자 랭킹</h1>
-        {renderRanking("👑 이번주 활동왕 👑", weeklyDistance, "distance")}
-        {renderRanking("👑 이번달 활동왕 👑", monthlyDistance, "distance")}
-        {renderRanking("👑 이번주 게시글 활동왕 👑", weeklyPosts, "post")}
-        {renderRanking("👑 업적왕 👑", achievements, "achievement")}
-      </div>
-    </Layout>
+    <Wrapper>
+      <Layout>
+        <div className="ranking-page">
+          <h1>🏆 사용자 랭킹</h1>
+          {renderRanking("👑 이번주 활동왕 👑", weeklyDistance, "distance")}
+          {renderRanking("👑 이번달 활동왕 👑", monthlyDistance, "distance")}
+          {renderRanking("👑 이번주 게시글 활동왕 👑", weeklyPosts, "post")}
+          {renderRanking("👑 업적왕 👑", achievements, "achievement")}
+        </div>
+      </Layout>
+    </Wrapper>
   );
 }
 

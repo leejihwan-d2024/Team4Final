@@ -5,6 +5,7 @@ import Layout from "./Layout";
 import { useNavigate } from "react-router-dom";
 import "../styles/PostMain.css";
 import axios from "axios";
+import styled from "styled-components";
 
 interface PostMainProps {
   posts: Post[];
@@ -30,6 +31,18 @@ function PostMain({ posts, onDelete, onEdit, onSelect }: PostMainProps) {
   const currentUserId = user?.userId;
 
   const navigate = useNavigate();
+  const Wrapper = styled.div`
+    max-width: 360px;
+    height: 640px;
+    margin: auto;
+    padding: 16px;
+    box-sizing: border-box;
+    background: #f9f9f9;
+    font-size: 14px;
+
+    position: relative; // ✅ 메뉴 기준 위치를 잡기 위해 필요
+    overflow: visible; // ✅ 팝업 메뉴가 잘리지 않도록
+  `;
 
   useEffect(() => {
     fetchPosts().then((data) => {
@@ -110,96 +123,99 @@ function PostMain({ posts, onDelete, onEdit, onSelect }: PostMainProps) {
   const categories = ["전체", "러닝", "스포츠", "잡담", "이슈"];
 
   return (
-    <div className="main-container">
-      <Layout>
-        <div className="center-group">러닝 크루 게시판</div>
-      </Layout>
+    <Wrapper>
+      <div className="main-container">
+        <Layout>
+          <div className="center-group">러닝 크루 게시판</div>
+        </Layout>
 
-      <div className="category-buttons">
-        {categories.map((cat) => (
-          <button
-            key={cat}
-            onClick={() => applyCategoryFilter(cat)}
-            style={{
-              margin: "0 5px",
-              padding: "5px 10px",
-              backgroundColor: selectedCategory === cat ? "#c4d92d" : "#d1e15b",
-            }}
-          >
-            {cat}
-          </button>
-        ))}
-      </div>
-      <br />
-      <div>
-        <h2>전체 게시글</h2>
-        <button onClick={() => navigate("/write")} className="write">
-          ✏️글쓰기
-        </button>
-      </div>
-      <div className="postWrapperBox">
-        <ul className="postUl">
-          {currentPosts.map((post) => (
-            <li key={post.postId}>
-              <span
-                onClick={async () => {
-                  try {
-                    await axios.post(
-                      `https://localhost:8080/api/posts/${post.postId}/view`
-                    );
-                    navigate(`/detail/${post.postId}`);
-                  } catch (err) {
-                    console.error("조회수 증가 실패", err);
-                    navigate(`/detail/${post.postId}`); // 실패해도 페이지 이동
-                  }
-                }}
-              >
-                {post.postId} . {post.title} -🖊{post.category}
-              </span>
-
-              <span>
-                {post.createdAt}
-                👍{post.likeCount}
-              </span>
-
-              <span>조회수: {post.viewCount}</span>
-
-              <button onClick={() => toggleLike(post)}>
-                {likedPosts.includes(post.postId) ? "좋아요 취소" : "좋아요"}
-              </button>
-
-              {/*  로그인한 사용자만 수정/삭제 가능 */}
-              {post.author === currentUserId && (
-                <>
-                  <button onClick={() => handleEdit(post)}>수정</button>
-                  <button onClick={() => handleDelete(post.postId)}>
-                    삭제
-                  </button>
-                </>
-              )}
-            </li>
+        <div className="category-buttons">
+          {categories.map((cat) => (
+            <button
+              key={cat}
+              onClick={() => applyCategoryFilter(cat)}
+              style={{
+                margin: "0 5px",
+                padding: "5px 10px",
+                backgroundColor:
+                  selectedCategory === cat ? "#c4d92d" : "#d1e15b",
+              }}
+            >
+              {cat}
+            </button>
           ))}
-        </ul>
-        <div className="pagination">
-          {Array.from(
-            { length: Math.ceil(filteredPosts.length / postsPerPage) },
-            (_, i) => (
-              <button
-                key={i + 1}
-                onClick={() => setCurrentPage(i + 1)}
-                style={{
-                  margin: "0 5px",
-                  padding: "5px 10px",
-                  backgroundColor: currentPage === i + 1 ? "#c4d92d" : "#eee",
-                }}
-              >
-                {i + 1}
-              </button>
-            )
-          )}
+        </div>
+        <br />
+        <div>
+          <h2>전체 게시글</h2>
+          <button onClick={() => navigate("/write")} className="write">
+            ✏️글쓰기
+          </button>
+        </div>
+        <div className="postWrapperBox">
+          <ul className="postUl">
+            {currentPosts.map((post) => (
+              <li key={post.postId}>
+                <span
+                  onClick={async () => {
+                    try {
+                      await axios.post(
+                        `https://localhost:8080/api/posts/${post.postId}/view`
+                      );
+                      navigate(`/detail/${post.postId}`);
+                    } catch (err) {
+                      console.error("조회수 증가 실패", err);
+                      navigate(`/detail/${post.postId}`); // 실패해도 페이지 이동
+                    }
+                  }}
+                >
+                  {post.postId} . {post.title} -🖊{post.category}
+                </span>
+
+                <span>
+                  {post.createdAt}
+                  👍{post.likeCount}
+                </span>
+
+                <span>조회수: {post.viewCount}</span>
+
+                <button onClick={() => toggleLike(post)}>
+                  {likedPosts.includes(post.postId) ? "좋아요 취소" : "좋아요"}
+                </button>
+
+                {/*  로그인한 사용자만 수정/삭제 가능 */}
+                {post.author === currentUserId && (
+                  <>
+                    <button onClick={() => handleEdit(post)}>수정</button>
+                    <button onClick={() => handleDelete(post.postId)}>
+                      삭제
+                    </button>
+                  </>
+                )}
+              </li>
+            ))}
+          </ul>
+          <div className="pagination">
+            {Array.from(
+              { length: Math.ceil(filteredPosts.length / postsPerPage) },
+              (_, i) => (
+                <button
+                  key={i + 1}
+                  onClick={() => setCurrentPage(i + 1)}
+                  style={{
+                    margin: "0 5px",
+                    padding: "5px 10px",
+                    backgroundColor: currentPage === i + 1 ? "#c4d92d" : "#eee",
+                  }}
+                >
+                  {i + 1}
+                </button>
+              )
+            )}
+          </div>
         </div>
       </div>
-    </div>
+    </Wrapper>
   );
 }
 
