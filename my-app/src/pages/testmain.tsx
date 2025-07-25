@@ -382,7 +382,7 @@ const TestMain: React.FC = () => {
   };
 
   const handleGoToMyPage = (): void => {
-    navigate("/mypage");
+    navigate(`/mypage/${user?.userId || ""}`);
   };
 
   // 카카오 로그인 여부 확인 (userId가 kakao_로 시작하거나, 닉네임이 카카오사용자_로 시작하는지 확인)

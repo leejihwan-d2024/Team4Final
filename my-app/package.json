@@ -4,7 +4,6 @@
   "main": "src/FirstPage.tsx",
   "private": true,
   "dependencies": {
-    "@simplewebauthn/server": "^13.1.1",
     "@stomp/stompjs": "^7.1.1",
     "@testing-library/dom": "^10.4.0",
     "@testing-library/jest-dom": "^6.6.3",
