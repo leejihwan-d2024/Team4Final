@@ -22,6 +22,7 @@ function AdminPage() {
 
   return (
     <div>
+      <MainMenu />
       <span style={{ fontSize: "20px", fontWeight: "bold" }}>관리자페이지</span>
 
       <div style={{ marginTop: "12px", marginBottom: "12px" }}>
@@ -49,8 +50,6 @@ function AdminPage() {
       >
         {renderContent()}
       </div>
-
-      <MainMenu />
     </div>
   );
 }

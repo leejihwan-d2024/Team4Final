@@ -120,6 +120,7 @@ const PathMap: React.FC<PathMapProps> = ({
           const latlng = mouseEvent.latLng;
 
           const resultDiv = document.getElementById("result");
+          /*
           if (resultDiv)
             resultDiv.innerHTML =
               "클릭한 위치의 위도는 " +
@@ -127,7 +128,7 @@ const PathMap: React.FC<PathMapProps> = ({
               " 이고, 경도는 " +
               latlng.getLng() +
               " 입니다";
-
+*/
           clickedPathRef.current.push(latlng);
 
           if (polylineRef.current) {
@@ -307,6 +308,7 @@ const PathMap: React.FC<PathMapProps> = ({
       {mode !== "OnlyMap" && (
         <div style={{ marginTop: "10px" }}>
           <button
+            type="button"
             style={{
               padding: "8px 16px",
               backgroundColor: "#ff5e5e",
@@ -324,6 +326,7 @@ const PathMap: React.FC<PathMapProps> = ({
           </button>
 
           <button
+            type="button"
             style={{
               padding: "8px 16px",
               backgroundColor: "#1e90ff",
@@ -336,6 +339,7 @@ const PathMap: React.FC<PathMapProps> = ({
           >
             💾 저장하기
           </button>
+          {/*
           <button
             style={{
               padding: "8px 16px",
@@ -351,6 +355,7 @@ const PathMap: React.FC<PathMapProps> = ({
             📂 불러오기
           </button>
           <span>현재저장모드: {CrewId ?? measurementId ?? "없음"}</span>
+           */}
         </div>
       )}
     </>

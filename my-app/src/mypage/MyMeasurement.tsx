@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { useParams } from "react-router-dom";
 import PathMap from "../mainpage/PathMap";
+import MainMenu from "../mainpage/MainMenu";
 
 interface MeasureSimpleDTO {
   label: string;
@@ -37,17 +38,23 @@ const MyMeasure = () => {
     <div
       style={{
         padding: "20px",
-        width: "100%",
-        maxWidth: "360px",
-        height: "100%",
-        maxHeight: "640px",
+        width: "360px",
+        height: "640px",
         overflowY: "auto",
+        overflowX: "hidden", // ✅ 수평 스크롤 방지
         boxSizing: "border-box",
         margin: "0 auto",
         backgroundColor: "#fff",
       }}
     >
-      <h2 style={{ fontSize: "24px", fontWeight: "bold" }}>
+      <MainMenu />
+      <h2
+        style={{
+          fontSize: "24px",
+          fontWeight: "bold",
+          textAlign: "left", // ✅ 왼쪽 정렬
+        }}
+      >
         📍 나의 측정 기록
       </h2>
 
