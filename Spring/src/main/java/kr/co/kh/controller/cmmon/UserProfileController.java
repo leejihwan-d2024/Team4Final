@@ -202,13 +202,14 @@ public class UserProfileController {
             userInfo.put("userNn", user.getUserNn());
             userInfo.put("userEmail", user.getUserEmail());
             userInfo.put("userPhoneno", user.getUserPhoneno());
-            userInfo.put("userStatus", user.getUserStatus());
+                userInfo.put("userStatus", user.getUserStatus());
             userInfo.put("userSignUp", user.getUserSignUp());
             userInfo.put("userLastLogin", user.getUserLastLogin());
             userInfo.put("userPoint", user.getUserPoint());
             userInfo.put("userActivePoint", user.getUserActivePoint());
             userInfo.put("provider", user.getProvider());
             userInfo.put("userProfileImageUrl", user.getUserProfileImageUrl());
+
             
             response.put("success", true);
             response.put("userInfo", userInfo);

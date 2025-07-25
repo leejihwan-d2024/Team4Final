@@ -22,6 +22,11 @@ function MainMenu() {
         <div className="p-4 border-b font-bold text-lg">📋 메뉴</div>
         <ul className="p-4 space-y-4">
           <li>
+            <Link to="/" className="text-blue-700 hover:underline">
+              📞 홈
+            </Link>
+          </li>
+          <li>
             <Link to="/testmain" className="text-blue-700 hover:underline">
               📞 테스트메인
             </Link>
