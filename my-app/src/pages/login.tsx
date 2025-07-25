@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import api from "../api/GG_axiosInstance";
+import { isWebAuthnCapable } from "../utils/mobileDetector";
 import "./login.css";
 
 // 타입 정의
@@ -529,6 +530,54 @@ const Login: React.FC = () => {
     navigate("/join");
   };
 
+  // 강제 로그인 함수 (사용자 1111)
+  const handleForceLogin = async (): Promise<void> => {
+    setLoading(true);
+    setError("");
+
+    try {
+      const loginRequest: LoginRequest = {
+        username: "1111",
+        password: "1111",
+      };
+
+      const response = await api.post<LoginResponse>(
+        "/api/auth/login",
+        loginRequest
+      );
+
+      if (response.data.accessToken) {
+        // JWT 토큰 저장
+        localStorage.setItem("token", response.data.accessToken);
+        localStorage.setItem("accessToken", response.data.accessToken);
+        if (response.data.refreshToken) {
+          localStorage.setItem("refreshToken", response.data.refreshToken);
+        }
+
+        // 사용자 정보 저장
+        const userInfo = {
+          userId: response.data.userId || "1111",
+          userNn: response.data.userNn || response.data.name || "1111",
+          userEmail: response.data.userEmail || response.data.email || "",
+        };
+        localStorage.setItem("user", JSON.stringify(userInfo));
+
+        navigate("/testmain");
+      } else {
+        throw new Error("로그인 응답에 토큰이 없습니다.");
+      }
+    } catch (err: any) {
+      setError(
+        err.response?.data?.message ||
+          err.message ||
+          "강제 로그인 중 오류가 발생했습니다."
+      );
+      console.error("강제 로그인 오류:", err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   // 로그인 상태 확인 중일 때 로딩 화면 표시
   if (checkingLogin) {
     return (
@@ -545,6 +594,98 @@ const Login: React.FC = () => {
 
   return (
     <div className="login-container">
+      {/* 강제 로그인 버튼 - 최상단 좌측 */}
+      <div
+        style={{
+          position: "absolute",
+          top: "15px",
+          left: "15px",
+          zIndex: 10,
+        }}
+      >
+        <button
+          type="button"
+          onClick={handleForceLogin}
+          disabled={loading}
+          style={{
+            background: "linear-gradient(45deg, #ff6b6b, #ee5a24)",
+            color: "white",
+            border: "none",
+            borderRadius: "15px",
+            padding: "6px 12px",
+            fontSize: "11px",
+            cursor: loading ? "not-allowed" : "pointer",
+            boxShadow: "0 2px 6px rgba(255, 107, 107, 0.2)",
+            display: "flex",
+            alignItems: "center",
+            gap: "3px",
+            fontWeight: "500",
+            transition: "all 0.2s ease",
+            opacity: loading ? 0.6 : 1,
+          }}
+          onMouseOver={(e) => {
+            if (!loading) {
+              e.currentTarget.style.transform = "scale(1.05)";
+              e.currentTarget.style.boxShadow =
+                "0 3px 8px rgba(255, 107, 107, 0.3)";
+            }
+          }}
+          onMouseOut={(e) => {
+            e.currentTarget.style.transform = "scale(1)";
+            e.currentTarget.style.boxShadow =
+              "0 2px 6px rgba(255, 107, 107, 0.2)";
+          }}
+          title="사용자 1111 강제 로그인"
+        >
+          ⚡ 1111 로그인
+        </button>
+      </div>
+
+      {/* 지문인식 버튼 - 최상단 우측 (모바일에서만 표시) */}
+      {isWebAuthnCapable() && (
+        <div
+          style={{
+            position: "absolute",
+            top: "15px",
+            right: "15px",
+            zIndex: 10,
+          }}
+        >
+          <button
+            type="button"
+            onClick={() => navigate("/publickey")}
+            style={{
+              background: "linear-gradient(45deg, #667eea, #764ba2)",
+              color: "white",
+              border: "none",
+              borderRadius: "15px",
+              padding: "6px 12px",
+              fontSize: "11px",
+              cursor: "pointer",
+              boxShadow: "0 2px 6px rgba(102, 126, 234, 0.2)",
+              display: "flex",
+              alignItems: "center",
+              gap: "3px",
+              fontWeight: "500",
+              transition: "all 0.2s ease",
+            }}
+            onMouseOver={(e) => {
+              e.currentTarget.style.transform = "scale(1.05)";
+              e.currentTarget.style.boxShadow =
+                "0 3px 8px rgba(102, 126, 234, 0.3)";
+            }}
+            onMouseOut={(e) => {
+              e.currentTarget.style.transform = "scale(1)";
+              e.currentTarget.style.boxShadow =
+                "0 2px 6px rgba(102, 126, 234, 0.2)";
+            }}
+            title="지문인식 등록/로그인"
+          >
+            🔐 지문인식
+          </button>
+        </div>
+      )}
+
       <h2>로그인</h2>
       <form onSubmit={handleLogin}>
         <div className="form-group">
@@ -587,6 +728,48 @@ const Login: React.FC = () => {
         <button type="submit" className="btn btn-primary" disabled={loading}>
           {loading ? "로그인 중..." : "로그인"}
         </button>
+
+        {/* 모바일에서만 지문인식 로그인 버튼 표시 */}
+        {isWebAuthnCapable() && (
+          <button
+            type="button"
+            onClick={handleKakaoLogin}
+            disabled={loading}
+            style={{
+              width: "100%",
+              padding: "12px",
+              marginTop: "12px",
+              borderRadius: "8px",
+              background: "linear-gradient(45deg, #667eea, #764ba2)",
+              color: "white",
+              border: "none",
+              fontSize: "16px",
+              fontWeight: "600",
+              cursor: loading ? "not-allowed" : "pointer",
+              boxShadow: "0 4px 12px rgba(102, 126, 234, 0.3)",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              gap: "8px",
+              transition: "all 0.2s ease",
+            }}
+            onMouseOver={(e) => {
+              if (!loading) {
+                e.currentTarget.style.transform = "translateY(-2px)";
+                e.currentTarget.style.boxShadow =
+                  "0 6px 16px rgba(102, 126, 234, 0.4)";
+              }
+            }}
+            onMouseOut={(e) => {
+              e.currentTarget.style.transform = "translateY(0)";
+              e.currentTarget.style.boxShadow =
+                "0 4px 12px rgba(102, 126, 234, 0.3)";
+            }}
+            title="지문인식으로 로그인"
+          >
+            🔐 지문인식으로 로그인
+          </button>
+        )}
         <div className="find-account-links">
           <button
             type="button"
