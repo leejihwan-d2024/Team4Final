@@ -21,10 +21,11 @@ type RunningEvent = {
 export default function MainPage() {
   const navigate = useNavigate();
   const [crewList, setCrewList] = useState<Crew[]>([]);
+  const [filteredCrewList, setFilteredCrewList] = useState<Crew[]>([]);
+  const [searchTerm, setSearchTerm] = useState("");
   const [todayEvent, setTodayEvent] = useState<RunningEvent | null>(null);
   const [offsetY, setOffsetY] = useState(0);
   const [regionName, setRegionName] = useState("내 지역");
-
   const [userId, setUserId] = useState<string>("");
 
   useEffect(() => {
@@ -36,7 +37,6 @@ export default function MainPage() {
   }, []);
 
   useEffect(() => {
-    // 지역 가져오기
     if (!navigator.geolocation) {
       setRegionName("위치 지원 안됨");
       return;
@@ -99,6 +99,7 @@ export default function MainPage() {
         });
 
         setCrewList(sorted);
+        setFilteredCrewList(sorted);
       } catch (err) {
         console.error("❌ 크루 목록 로딩 실패:", err);
         alert("크루 목록을 불러오지 못했습니다.");
@@ -127,55 +128,91 @@ export default function MainPage() {
     else alert("오늘의 이벤트가 없습니다.");
   };
 
+  const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const term = e.target.value;
+    setSearchTerm(term);
+    const filtered = crewList.filter((crew) =>
+      crew.crewTitle.toLowerCase().includes(term.toLowerCase())
+    );
+    setFilteredCrewList(filtered);
+  };
+
   return (
-    <div className={styles.container}>
-      <div
-        className={styles.banner}
-        style={{
-          backgroundImage: `url("/marathon-3753907_1280.jpg")`,
-          backgroundPositionY: `${offsetY * 0.5}px`,
-          cursor: "pointer",
-        }}
-        onClick={handleClickTodayEvent}
-      >
-        <div className={styles.bannerOverlay}>
-          <motion.div
-            className={styles.highlightText}
-            whileHover={{
-              scale: 1.1,
-              textShadow: "0 0 16px rgba(191, 219, 186, 0.97)",
-            }}
-            whileTap={{ scale: 0.95 }}
-            initial={{ opacity: 0, y: -20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
-          >
-            오늘의 {regionName} 러닝이벤트
-          </motion.div>
-        </div>
+    // <div className={styles.pageRoot}>
+    //   <div className={styles.banner} onClick={handleClickTodayEvent}>
+    //     <div
+    //       className={styles.bannerOverlay}
+    //       style={{
+    //         backgroundPositionY: `${offsetY * 0.5}px`,
+    //         backgroundImage: `url("/marathon-3753907_1280.jpg")`,
+    //       }}
+    //     >
+    //       <motion.div
+    //         className={styles.highlightText}
+    //         whileHover={{
+    //           scale: 1.1,
+    //           textShadow: "0 0 16px rgba(191, 219, 186, 0.97)",
+    //         }}
+    //         whileTap={{ scale: 0.95 }}
+    //         initial={{ opacity: 0, y: -20 }}
+    //         animate={{ opacity: 1, y: 0 }}
+    //         transition={{ duration: 0.6 }}
+    //       >
+    //         오늘의 {regionName} 러닝이벤트
+    //       </motion.div>
+    //     </div>
+    //   </div>
+
+    <div className={styles.pageRoot}>
+      <div className={styles.videoBox}>
+        {/* <iframe
+          src="https://www.youtube.com/embed/JfK0mHEy0po?si=MHTgDXP7T3eSkIqA"
+          title="YouTube video player"
+          frameBorder="0"
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+          allowFullScreen
+          style={{ width: "100%", height: "140px", borderRadius: "12px" }}
+        /> */}
+        <iframe
+          src="https://www.youtube.com/embed/JfK0mHEy0po?autoplay=1&mute=1&loop=1&playlist=JfK0mHEy0po&controls=0&rel=0&modestbranding=1"
+          title="YouTube video player"
+          frameBorder="0"
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+          allowFullScreen
+        />
       </div>
 
-      <div className={styles.crewList}>
-        {crewList.map((crew) => (
-          <div
-            key={crew.crewId}
-            className={`${styles.crewItem} ${
-              crew.isJoined ? styles.joined : ""
-            }`}
-            onClick={() => navigate(`/crew/${crew.crewId}`)}
-          >
-            <div className={styles.crewTitle}>
-              {crew.crewTitle}
-              {crew.isJoined && <span className={styles.pinIcon}>📌</span>}
+      <input
+        className={styles.searchInput}
+        type="text"
+        placeholder="크루 이름으로 검색"
+        value={searchTerm}
+        onChange={handleSearch}
+      />
+
+      <div className={styles.crewListWrapper}>
+        <div className={styles.crewList}>
+          {filteredCrewList.map((crew) => (
+            <div
+              key={crew.crewId}
+              className={`${styles.crewItem} ${
+                crew.isJoined ? styles.joined : ""
+              }`}
+              onClick={() => navigate(`/crew/${crew.crewId}`)}
+            >
+              <div className={styles.crewTitle}>
+                {crew.crewTitle}
+                {crew.isJoined && <span className={styles.pinIcon}>📌</span>}
+              </div>
+              <div className={styles.crewInfo}>
+                현재 참여 인원: {(crew.currentCount ?? 0) + 1}
+                {crew.isJoined && (
+                  <span className={styles.joinedText}>참가중!</span>
+                )}
+              </div>
             </div>
-            <div className={styles.crewInfo}>
-              현재 참여 인원: {(crew.currentCount ?? 0) + 1}
-              {crew.isJoined && (
-                <span className={styles.joinedText}>참가중!</span>
-              )}
-            </div>
-          </div>
-        ))}
+          ))}
+        </div>
       </div>
 
       <button

@@ -1,38 +1,120 @@
+/* HTML, BODY 건드리지 않고 기본 세팅 유지 */
+
+/* 컨테이너 스타일 - 고정 360x640, 중앙 정렬, 스크롤 처리 */
 .container {
-  padding: 20px;
-  font-family: sans-serif;
+  width: 360px; /* 고정 폭 */
+  height: 640px; /* 고정 높이 */
+  margin: 0 auto; /* 좌우 중앙 정렬 */
+  overflow-x: hidden; /* 가로 스크롤 막기 */
+  overflow-y: auto; /* 세로 스크롤 허용 */
+  background-color: #ffffff;
+  padding: 2rem 1rem;
+  box-sizing: border-box;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
 }
 
+/* 제목 스타일 */
 .title {
-  font-size: 24px;
+  font-size: 1.5rem;
   font-weight: bold;
-  margin-bottom: 16px;
+  margin-bottom: 1.5rem;
+  color: #222;
+  text-align: center;
 }
 
-.form {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-}
-
-input,
-textarea {
-  padding: 10px;
+/* 입력폼 스타일 */
+form input,
+form textarea {
+  display: block;
+  width: 100%;
+  padding: 0.6rem 0.8rem;
+  margin-bottom: 1rem;
+  font-size: 1rem;
   border: 1px solid #ccc;
-  border-radius: 6px;
-  font-size: 14px;
+  border-radius: 8px;
+  box-sizing: border-box;
+  font-family: inherit;
+  resize: vertical; /* textarea는 세로 크기 조절만 */
 }
 
+/* 체크박스 라벨 스타일 */
+label {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 1rem;
+  color: #444;
+  margin-bottom: 1.5rem;
+}
+
+/* 버튼 스타일 (submit) */
 .submitBtn {
-  padding: 12px;
-  background-color: #1976d2;
-  color: white;
-  font-weight: bold;
+  display: block;
+  width: 100%;
+  padding: 0.75rem 1.5rem;
+  font-weight: 700;
+  font-size: 1.1rem;
+  background-color: #007bff;
   border: none;
+  color: white;
   border-radius: 8px;
   cursor: pointer;
+  transition: background-color 0.3s ease;
+  box-sizing: border-box;
+  user-select: none;
 }
 
+/* 버튼 호버 효과 */
 .submitBtn:hover {
-  background-color: #115293;
+  background-color: #0056b3;
+}
+
+/* 버튼 포커스 접근성 개선 */
+.submitBtn:focus {
+  outline: 3px solid #004080;
+  outline-offset: 2px;
+}
+
+/* 지도 박스 스타일 */
+div[style*="width: 100%"][style*="height: 400px"] {
+  margin-bottom: 40px;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* 스크롤바 스타일 (선택 사항) */
+.container::-webkit-scrollbar {
+  width: 8px;
+}
+
+.container::-webkit-scrollbar-thumb {
+  background-color: rgba(0, 123, 255, 0.5);
+  border-radius: 4px;
+}
+
+.container::-webkit-scrollbar-track {
+  background-color: transparent;
+}
+
+.videoBox {
+  position: relative;
+  width: 100%;
+  height: 0;
+  padding-top: 56.25%; /* 16:9 비율 유지 */
+  border-radius: 12px; /* 필요하면 둥글게 */
+  overflow: hidden;
+  background: black;
+}
+
+.videoBox iframe {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  border: 0;
+  object-fit: cover; /* 검은 여백 없이 꽉 채움 */
 }
