@@ -6,6 +6,7 @@
   border-radius: 16px;
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
   text-align: center;
+  box-sizing: border-box;
 }
 
 .login-container h2 {
@@ -64,6 +65,7 @@
   cursor: pointer;
   transition: all 0.3s ease;
   margin-bottom: 12px;
+  box-sizing: border-box;
 }
 
 .btn-primary {
@@ -84,6 +86,8 @@
   margin-top: 20px;
   display: flex;
   gap: 12px;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .login-actions .btn {
@@ -91,6 +95,7 @@
   margin-bottom: 0;
   min-width: 0; /* flex 아이템이 줄바꿈되지 않도록 설정 */
   white-space: nowrap; /* 텍스트 줄바꿈 방지 */
+  box-sizing: border-box;
 }
 
 .btn-secondary {
@@ -218,7 +223,7 @@
   .login-actions {
     gap: 16px; /* 간격을 조금 더 늘려서 여유 공간 확보 */
   }
-  
+
   .login-actions .btn {
     font-size: 14px; /* 폰트 크기를 조금 줄여서 공간 확보 */
     padding: 12px 16px; /* 패딩을 조금 줄여서 공간 확보 */

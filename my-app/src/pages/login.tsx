@@ -799,12 +799,13 @@ const Login: React.FC = () => {
           onClick={handleJoinClick}
           disabled={loading}
           style={{
-            padding: 0,
+            padding: "14px 20px",
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
             height: "auto",
             fontSize: "14px",
+            boxSizing: "border-box",
           }}
         >
           회원가입
@@ -825,7 +826,8 @@ const Login: React.FC = () => {
             height: "auto",
             transition: "all 0.2s ease",
             opacity: loading ? 0.6 : 1,
-            marginBottom: "12px",
+            marginBottom: 0,
+            boxSizing: "border-box",
           }}
           onMouseOver={(e) => {
             if (!loading) {
@@ -846,6 +848,7 @@ const Login: React.FC = () => {
               maxWidth: "100%",
               maxHeight: "60px",
               objectFit: "contain",
+              display: "block",
             }}
           />
         </button>
