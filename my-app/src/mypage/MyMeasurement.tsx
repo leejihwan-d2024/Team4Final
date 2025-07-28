@@ -22,7 +22,7 @@ const MyMeasure = () => {
 
     axios
       .get<MeasureSimpleDTO[]>(
-        `https://200.200.200.62:8080/getrecentmeasure/${UserId}`
+        `${process.env.REACT_APP_API_BASE_URL}getrecentmeasure/${UserId}`
       )
       .then((res) => setMeasures(res.data))
       .catch((err) => console.error("측정 리스트 불러오기 실패:", err));

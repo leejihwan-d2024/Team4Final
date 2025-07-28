@@ -74,7 +74,7 @@ const PathMap: React.FC<PathMapProps> = ({
         if (measurementId) {
           try {
             const response = await axios.get<LatLngPoint[]>(
-              `https://200.200.200.62:8080/getpath/${measurementId}`
+              `${process.env.REACT_APP_API_BASE_URL}getpath/${measurementId}`
             );
 
             const pathData = response.data;
@@ -210,7 +210,10 @@ const PathMap: React.FC<PathMapProps> = ({
         })
       );
 
-      await axios.post("https://200.200.200.62:8080/savecustompath", pathData);
+      await axios.post(
+        `${process.env.REACT_APP_API_BASE_URL}savecustompath`,
+        pathData
+      );
       alert(`경로가 성공적으로 저장되었습니다. (ID: ${pathId})`);
     } catch (err) {
       console.error("경로 저장 실패:", err);
@@ -234,8 +237,8 @@ const PathMap: React.FC<PathMapProps> = ({
     try {
       const apiUrl =
         CrewId && mode === "OnlyMap"
-          ? `https://200.200.200.62:8080/getcustompath/${pathId}`
-          : `https://200.200.200.62:8080/getpath/${pathId}`;
+          ? `${process.env.REACT_APP_API_BASE_URL}getcustompath/${pathId}`
+          : `${process.env.REACT_APP_API_BASE_URL}getpath/${pathId}`;
 
       console.log("불러오기 API 호출:", apiUrl);
 

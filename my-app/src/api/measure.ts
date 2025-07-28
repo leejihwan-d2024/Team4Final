@@ -5,7 +5,7 @@ export async function fetchRecentMeasures(
   userId: string
 ): Promise<MeasureSimpleDTO[]> {
   const response = await axios.get<MeasureSimpleDTO[]>(
-    `https://localhost:8080/getrecentmeasure/${userId}`
+    `${process.env.REACT_APP_API_BASE_URL}getrecentmeasure/${userId}`
   );
   return response.data;
 }

@@ -21,7 +21,7 @@ const PostTable: React.FC = () => {
     const fetchPosts = async () => {
       try {
         const response = await axios.get<Post[]>(
-          "https://200.200.200.62:8080/api/posts"
+          `${process.env.REACT_APP_API_BASE_URL}api/posts`
         );
         setPosts(response.data);
       } catch (error) {

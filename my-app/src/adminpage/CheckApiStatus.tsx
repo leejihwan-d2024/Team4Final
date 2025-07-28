@@ -11,6 +11,7 @@ interface ApiStatus {
 interface CheckStatusProps {
   path: string;
   method?: "get" | "post" | "put" | "delete";
+  title?: string; // ✅ 선택적 title 추가
 }
 
 const getStatusStyle = (statusCode: number | null): ApiStatus => {
@@ -47,7 +48,11 @@ const getStatusStyle = (statusCode: number | null): ApiStatus => {
   };
 };
 
-const CheckStatus: React.FC<CheckStatusProps> = ({ path, method = "get" }) => {
+const CheckStatus: React.FC<CheckStatusProps> = ({
+  path,
+  method = "get",
+  title,
+}) => {
   const [status, setStatus] = useState<ApiStatus>(getStatusStyle(null));
 
   useEffect(() => {
@@ -74,7 +79,8 @@ const CheckStatus: React.FC<CheckStatusProps> = ({ path, method = "get" }) => {
 
   return (
     <div style={{ fontWeight: "bold", padding: "8px", color: status.color }}>
-      {path} API 상태 확인: {status.emoji} {status.text}
+      {/* ✅ title이 있으면 title 출력, 없으면 path 출력 */}
+      {title ?? path} : {status.emoji} {status.text}
     </div>
   );
 };

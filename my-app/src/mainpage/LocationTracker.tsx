@@ -92,7 +92,7 @@ const LocationTracker = () => {
       console.log("전송할 위치 리스트:", locationList.current);
 
       // 서버 전송
-      fetch("https://localhost:8080/savemeasure", {
+      fetch(`${process.env.REACT_APP_API_BASE_URL}savemeasure`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

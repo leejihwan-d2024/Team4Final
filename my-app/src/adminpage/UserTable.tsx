@@ -23,7 +23,7 @@ const UserTable: React.FC = () => {
 
   useEffect(() => {
     axios
-      .get<User[]>("https://localhost:8080/users/all")
+      .get<User[]>(`${process.env.REACT_APP_API_BASE_URL}users/all`)
       .then((response) => setUsers(response.data))
       .catch((error) => console.error("Failed to fetch users", error));
   }, []);
