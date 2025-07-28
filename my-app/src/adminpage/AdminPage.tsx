@@ -3,6 +3,7 @@ import MainMenu from "../mainpage/MainMenu";
 import AdminPage_Status from "./AdminPage_Status";
 import UserTable from "./UserTable";
 import PostTable from "./PostTable";
+import { Link } from "react-router-dom";
 
 function AdminPage() {
   const [selectedTab, setSelectedTab] = useState<"user" | "post" | "status">(
@@ -34,7 +35,12 @@ function AdminPage() {
     <div>
       <MainMenu />
       <span style={{ fontSize: "20px", fontWeight: "bold" }}>관리자페이지</span>
-
+      <Link
+        to={`${process.env.REACT_APP_API_BASE_URL}swagger-ui/index.html#/`}
+        className="inline-block bg-green-500 text-white px-4 py-2 rounded-lg text-sm font-semibold shadow hover:bg-green-600 transition-colors my-[10px]"
+      >
+        SWAGGER DOC
+      </Link>
       <div style={{ marginTop: "12px", marginBottom: "12px" }}>
         <button
           onClick={() => setSelectedTab("user")}
