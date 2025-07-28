@@ -250,13 +250,14 @@ export default function CrewCreatePage() {
           value={startAddress}
           readOnly
         />
-        <div style={{ width: "100%", height: 400, marginBottom: "40px" }}>
+        <div style={{ width: "100%", height: "600px", marginBottom: "40px" }}>
           <PathMap
             measurementId={7}
             setPathPoints={setPathPoints}
             CrewId={form.crewId}
           />
         </div>
+
         <input name="endLocation" value={form.endLocation} hidden readOnly />
 
         <input

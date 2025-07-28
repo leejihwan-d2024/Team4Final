@@ -53,6 +53,57 @@ const PathMap: React.FC<PathMapProps> = ({
     "#000080", // 남색
     "#8B00FF", // 보라
   ];
+  const handleUndoPath = () => {
+    if (clickedPathRef.current.length > 0) {
+      clickedPathRef.current.pop(); // 마지막 포인트 제거
+
+      // 기존 선 제거
+      if (polylineRef.current) {
+        polylineRef.current.setMap(null);
+      }
+
+      // 선 다시 그림
+      const newLine = new window.kakao.maps.Polyline({
+        path: clickedPathRef.current,
+        strokeWeight: 3,
+        strokeColor: "#FF0000",
+        strokeOpacity: 0.8,
+        strokeStyle: "solid",
+      });
+      newLine.setMap(mapInstanceRef.current);
+      polylineRef.current = newLine;
+
+      // 시작점 마커
+      if (clickedPathRef.current.length === 0 && startMarkerRef.current) {
+        startMarkerRef.current.setMap(null);
+        startMarkerRef.current = null;
+      }
+
+      // 종료점 마커 업데이트
+      if (endMarkerRef.current) {
+        endMarkerRef.current.setMap(null);
+      }
+
+      if (clickedPathRef.current.length > 0) {
+        endMarkerRef.current = new window.kakao.maps.Marker({
+          position: clickedPathRef.current[clickedPathRef.current.length - 1],
+          title: "종료점",
+          map: mapInstanceRef.current,
+        });
+      } else {
+        endMarkerRef.current = null;
+      }
+
+      // 상위 컴포넌트에 경로 전달
+      if (typeof setPathPoints === "function") {
+        const arr = clickedPathRef.current.map((point) => ({
+          lat: point.getLat(),
+          lng: point.getLng(),
+        }));
+        setPathPoints(arr);
+      }
+    }
+  };
 
   useEffect(() => {
     const script = document.createElement("script");
@@ -313,16 +364,17 @@ const PathMap: React.FC<PathMapProps> = ({
           <button
             type="button"
             style={{
-              padding: "8px 16px",
+              padding: "4px 8px",
+              fontSize: "12px",
               backgroundColor: "#ff5e5e",
               color: "#fff",
               border: "none",
               borderRadius: "4px",
               cursor: "pointer",
-              marginRight: "8px",
+              marginRight: "4px",
             }}
             onClick={() => {
-              // 되돌리기 로직
+              handleUndoPath();
             }}
           >
             🔁 되돌리기
@@ -331,7 +383,8 @@ const PathMap: React.FC<PathMapProps> = ({
           <button
             type="button"
             style={{
-              padding: "8px 16px",
+              padding: "4px 8px",
+              fontSize: "12px",
               backgroundColor: "#1e90ff",
               color: "#fff",
               border: "none",
