@@ -144,6 +144,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/api/marathon/**").permitAll()
                 .antMatchers("/api/excel/**").permitAll()
                 .antMatchers("/api/ranking/**").permitAll()
+                .antMatchers("/api/giphy/**").permitAll()
+                .antMatchers("/giphy-test").permitAll()
                 .antMatchers("/getpath/**").permitAll()
                 .antMatchers("/savecustompath/**").permitAll()
                 .antMatchers("/savecustompath").permitAll()

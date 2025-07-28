@@ -41,6 +41,7 @@ import RankingPage from "./components/RankingPage";
 import PostByAuthorWrapper from "./components/PostByAuthorWrapper";
 import MyMeasurement from "./mypage/MyMeasurement";
 import AdminPage from "./adminpage/AdminPage";
+import GiphyTestPage from "./pages/GiphyTestPage";
 function App() {
   const [posts, setPosts] = useState<Post[]>([]);
   const [selectedPost, setSelectedPost] = useState<Post | null>(null);
@@ -133,37 +134,8 @@ function App() {
     <BrowserRouter>
       <Routes>
         <Route path="/main" element={<MainPage />} />
-        <Route
-          path=""
-          element={
-            /*
-            <>
-              <Link to="FirstPage">첫페이지로</Link>
-              <Link to="/MainPage2">2번째 매인</Link>
-              <Link to="/crew/:id">크루 상세페이지</Link>
-              <Link to="/CrewCreate">크루 생성</Link>
-              <Link to="/events/create">이벤트 생성</Link>
-              <Link to="/events/detail/:id">이벤트 상세</Link>
-              <Link to="/chat/:crewId">채팅방</Link>
-              <Link to="/achv">achv</Link>
-              <Link to="/posts">게시판으로이동</Link>
-              <Link to="/shop">러닝관련상품으로 이동</Link>
-              <Link to="/info">러닝관련정보로 이동</Link>
-              <br />
-
-              <Link to="/testmain">임시 Main 으로 이동</Link>
-              <Link to="/marathon">러닝대회정보로 이동</Link>
-              <br />
-              <Link to="/main">메인으로 이동</Link>
-            </>
-            */
-            <MainPage />
-          }
-        />
-        <Route
-          path=""
-          element={<Link to="/events/detail/:id">이벤트 상세</Link>}
-        />
+        <Route path="/" element={<FirstPage />} />
+        <Route path="" element={<Link to="/events/detail/:id">이벤트 상세</Link>}/>
         <Route path="" element={<Link to="/chat/:crewId">채팅방</Link>} />
         <Route path="/MainPage2" element={<MainPage2 />} />
         <Route path="/achv" element={<Achv />} />
@@ -214,6 +186,7 @@ function App() {
         <Route path="/ranking" element={<RankingPage />} />
         <Route path="/posts/author" element={<PostByAuthorWrapper />}></Route>
         <Route path="/admin" element={<AdminPage />}></Route>
+        <Route path="/giphy-test" element={<GiphyTestPage />}></Route>
       </Routes>
     </BrowserRouter>
   );

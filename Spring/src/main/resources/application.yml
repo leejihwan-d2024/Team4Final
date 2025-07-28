@@ -138,6 +138,11 @@ kakao:
   client-id: ${KAKAO_CLIENT_ID:6ad0e21f224b767fe674ccc4e6dbb79c}
   client-secret: ${KAKAO_CLIENT_SECRET:is3zcJXBwohwHnsCuPqMXSrmdE5hDVd7}
 
+# Giphy API 설정
+giphy:
+  api:
+    key: ${GIPHY_API_KEY:ErmmZ2riyWkDwSkRT2z4BlNK8AmtJTDu}
+
 upload:
   path: C:\\WAS_DATA\\upload
   profile:

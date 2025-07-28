@@ -1,5 +1,6 @@
 import React, { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import GiphyMixedRandomGif from "../components/GiphyMixedRandomGif";
 
 const FirstPage: React.FC = () => {
   const navigate = useNavigate();
@@ -7,7 +8,7 @@ const FirstPage: React.FC = () => {
   useEffect(() => {
     const timer = setTimeout(() => {
       navigate("/login");
-    }, 3000);
+    }, 5000);
     return () => clearTimeout(timer);
   }, [navigate]);
 
@@ -30,10 +31,28 @@ const FirstPage: React.FC = () => {
           borderRadius: "10px",
           boxShadow: "0 4px 6px rgba(0, 0, 0, 0.1)",
           textAlign: "center",
-          maxWidth: "500px",
+          maxWidth: "600px",
           width: "100%",
         }}
       >
+        {/* 혼합 랜덤 GIF 컴포넌트 - 깔끔한 버전 */}
+        <div
+          style={{
+            marginBottom: "30px",
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            width: "100%",
+          }}
+        >
+          <GiphyMixedRandomGif
+            autoLoad={true}
+            autoRefresh={false}
+            showInfo={false}
+            cleanMode={true}
+          />
+        </div>
+
         <h1 style={{ color: "#333", marginBottom: "20px" }}>환영합니다!</h1>
         <p style={{ color: "#666", marginBottom: "30px" }}>
           잠시 후 로그인 페이지로 이동합니다...
