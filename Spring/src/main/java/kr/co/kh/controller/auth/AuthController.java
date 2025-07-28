@@ -247,6 +247,7 @@ public class AuthController {
             @ApiImplicitParam(name = "userEmail", value = "이메일", dataType = "String", required = true),
             @ApiImplicitParam(name = "userPw", value = "비밀번호", dataType = "String", required = true),
             @ApiImplicitParam(name = "userNn", value = "이름", dataType = "String", required = true),
+            @ApiImplicitParam(name = "userPhoneno", value = "전화번호", dataType = "String", required = true),
             @ApiImplicitParam(name = "userProfileImageUrl", value = "프로필 이미지 URL", dataType = "String", required = false)
     })
     @PostMapping("/register")
@@ -255,6 +256,7 @@ public class AuthController {
         log.info("아이디: {}", request.getUsername());
         log.info("이메일: {}", request.getEmail());
         log.info("이름: {}", request.getName());
+        log.info("전화번호: {}", request.getPhoneno());
         log.info("프로필 이미지 URL: {}", request.getProfileImageUrl());
         log.info("================================");
         

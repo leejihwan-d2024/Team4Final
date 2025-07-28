@@ -28,6 +28,7 @@ public class RegistrationRequest {
     @JsonProperty("userNn")
     private String name;
 
+    @NullOrNotBlank(message = "전화번호는 필수입니다.")
     @JsonProperty("userPhoneno")
     private String phoneno;
 

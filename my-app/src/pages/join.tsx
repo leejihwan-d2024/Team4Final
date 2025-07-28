@@ -153,6 +153,12 @@ const Join: React.FC = () => {
         return;
       }
 
+      // 전화번호 필수 검증
+      if (!phone1 || !phone2 || !phone3) {
+        setError("전화번호는 필수 항목입니다.");
+        return;
+      }
+
       // 전화번호 합치기
       let phone = "";
       if (phone1 && phone2 && phone3) {
@@ -266,43 +272,54 @@ const Join: React.FC = () => {
           />
         </div>
         <div className="form-group">
-          <label htmlFor="userPhoneno">전화번호 (선택)</label>
+          <label htmlFor="userPhoneno">
+            전화번호 <span className="required">*</span>
+          </label>
           <div className="phone-input-group">
-            <input
-              type="text"
-              name="phone1"
-              value={phone1}
-              onChange={(e) => handlePhoneChange(e, "phone1")}
-              maxLength={3}
-              ref={phone1Ref}
-              className="phone-input"
-              placeholder="010"
-              autoComplete="off"
-            />
-            <span className="phone-hyphen">-</span>
-            <input
-              type="text"
-              name="phone2"
-              value={phone2}
-              onChange={(e) => handlePhoneChange(e, "phone2")}
-              maxLength={4}
-              ref={phone2Ref}
-              className="phone-input"
-              placeholder="0000"
-              autoComplete="off"
-            />
-            <span className="phone-hyphen">-</span>
-            <input
-              type="text"
-              name="phone3"
-              value={phone3}
-              onChange={(e) => handlePhoneChange(e, "phone3")}
-              maxLength={4}
-              ref={phone3Ref}
-              className="phone-input"
-              placeholder="0000"
-              autoComplete="off"
-            />
+            <div className="phone-input-row">
+              <input
+                type="text"
+                name="phone1"
+                value={phone1}
+                onChange={(e) => handlePhoneChange(e, "phone1")}
+                maxLength={3}
+                ref={phone1Ref}
+                className="phone-input"
+                placeholder="010"
+                autoComplete="off"
+                required
+              />
+            </div>
+            <div className="phone-input-row">
+              <span className="phone-hyphen">-</span>
+              <input
+                type="text"
+                name="phone2"
+                value={phone2}
+                onChange={(e) => handlePhoneChange(e, "phone2")}
+                maxLength={4}
+                ref={phone2Ref}
+                className="phone-input"
+                placeholder="0000"
+                autoComplete="off"
+                required
+              />
+              <span className="phone-hyphen">-</span>
+            </div>
+            <div className="phone-input-row">
+              <input
+                type="text"
+                name="phone3"
+                value={phone3}
+                onChange={(e) => handlePhoneChange(e, "phone3")}
+                maxLength={4}
+                ref={phone3Ref}
+                className="phone-input"
+                placeholder="0000"
+                autoComplete="off"
+                required
+              />
+            </div>
           </div>
         </div>
 

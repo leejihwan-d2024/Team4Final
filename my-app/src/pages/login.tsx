@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import api from "../api/GG_axiosInstance";
 import { isWebAuthnCapable } from "../utils/mobileDetector";
+import kakaoLoginImage from "../img/kakao_login_large_narrow.png";
 import "./login.css";
 
 // 타입 정의
@@ -797,6 +798,14 @@ const Login: React.FC = () => {
           className="btn btn-secondary"
           onClick={handleJoinClick}
           disabled={loading}
+          style={{
+            padding: 0,
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            height: "auto",
+            fontSize: "14px",
+          }}
         >
           회원가입
         </button>
@@ -804,9 +813,41 @@ const Login: React.FC = () => {
           className="btn btn-sns"
           onClick={handleKakaoLogin}
           disabled={loading}
-          style={{ backgroundColor: "#FEE500", color: "#000" }}
+          style={{
+            background: "none",
+            border: "none",
+            padding: 0,
+            cursor: loading ? "not-allowed" : "pointer",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            width: "100%",
+            height: "auto",
+            transition: "all 0.2s ease",
+            opacity: loading ? 0.6 : 1,
+            marginBottom: "12px",
+          }}
+          onMouseOver={(e) => {
+            if (!loading) {
+              e.currentTarget.style.transform = "scale(1.02)";
+            }
+          }}
+          onMouseOut={(e) => {
+            e.currentTarget.style.transform = "scale(1)";
+          }}
+          title="카카오 로그인"
         >
-          카카오 로그인
+          <img
+            src={kakaoLoginImage}
+            alt="카카오 로그인"
+            style={{
+              width: "100%",
+              height: "auto",
+              maxWidth: "100%",
+              maxHeight: "60px",
+              objectFit: "contain",
+            }}
+          />
         </button>
       </div>
     </div>
