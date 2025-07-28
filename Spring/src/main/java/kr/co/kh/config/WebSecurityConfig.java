@@ -151,7 +151,13 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/nextpathid").permitAll()
                 .antMatchers("/getcustompath/**").permitAll()
                 .antMatchers("/getrecentmeasure/**").permitAll()
-
+                .antMatchers(
+                        "/v3/api-docs/**",     // ✅ Swagger API 명세 경로
+                        "/swagger-ui/**",      // ✅ Swagger UI 정적 리소스
+                        "/swagger-ui.html",    // ✅ Swagger UI 진입점
+                        "/swagger-resources/**",
+                        "/webjars/**"
+                ).permitAll()
                 .anyRequest().authenticated();
 
         http.addFilterBefore(jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);
