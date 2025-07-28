@@ -1,39 +1,118 @@
+/* === 전체 채팅창 컨테이너 === */
 .chat-container {
   width: 360px;
   height: 640px;
-  overflow-x: hidden; /* 가로 스크롤 차단 */
-  overflow-y: auto; /* 세로 스크롤 허용 */
-  margin-left: auto;
-  margin-right: auto;
-  background-color: #fff;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  background-color: rgba(0, 0, 0, 0.05); /* 흐린 검정 */
   border-radius: 12px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-  padding: 1rem 1.5rem;
-  box-sizing: border-box;
   font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  overflow: hidden;
 }
 
-/* 버튼 */
+/* === 헤더 === */
+.chat-header {
+  text-align: center;
+  padding: 1rem;
+  font-size: 1.25rem;
+  font-weight: bold;
+  border-bottom: 1px solid #e0e0e0;
+  background-color: #ffffff;
+  color: #222;
+}
+
+/* === 메시지 영역 === */
+.chat-box {
+  flex: 1;
+  padding: 1rem;
+  overflow-y: auto;
+  background-color: transparent;
+}
+
+/* === 메시지 기본 === */
+.chat-message {
+  margin-bottom: 0.75rem;
+  max-width: 75%;
+  padding: 0.6rem 0.9rem;
+  border-radius: 10px;
+  word-break: break-word;
+  font-size: 0.95rem;
+  position: relative;
+}
+
+/* === 내 메시지 === */
+.chat-message.me {
+  margin-left: auto;
+  background-color: #bad546; /* 카키빛 연두 */
+  color: #222;
+}
+
+/* === 상대 메시지 === */
+.chat-message.other {
+  background-color: #e1e1f0; /* 연보라 */
+  color: #333;
+}
+
+/* === 닉네임 / 메타 정보 === */
+.chat-meta {
+  font-size: 0.75rem;
+  font-weight: 600;
+  margin-bottom: 0.3rem;
+  color: #666;
+}
+
+/* === 시간 === */
+.chat-time {
+  font-size: 0.7rem;
+  color: #999;
+  text-align: right;
+  margin-top: 0.25rem;
+}
+
+/* === 입력창 구역 === */
+.chat-input-area {
+  display: flex;
+  padding: 0.75rem;
+  border-top: 1px solid #e0e0e0;
+  background-color: #fff;
+}
+
+/* === 입력창 === */
+.chat-input {
+  flex: 1;
+  padding: 0.5rem 0.75rem;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  font-size: 1rem;
+  outline: none;
+}
+
+/* === 전송 버튼 === */
 .chat-button {
+  margin-left: 0.5rem;
   padding: 0.5rem 1rem;
-  background-color: #007bff;
-  color: white;
+  font-weight: bold;
+  font-size: 1rem;
+  background-color: #bad546;
+  color: black;
   border: none;
-  border-radius: 6px;
+  border-radius: 8px;
   cursor: pointer;
-  font-size: 0.9rem;
-  transition: background-color 0.3s ease;
+  transition: background-color 0.25s ease;
 }
 
 .chat-button:hover {
-  background-color: #0056b3;
+  background-color: #a4bd3d;
 }
 
-/* 입력창 */
-.chat-input {
-  flex: 1;
-  padding: 0.5rem;
-  border-radius: 6px;
-  border: 1px solid #ccc;
-  font-size: 0.9rem;
+/* === 스크롤바 스타일 === */
+.chat-box::-webkit-scrollbar {
+  width: 6px;
+}
+
+.chat-box::-webkit-scrollbar-thumb {
+  background-color: rgba(0, 0, 0, 0.2);
+  border-radius: 4px;
 }

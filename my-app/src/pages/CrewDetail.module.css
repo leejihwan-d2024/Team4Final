@@ -1,26 +1,28 @@
+/* === 메인 컨테이너 === */
 .container {
-  width: 360px; /* 고정 폭 */
-  height: 640px; /* 고정 높이 */
-  margin: 0 auto; /* 화면 가운데 정렬 */
-  padding: 1.5rem; /* 안쪽 여백 */
-  background-color: #fff;
+  width: 360px;
+  height: 640px;
+  margin: 0 auto;
+  padding: 1.5rem;
+  background-color: rgba(0, 0, 0, 0.05); /* 은은한 어두운 배경 */
   border-radius: 12px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
 
-  overflow-x: hidden; /* 가로 스크롤 숨김 */
-  overflow-y: auto; /* 세로 스크롤 허용 */
+  overflow-x: hidden;
+  overflow-y: auto;
 
   box-sizing: border-box;
   display: flex;
   flex-direction: column;
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
 }
 
-/* 버튼 공통 스타일 */
+/* === 공통 버튼 스타일 === */
 .joinButton,
 .chatButton,
 .editButton,
 .deleteButton {
-  width: 100%; /* 부모 너비 꽉 채움 */
+  width: 100%;
   padding: 0.75rem 1.5rem;
   font-weight: 700;
   font-size: 1rem;
@@ -28,47 +30,48 @@
   border: none;
   cursor: pointer;
   user-select: none;
-  transition: background-color 0.3s ease;
-  margin-top: 1rem; /* 버튼 간격 */
+  transition: all 0.3s ease;
+  margin-top: 1rem;
   box-sizing: border-box;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
 }
 
-/* 참가 버튼 (파란색) */
+/* 참가 버튼: 톤다운 청록 */
 .joinButton {
-  background-color: #007bff;
-  color: white;
+  background-color: #3a8f8b;
+  color: #fff;
 }
 
 .joinButton:hover {
-  background-color: #0056b3;
+  background-color: #2e6f6b;
 }
 
-/* 채팅 입장 버튼 (초록색) */
+/* 채팅 입장 버튼: 메인 포인트 컬러 (#bad546) */
 .chatButton {
-  background-color: #28a745;
-  color: white;
+  background-color: #bad546;
+  color: #222;
 }
 
 .chatButton:hover {
-  background-color: #1e7e34;
+  background-color: #a4bd3d;
 }
 
-/* 수정 버튼 (노란색) */
+/* 수정 버튼: 따뜻한 황토 느낌 */
 .editButton {
-  background-color: #ffc107;
-  color: #212529;
+  background-color: #e6c14b;
+  color: #2b2b2b;
 }
 
 .editButton:hover {
-  background-color: #e0a800;
+  background-color: #cfae3f;
 }
 
-/* 삭제 버튼 (빨간색) */
+/* 삭제 버튼: 부드럽게 톤다운된 빨강 */
 .deleteButton {
-  background-color: #dc3545;
+  background-color: #c94b4b;
   color: white;
 }
 
 .deleteButton:hover {
-  background-color: #b02a37;
+  background-color: #a83838;
 }
