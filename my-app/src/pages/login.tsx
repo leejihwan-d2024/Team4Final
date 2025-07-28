@@ -235,7 +235,8 @@ const Login: React.FC = () => {
 
         alert("로그인 성공!");
         console.log("겨겨겨결과", JSON.stringify(result, null, 2));
-        const redirectPath = localStorage.getItem("redirectAfterLogin") || "/";
+        const redirectPath =
+          localStorage.getItem("redirectAfterLogin") || "/main";
         localStorage.removeItem("redirectAfterLogin");
         navigate(redirectPath);
       } else {
@@ -466,7 +467,8 @@ const Login: React.FC = () => {
         }
 
         alert("카카오 로그인 성공!");
-        const redirectPath = localStorage.getItem("redirectAfterLogin") || "/";
+        const redirectPath =
+          localStorage.getItem("redirectAfterLogin") || "/main";
         localStorage.removeItem("redirectAfterLogin");
         navigate(redirectPath);
       } else {
