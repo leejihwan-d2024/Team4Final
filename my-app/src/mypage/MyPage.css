@@ -306,3 +306,133 @@
   font-size: 0.8rem;
   color: #888;
 }
+
+/* 전화번호 입력 필드 스타일 */
+.phone-input-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.phone-input-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+}
+
+.phone-input-row:nth-child(1) {
+  justify-content: flex-start;
+}
+
+.phone-input-row:nth-child(2) {
+  justify-content: center;
+}
+
+.phone-input-row:nth-child(3) {
+  justify-content: flex-end;
+}
+
+.phone-input {
+  width: 80px;
+  padding: 0.5rem;
+  border: 2px solid #e1e5e9;
+  border-radius: 0.5rem;
+  font-size: 1rem;
+  text-align: center;
+  transition: all 0.3s ease;
+  box-sizing: border-box;
+}
+
+.phone-input:focus {
+  outline: none;
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+.phone-hyphen {
+  color: #6b7280;
+  font-weight: 500;
+  font-size: 1.125rem;
+}
+
+/* 모달 폼 스타일 */
+.form-group {
+  margin-bottom: 0.5rem;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 0.25rem;
+  color: #374151;
+  font-weight: 500;
+  font-size: 0.875rem;
+}
+
+.input {
+  width: 100%;
+  padding: 0.5rem;
+  border: 2px solid #e1e5e9;
+  border-radius: 0.5rem;
+  font-size: 1rem;
+  transition: all 0.3s ease;
+  box-sizing: border-box;
+}
+
+.input:focus {
+  outline: none;
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+/* 체크박스 스타일 */
+.form-group input[type="checkbox"] {
+  width: 1rem;
+  height: 1rem;
+  color: #3b82f6;
+  background-color: #f3f4f6;
+  border: 2px solid #d1d5db;
+  border-radius: 0.25rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.form-group input[type="checkbox"]:focus {
+  outline: none;
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2);
+}
+
+.form-group input[type="checkbox"]:checked {
+  background-color: #3b82f6;
+  border-color: #3b82f6;
+}
+
+.form-group label {
+  cursor: pointer;
+  user-select: none;
+}
+
+/* 모달 스크롤바 스타일 */
+.overflow-y-auto {
+  scrollbar-width: thin;
+  scrollbar-color: #cbd5e0 #f7fafc;
+}
+
+.overflow-y-auto::-webkit-scrollbar {
+  width: 6px;
+}
+
+.overflow-y-auto::-webkit-scrollbar-track {
+  background: #f7fafc;
+  border-radius: 3px;
+}
+
+.overflow-y-auto::-webkit-scrollbar-thumb {
+  background: #cbd5e0;
+  border-radius: 3px;
+}
+
+.overflow-y-auto::-webkit-scrollbar-thumb:hover {
+  background: #a0aec0;
+}
