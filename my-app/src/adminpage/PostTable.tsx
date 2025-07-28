@@ -34,7 +34,7 @@ const PostTable: React.FC = () => {
 
   return (
     <div className="p-4">
-      <h2 className="text-2xl font-semibold mb-4">📄 게시글 목록</h2>
+      <h2 className="text-2xl font-semibold mb-4">게시글 목록</h2>
       <div className="overflow-auto">
         <table className="min-w-full bg-white border border-gray-300 text-sm">
           <thead>

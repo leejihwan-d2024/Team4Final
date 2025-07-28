@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-
 import RecentMeasureList from "./RecentMeasureList";
 import PostsByAuthor from "../components/PostsByAuthor";
 import axios from "../api/axiosInstance";
@@ -12,6 +11,7 @@ function isValidDate(value: string) {
 
 interface ToggleBoxProps {
   userId: string | undefined;
+  style?: React.CSSProperties;
 }
 
 interface Badge {
@@ -21,9 +21,9 @@ interface Badge {
   badgeName: string;
 }
 
-const ToggleBox: React.FC<ToggleBoxProps> = ({ userId }) => {
+const ToggleBox: React.FC<ToggleBoxProps> = ({ userId, style }) => {
   const [active, setActive] = useState<"최근활동" | "업적">("최근활동");
-  const [userBadges, setUserBadges] = useState<Badge[]>([]); // ✅ 뱃지 목록 상태 추가
+  const [userBadges, setUserBadges] = useState<Badge[]>([]);
 
   const fetchUserBadges = async () => {
     const token = localStorage.getItem("token");
@@ -53,7 +53,6 @@ const ToggleBox: React.FC<ToggleBoxProps> = ({ userId }) => {
     }
   };
 
-  // ✅ active가 "업적"일 때만 뱃지 가져오기
   useEffect(() => {
     if (active === "업적") {
       fetchUserBadges();
@@ -65,38 +64,57 @@ const ToggleBox: React.FC<ToggleBoxProps> = ({ userId }) => {
       style={{
         border: "2px solid #333",
         width: "100%",
-        maxWidth: "400px",
-        height: "200px",
-        padding: "10px",
+        maxWidth: 400,
+        // height: 300,  // 고정 높이 제거
+        display: "flex",
+        flexDirection: "column",
         boxSizing: "border-box",
-        overflowY: "auto", // 수직 스크롤 가능
-        scrollbarWidth: "none", // Firefox용 스크롤바 숨김
-        msOverflowStyle: "none", // IE, Edge용 스크롤바 숨김
+        height: "100%", // 여기 추가
+        minHeight: 0, // 추가 (flexbox 스크롤 정상 작동)
+        ...style,
       }}
-      className="scroll-hidden"
     >
-      <div style={{ display: "flex", gap: "10px", marginBottom: "10px" }}>
-        {["최근활동", "업적"].map((label) => (
-          <button
-            key={label}
-            onClick={() => setActive(label as "최근활동" | "업적")}
-            style={{
-              padding: "6px 12px",
-              border: "1px solid",
-              borderColor: active === label ? "#007bff" : "#ccc",
-              backgroundColor: active === label ? "#007bff" : "#f0f0f0",
-              color: active === label ? "#fff" : "#000",
-              fontWeight: active === label ? "bold" : "normal",
-              borderRadius: "4px",
-              cursor: "pointer",
-            }}
-          >
-            {label}
-          </button>
-        ))}
+      {/* 고정된 탭 버튼 영역 */}
+      <div
+        style={{
+          padding: "8px",
+          flexShrink: 0,
+          backgroundColor: "#f9f9f9",
+          borderBottom: "1px solid #ccc",
+        }}
+      >
+        <div style={{ display: "flex", gap: "10px" }}>
+          {["최근활동", "업적"].map((label) => (
+            <button
+              key={label}
+              onClick={() => setActive(label as "최근활동" | "업적")}
+              style={{
+                padding: "6px 12px",
+                border: "1px solid",
+                borderColor: active === label ? "#007bff" : "#ccc",
+                backgroundColor: active === label ? "#007bff" : "#f0f0f0",
+                color: active === label ? "#fff" : "#000",
+                fontWeight: active === label ? "bold" : "normal",
+                borderRadius: "4px",
+                cursor: "pointer",
+              }}
+            >
+              {label}
+            </button>
+          ))}
+        </div>
       </div>
 
-      <div>
+      {/* 스크롤 가능한 콘텐츠 영역 */}
+      <div
+        style={{
+          overflowY: "auto",
+          flexGrow: 1,
+          padding: "10px",
+          minHeight: 0, // flexbox에서 스크롤 정상 작동하게
+        }}
+        className="scroll-hidden"
+      >
         {active === "최근활동" ? (
           <div>
             <RecentMeasureList userId={userId || ""} />
@@ -110,7 +128,11 @@ const ToggleBox: React.FC<ToggleBoxProps> = ({ userId }) => {
                 <div className="badge-grid">
                   {userBadges.map((badge, idx) => (
                     <div key={idx} className="badge-item">
-                      <img src={badge.badgeImageUrl} alt={badge.badgeName} />
+                      <img
+                        src={badge.badgeImageUrl}
+                        alt={badge.badgeName}
+                        style={{ width: "50px", height: "50px" }}
+                      />
                       <div className="badge-name">{badge.badgeName}</div>
                       <div className="badge-date">
                         {isValidDate(badge.achievedDate)

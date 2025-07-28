@@ -31,7 +31,7 @@ const UserTable: React.FC = () => {
   return (
     <div className="overflow-x-auto p-4">
       <h2 className="text-xl font-bold mb-4">전체 회원 목록</h2>
-      <table className="min-w-full border border-gray-300">
+      <table className="min-w-full bg-white border border-gray-300 text-sm">
         <thead className="bg-gray-100">
           <tr>
             <th className="border px-2 py-1">ID</th>
@@ -49,11 +49,13 @@ const UserTable: React.FC = () => {
         </thead>
         <tbody>
           {users.map((user) => (
-            <tr key={user.userId}>
+            <tr key={user.userId} className="hover:bg-gray-50">
               <td className="border px-2 py-1">{user.userId}</td>
               <td className="border px-2 py-1">{user.userNn}</td>
               <td className="border px-2 py-1">{user.userEmail}</td>
-              <td className="border px-2 py-1">{user.userPhoneNo}</td>
+              <td className="border px-2 py-1">
+                {/*user.userPhoneNo*/}###-####-####
+              </td>
               <td className="border px-2 py-1">{user.userStatus}</td>
               <td className="border px-2 py-1">{user.userSignUp}</td>
               <td className="border px-2 py-1">{user.userLastLogin}</td>
