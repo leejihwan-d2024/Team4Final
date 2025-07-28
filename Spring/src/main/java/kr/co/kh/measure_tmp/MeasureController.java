@@ -99,4 +99,10 @@ public class MeasureController {
                 .map(p -> new PathDTO(p.getLocationY(), p.getLocationX()))
                 .collect(Collectors.toList());
     }
+
+    @GetMapping("/getautherror")
+    public String getautherror() {
+
+        return "test for adminpage";
+    }
 }
