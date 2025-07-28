@@ -233,9 +233,9 @@ function MyPage() {
       )}
 
       {showPersonalEditModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white rounded-lg shadow-lg p-4 w-11/12 max-w-sm">
-            <div className="flex justify-between items-center mb-4">
+        <div className="fixed inset-0 bg-black bg-opacity-50 z-50 p-4">
+          <div className="bg-white rounded-lg shadow-lg w-11/12 max-w-sm max-h-[90vh] flex flex-col absolute top-4 left-4">
+            <div className="flex justify-between items-center p-4 border-b">
               <h2 className="text-lg font-bold">개인정보 수정</h2>
               <button
                 onClick={() => setShowPersonalEditModal(false)}
@@ -244,11 +244,13 @@ function MyPage() {
                 ×
               </button>
             </div>
-            <PersonalEditForm
-              userInfo={ownerInfo}
-              onClose={() => setShowPersonalEditModal(false)}
-              onUpdate={handleProfileUpdate}
-            />
+            <div className="flex-1 overflow-y-auto p-4">
+              <PersonalEditForm
+                userInfo={ownerInfo}
+                onClose={() => setShowPersonalEditModal(false)}
+                onUpdate={handleProfileUpdate}
+              />
+            </div>
           </div>
         </div>
       )}
@@ -271,8 +273,24 @@ function PersonalEditForm({
     newPassword: "",
     showPassword: false,
   });
+  const [phone1, setPhone1] = useState("");
+  const [phone2, setPhone2] = useState("");
+  const [phone3, setPhone3] = useState("");
+  const phone1Ref = React.useRef<HTMLInputElement>(null);
+  const phone2Ref = React.useRef<HTMLInputElement>(null);
+  const phone3Ref = React.useRef<HTMLInputElement>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  // 전화번호 분리 및 초기화
+  useEffect(() => {
+    if (userInfo.userPhoneno) {
+      const phoneParts = userInfo.userPhoneno.split("-");
+      setPhone1(phoneParts[0] || "");
+      setPhone2(phoneParts[1] || "");
+      setPhone3(phoneParts[2] || "");
+    }
+  }, [userInfo.userPhoneno]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value, type, checked } = e.target;
@@ -282,15 +300,43 @@ function PersonalEditForm({
     }));
   };
 
+  // 전화번호 입력 핸들러
+  const handlePhoneChange = (
+    e: React.ChangeEvent<HTMLInputElement>,
+    part: "phone1" | "phone2" | "phone3"
+  ) => {
+    const value = e.target.value.replace(/[^0-9]/g, "");
+    if (part === "phone1") {
+      setPhone1(value.slice(0, 3));
+      if (value.length === 3) {
+        phone2Ref.current?.focus();
+      }
+    } else if (part === "phone2") {
+      setPhone2(value.slice(0, 4));
+      if (value.length === 4) {
+        phone3Ref.current?.focus();
+      }
+    } else if (part === "phone3") {
+      setPhone3(value.slice(0, 4));
+    }
+  };
+
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setLoading(true);
     setError(null);
+
+    // 전화번호 합치기
+    let phone = "";
+    if (phone1 && phone2 && phone3) {
+      phone = `${phone1}-${phone2}-${phone3}`;
+    }
+
     try {
       await api.put(`/api/user-profile/${userInfo.userId}`, {
         userNn: form.userNn,
         userEmail: form.userEmail,
-        userPhoneno: form.userPhoneno,
+        userPhoneno: phone,
       });
       if (form.showPassword && form.password && form.newPassword) {
         await api.post("/api/auth/password/update", {
@@ -301,7 +347,7 @@ function PersonalEditForm({
       onUpdate({
         userNn: form.userNn,
         userEmail: form.userEmail,
-        userPhoneno: form.userPhoneno,
+        userPhoneno: phone,
       });
     } catch (err: unknown) {
       const error = err as any;
@@ -313,61 +359,139 @@ function PersonalEditForm({
 
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
-      <input
-        type="text"
-        name="userNn"
-        value={form.userNn}
-        onChange={handleChange}
-        placeholder="닉네임"
-        className="input"
-        required
-      />
-      <input
-        type="email"
-        name="userEmail"
-        value={form.userEmail}
-        onChange={handleChange}
-        placeholder="이메일"
-        className="input"
-        required
-      />
-      <input
-        type="text"
-        name="userPhoneno"
-        value={form.userPhoneno}
-        onChange={handleChange}
-        placeholder="전화번호"
-        className="input"
-      />
-      <label className="flex items-center space-x-2 text-sm">
+      <div className="form-group">
+        <label
+          htmlFor="userNn"
+          className="block text-sm font-medium text-gray-700 mb-2"
+        >
+          닉네임
+        </label>
         <input
-          type="checkbox"
-          name="showPassword"
-          checked={form.showPassword}
+          type="text"
+          id="userNn"
+          name="userNn"
+          value={form.userNn}
           onChange={handleChange}
+          className="input w-full"
+          required
         />
-        <span>비밀번호 변경</span>
-      </label>
+      </div>
+      <div className="form-group">
+        <label
+          htmlFor="userEmail"
+          className="block text-sm font-medium text-gray-700 mb-2"
+        >
+          이메일
+        </label>
+        <input
+          type="email"
+          id="userEmail"
+          name="userEmail"
+          value={form.userEmail}
+          onChange={handleChange}
+          className="input w-full"
+          required
+        />
+      </div>
+      <div className="form-group">
+        <label
+          htmlFor="userPhoneno"
+          className="block text-sm font-medium text-gray-700 mb-2"
+        >
+          전화번호
+        </label>
+        <div className="phone-input-group">
+          <div className="phone-input-row">
+            <input
+              type="text"
+              name="phone1"
+              value={phone1}
+              onChange={(e) => handlePhoneChange(e, "phone1")}
+              maxLength={3}
+              ref={phone1Ref}
+              className="phone-input"
+              placeholder="010"
+              autoComplete="off"
+            />
+          </div>
+          <div className="phone-input-row">
+            <span className="phone-hyphen">-</span>
+            <input
+              type="text"
+              name="phone2"
+              value={phone2}
+              onChange={(e) => handlePhoneChange(e, "phone2")}
+              maxLength={4}
+              ref={phone2Ref}
+              className="phone-input"
+              placeholder="0000"
+              autoComplete="off"
+            />
+            <span className="phone-hyphen">-</span>
+          </div>
+          <div className="phone-input-row">
+            <input
+              type="text"
+              name="phone3"
+              value={phone3}
+              onChange={(e) => handlePhoneChange(e, "phone3")}
+              maxLength={4}
+              ref={phone3Ref}
+              className="phone-input"
+              placeholder="0000"
+              autoComplete="off"
+            />
+          </div>
+        </div>
+      </div>
+      <div className="form-group">
+        <label className="flex items-center space-x-2 text-sm font-medium text-gray-700">
+          <input
+            type="checkbox"
+            name="showPassword"
+            checked={form.showPassword}
+            onChange={handleChange}
+            className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 focus:ring-2"
+          />
+          <span>비밀번호 변경</span>
+        </label>
+      </div>
       {form.showPassword && (
         <>
-          <input
-            type="password"
-            name="password"
-            value={form.password}
-            onChange={handleChange}
-            placeholder="현재 비밀번호"
-            className="input"
-            required
-          />
-          <input
-            type="password"
-            name="newPassword"
-            value={form.newPassword}
-            onChange={handleChange}
-            placeholder="새 비밀번호"
-            className="input"
-            required
-          />
+          <div className="form-group">
+            <label
+              htmlFor="password"
+              className="block text-sm font-medium text-gray-700 mb-2"
+            >
+              현재 비밀번호
+            </label>
+            <input
+              type="password"
+              id="password"
+              name="password"
+              value={form.password}
+              onChange={handleChange}
+              className="input w-full"
+              required
+            />
+          </div>
+          <div className="form-group">
+            <label
+              htmlFor="newPassword"
+              className="block text-sm font-medium text-gray-700 mb-2"
+            >
+              새 비밀번호
+            </label>
+            <input
+              type="password"
+              id="newPassword"
+              name="newPassword"
+              value={form.newPassword}
+              onChange={handleChange}
+              className="input w-full"
+              required
+            />
+          </div>
         </>
       )}
       {error && <div className="text-red-500 text-sm">{error}</div>}
