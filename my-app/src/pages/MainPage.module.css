@@ -1,145 +1,123 @@
-.container {
-  max-width: 900px;
-  margin: 2rem auto;
-  padding: 0 1rem 3rem;
-  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
-  color: #333;
-  background-color: white; /* 반투명 블랙 */
-  backdrop-filter: blur(4px); /* 더 흐릿한 느낌 주기 */
-}
-
-.banner {
-  position: relative;
-  height: 250px;
-  border-radius: 16px;
-  background-size: cover;
-  background-position: center;
-  overflow: hidden;
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0);
-  margin-bottom: 2.5rem;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.bannerOverlay {
-  position: absolute;
-  inset: 0;
-  background: rgba(0, 0, 0, 0.5);
-  color: #fff;
+.pageRoot {
+  width: 100%;
+  max-width: 360px;
+  height: 640px;
+  margin: 0 auto;
   display: flex;
   flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  padding: 1.5rem;
-  text-align: center;
-  border-radius: 16px;
-  user-select: none;
+  background-color: #f9f9f9;
+  overflow: hidden;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  border-radius: 12px;
+  position: relative;
+  font-family: sans-serif;
 }
 
-.highlightText {
-  color: #fff;
-  font-size: 2.6rem;
-  font-weight: 900;
-  cursor: pointer;
-  margin-bottom: 1rem;
-
-  transition: transform 0.3s ease;
-  font-family: "Inter", "Pretendard", sans-serif;
-}
-.highlightText:hover {
-  transform: scale(1.1);
-  text-shadow: 0 0 20px #d6e6d3;
+/* 상단 영상 */
+.videoBox {
+  position: relative;
+  width: 100%;
+  padding-top: 56.25%; /* 16:9 비율 */
+  overflow: hidden;
+  background-color: black;
+  flex-shrink: 0;
 }
 
-.eventTitle {
-  font-size: 2.4rem;
-  font-weight: 700;
-  letter-spacing: 0.05em;
-  margin-bottom: 0.8rem;
-  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.65);
+.videoBox iframe,
+.videoBox video {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border: 0;
 }
 
-.eventInfo {
-  font-size: 1.3rem;
-  font-weight: 500;
-  letter-spacing: 0.03em;
-  text-shadow: 0 1px 6px rgba(0, 0, 0, 0.6);
+/* 검색창 */
+.searchInput {
+  padding: 12px 16px;
+  font-size: 1rem;
+  border: none;
+  border-bottom: 1px solid #ccc;
+  background-color: white;
+  outline: none;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+/* 크루 리스트 스크롤 가능 래퍼 */
+.crewListWrapper {
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding: 16px;
+  box-sizing: border-box;
 }
 
 .crewList {
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 12px;
 }
 
 .crewItem {
-  background-color: #fff;
+  background-color: white;
   border-radius: 12px;
-  padding: 18px 24px;
-  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+  padding: 16px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
   cursor: pointer;
-  transition: box-shadow 0.25s ease, transform 0.2s ease;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
+  transition: transform 0.2s ease;
 }
 
 .crewItem:hover {
-  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.18);
-  transform: translateY(-3px);
+  transform: scale(1.01);
 }
 
 .crewTitle {
-  font-size: 1.25rem;
-  font-weight: 600;
-  color: #222;
+  font-weight: bold;
+  font-size: 1.2rem;
 }
 
 .crewInfo {
-  font-size: 1rem;
+  margin-top: 8px;
   color: #666;
-  font-weight: 500;
+  font-size: 0.95rem;
 }
 
-.crewTitle .pinIcon {
+.joined {
+  border-left: 6px solid #bad546;
+  padding-left: 10px;
+}
+
+.joinedText {
   margin-left: 8px;
-  font-size: 1.2rem;
-  color: #1e88e5;
-}
-
-.crewInfo .joinedText {
-  font-size: 0.75rem;
   color: #4caf50;
-  margin-left: 10px;
-  font-weight: 600;
-  user-select: none;
-  display: inline-block;
+  font-weight: bold;
 }
 
-.crewItem.joined {
-  border: 2px solid #4caf50;
-  box-shadow: 0 4px 14px rgba(76, 175, 80, 0.3);
+.pinIcon {
+  margin-left: 8px;
 }
 
 .createButton {
-  position: fixed;
-  bottom: 30px;
-  right: 30px;
-  padding: 14px 28px;
-  background-color: #1e88e5;
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  padding: 14px;
+  background-color: #bad546;
   color: white;
-  font-weight: 700;
   font-size: 1.1rem;
+  font-weight: bold;
   border: none;
-  border-radius: 9999px;
-  box-shadow: 0 6px 12px rgba(30, 136, 229, 0.6);
+  border-radius: 0 0 12px 12px;
+  box-shadow: 0 -2px 6px rgba(0, 0, 0, 0.05);
   cursor: pointer;
-  transition: background-color 0.3s ease, box-shadow 0.3s ease;
-  user-select: none;
+  z-index: 10;
+  transition: background-color 0.3s ease;
 }
 
 .createButton:hover {
-  background-color: #1565c0;
-  box-shadow: 0 8px 16px rgba(21, 101, 192, 0.8);
+  background-color: #43a047;
 }

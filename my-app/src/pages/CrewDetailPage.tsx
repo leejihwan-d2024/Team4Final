@@ -128,23 +128,23 @@ export default function CrewDetailPage() {
       <h2 className={styles.title}>{crew.crewTitle}</h2>
 
       <div className={styles.infoBlock}>
-        <p>
+        {/* <p>
           <strong>출발지 좌표:</strong> {crew.startLocation}
         </p>
         <p>
           <strong>도착지 좌표:</strong> {crew.endLocation}
-        </p>
+        </p> */}
 
         <div style={{ width: "100%", height: 400, margin: "20px 0" }}>
           <PathMap CrewId={crew.crewId} mode="OnlyMap" />
         </div>
 
-        <p>
+        {/* <p>
           <strong>출발 위치 좌표:</strong> {crew.startLocationMapPoint}
         </p>
         <p>
           <strong>도착 위치 좌표:</strong> {crew.endLocationMapPoint}
-        </p>
+        </p> */}
         <p>
           <strong>지역:</strong> {crew.district}
         </p>
