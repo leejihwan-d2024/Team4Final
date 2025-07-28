@@ -38,7 +38,7 @@ function PostWrite({ onSubmit }: PostWriteProps) {
   // 수정 시 기존 게시글 불러오기
   useEffect(() => {
     if (id) {
-      fetch(`https://localhost:8080/api/posts/${id}`)
+      fetch(`${process.env.REACT_APP_API_BASE_URL}api/posts/${id}`)
         .then((res) => res.json())
         .then((data) => {
           setTitle(data.title);

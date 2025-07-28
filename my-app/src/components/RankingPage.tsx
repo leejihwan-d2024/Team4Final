@@ -33,7 +33,7 @@ function RankingPage() {
 
   useEffect(() => {
     axios
-      .get("https://localhost:8080/api/ranking/weekly-distance")
+      .get(`${process.env.REACT_APP_API_BASE_URL}api/ranking/weekly-distance`)
       .then((res) =>
         setWeeklyDistance(
           res.data.sort(
@@ -43,7 +43,7 @@ function RankingPage() {
         )
       );
     axios
-      .get("https://localhost:8080/api/ranking/monthly-distance")
+      .get(`${process.env.REACT_APP_API_BASE_URL}api/ranking/monthly-distance`)
       .then((res) =>
         setMonthlyDistance(
           res.data.sort(
@@ -53,7 +53,7 @@ function RankingPage() {
         )
       );
     axios
-      .get("https://localhost:8080/api/ranking/weekly-posts")
+      .get(`${process.env.REACT_APP_API_BASE_URL}api/ranking/weekly-posts`)
       .then((res) =>
         setWeeklyPosts(
           res.data.sort(
@@ -63,7 +63,7 @@ function RankingPage() {
         )
       );
     axios
-      .get("https://localhost:8080/api/ranking/achievements")
+      .get(`{process.env.REACT_APP_API_BASE_URL}api/ranking/achievements`)
       .then((res) =>
         setAchievements(
           res.data.sort(

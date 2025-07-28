@@ -44,7 +44,9 @@ const ChatRoom = () => {
 
     const fetchOldMessages = async () => {
       try {
-        const res = await fetch(`https://localhost:8080/api/chat/${crewId}`);
+        const res = await fetch(
+          `${process.env.REACT_APP_API_BASE_URL}api/chat/${crewId}`
+        );
         if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
         const text = await res.text();
         if (!text) {
@@ -60,7 +62,7 @@ const ChatRoom = () => {
 
     fetchOldMessages();
 
-    const socket = new SockJS("https://localhost:8080/ws-chat");
+    const socket = new SockJS(`${process.env.REACT_APP_API_BASE_URL}ws-chat`);
     const client = new Client({
       webSocketFactory: () => socket,
       reconnectDelay: 5000,

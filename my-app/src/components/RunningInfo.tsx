@@ -33,9 +33,12 @@ function RunningInfo() {
     if (!keyword.trim()) return;
     try {
       setLoading(true);
-      const res = await axios.get(`https://localhost:8080/api/info/search`, {
-        params: { query: keyword },
-      });
+      const res = await axios.get(
+        `${process.env.REACT_APP_API_BASE_URL}api/info/search`,
+        {
+          params: { query: keyword },
+        }
+      );
       setResults(res.data.documents);
     } catch (err) {
       console.error("블로그 정보 가져오기 실패", err);

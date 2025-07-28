@@ -40,7 +40,7 @@ function Comment({ postId }: CommentProps) {
   // 댓글 목록 불러오기
   useEffect(() => {
     axios
-      .get(`https://localhost:8080/api/comments/post/${postId}`)
+      .get(`${process.env.REACT_APP_API_BASE_URL}api/comments/post/${postId}`)
       .then((res) => setComments(res.data))
       .catch((err) => console.error("댓글 목록 불러오기 실패", err));
   }, [postId]);
@@ -50,7 +50,7 @@ function Comment({ postId }: CommentProps) {
     if (!newComment.trim()) return;
 
     try {
-      await axios.post(`https://localhost:8080/api/comments`, {
+      await axios.post(`${process.env.REACT_APP_API_BASE_URL}api/comments`, {
         commentAuthor: currentUserId, // ✅ 로그인한 사용자 ID 사용
         commentComment: newComment,
         postId: postId,
@@ -59,7 +59,7 @@ function Comment({ postId }: CommentProps) {
       setNewComment("");
 
       const res = await axios.get(
-        `https://localhost:8080/api/comments/post/${postId}`
+        `${process.env.REACT_APP_API_BASE_URL}api/comments/post/${postId}`
       );
       setComments(res.data);
     } catch (err) {
@@ -74,7 +74,9 @@ function Comment({ postId }: CommentProps) {
     if (!confirmed) return;
 
     try {
-      await axios.delete(`https://localhost:8080/api/comments/${id}`);
+      await axios.delete(
+        `${process.env.REACT_APP_API_BASE_URL}api/comments/${id}`
+      );
       setComments((prev) => prev.filter((c) => c.commentId !== id));
     } catch (err) {
       console.error(err);

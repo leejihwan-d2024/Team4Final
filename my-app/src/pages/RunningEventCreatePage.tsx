@@ -25,11 +25,14 @@ export default function RunningEventCreatePage() {
     e.preventDefault();
 
     try {
-      const response = await axios.post("https://localhost:8080/api/events", {
-        ...form,
-        startTime: new Date(form.startTime),
-        endTime: new Date(form.endTime),
-      });
+      const response = await axios.post(
+        `${process.env.REACT_APP_API_BASE_URL}api/events`,
+        {
+          ...form,
+          startTime: new Date(form.startTime),
+          endTime: new Date(form.endTime),
+        }
+      );
       alert("러닝 이벤트 생성 완료!");
       navigate("/");
     } catch (error) {

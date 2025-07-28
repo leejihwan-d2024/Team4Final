@@ -17,7 +17,8 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
     @Override
     public void registerStompEndpoints(StompEndpointRegistry registry) {
         registry.addEndpoint("/ws-chat") // 클라이언트 소켓 연결 주소
-                .setAllowedOrigins("http://localhost:3000","http://200.200.200.62:3000")
+                .setAllowedOrigins("http://localhost:3000","http://200.200.200.62:3000","https://200.200.200.62:3000")
+                .setAllowedOriginPatterns("http://*.200.200.200.*:*", "https://*.200.200.200.*:*")
                 .withSockJS();
     }
 }

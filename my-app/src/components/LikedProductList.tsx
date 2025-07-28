@@ -23,9 +23,12 @@ function LikedProductList() {
   // 🔹 찜 목록 불러오기
   const fetchLikedProducts = async () => {
     try {
-      const res = await axios.get("https://localhost:8080/api/products/liked", {
-        params: { userId },
-      });
+      const res = await axios.get(
+        `${process.env.REACT_APP_API_BASE_URL}api/products/liked`,
+        {
+          params: { userId },
+        }
+      );
       setLikedProducts(res.data);
     } catch (err) {
       console.error("찜 목록 불러오기 실패", err);
@@ -39,12 +42,16 @@ function LikedProductList() {
   // 🔸 찜 취소 기능
   const handleUnlike = async (product: Product) => {
     try {
-      await axios.post("https://localhost:8080/api/products/like", product, {
-        params: { userId },
-        headers: {
-          "Content-Type": "application/json",
-        },
-      });
+      await axios.post(
+        `${process.env.REACT_APP_API_BASE_URL}api/products/like`,
+        product,
+        {
+          params: { userId },
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
       // 목록에서 제거
       setLikedProducts((prev) => prev.filter((p) => p.link !== product.link));
     } catch (err) {

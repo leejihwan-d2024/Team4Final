@@ -51,7 +51,9 @@ function App() {
   // 전체 게시글 불러오기
   const fetchPosts = async () => {
     try {
-      const res = await axios.get("https://localhost:8080/api/posts");
+      const res = await axios.get(
+        `${process.env.REACT_APP_API_BASE_URL}api/posts`
+      );
       setPosts(res.data);
     } catch (error) {
       console.error("게시글 불러오기 실패:", error);
@@ -61,7 +63,7 @@ function App() {
   //  게시글 등록
   const handlePostSubmit = async (post: Omit<Post, "id">) => {
     try {
-      await axios.post("https://localhost:8080/api/posts", post);
+      await axios.post(`${process.env.REACT_APP_API_BASE_URL}api/posts`, post);
       alert("등록 완료!");
       fetchPosts();
     } catch (error) {
@@ -73,7 +75,9 @@ function App() {
   //  게시글 상세 조회
   const fetchPostById = async (id: number) => {
     try {
-      const res = await axios.get(`https://localhost:8080/api/posts/${id}`);
+      const res = await axios.get(
+        `${process.env.REACT_APP_API_BASE_URL}api/posts/${id}`
+      );
       setSelectedPost(res.data);
     } catch (error) {
       console.error("게시글 조회 실패:", error);
@@ -82,7 +86,7 @@ function App() {
   // 게시글 수정
   const updatePost = async (post: Post) => {
     try {
-      await axios.put("https://localhost:8080/api/posts", post);
+      await axios.put(`${process.env.REACT_APP_API_BASE_URL}api/posts`, post);
       alert("수정 완료");
       fetchPosts();
     } catch (error) {
@@ -94,7 +98,9 @@ function App() {
   //  게시글 삭제
   const deletePost = async (id: number) => {
     try {
-      await axios.delete(`https://localhost:8080/api/posts/${id}`);
+      await axios.delete(
+        `${process.env.REACT_APP_API_BASE_URL}api/posts/${id}`
+      );
       alert("삭제 완료");
       fetchPosts();
     } catch (error) {
@@ -135,7 +141,10 @@ function App() {
       <Routes>
         <Route path="/main" element={<MainPage />} />
         <Route path="/" element={<FirstPage />} />
-        <Route path="" element={<Link to="/events/detail/:id">이벤트 상세</Link>}/>
+        <Route
+          path=""
+          element={<Link to="/events/detail/:id">이벤트 상세</Link>}
+        />
         <Route path="" element={<Link to="/chat/:crewId">채팅방</Link>} />
         <Route path="/MainPage2" element={<MainPage2 />} />
         <Route path="/achv" element={<Achv />} />

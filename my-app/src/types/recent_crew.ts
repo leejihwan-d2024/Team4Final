@@ -6,10 +6,10 @@ export const fetchRecentCrewsCombined = async (
   userId: string
 ): Promise<MeasureSimpleDTO[]> => {
   const joinPromise = axios.get(
-    `https://localhost:8080/api/crews/getrecentjoin/${userId}`
+    `${process.env.REACT_APP_API_BASE_URL}api/crews/getrecentjoin/${userId}`
   );
   const createPromise = axios.get(
-    `https://localhost:8080/api/crews/getrecentcreate/${userId}`
+    `${process.env.REACT_APP_API_BASE_URL}api/crews/getrecentcreate/${userId}`
   );
 
   const [joinResponse, createResponse] = await Promise.all([

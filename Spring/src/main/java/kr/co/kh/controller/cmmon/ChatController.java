@@ -15,7 +15,6 @@ import java.time.LocalDateTime;
 @Slf4j
 @Controller
 @RequiredArgsConstructor
-@CrossOrigin(origins = "http://localhost:3000")
 public class ChatController {
 
     private final SimpMessagingTemplate messagingTemplate;

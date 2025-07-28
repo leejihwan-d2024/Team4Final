@@ -33,9 +33,12 @@ function NaverProductList() {
   useEffect(() => {
     const fetchProducts = async () => {
       try {
-        const res = await axios.get("https://localhost:8080/api/shop/search", {
-          params: { query },
-        });
+        const res = await axios.get(
+          `${process.env.REACT_APP_API_BASE_URL}api/shop/search`,
+          {
+            params: { query },
+          }
+        );
         setProducts(res.data.items);
       } catch (err) {
         console.error("Spring 중계 API 호출 실패", err);

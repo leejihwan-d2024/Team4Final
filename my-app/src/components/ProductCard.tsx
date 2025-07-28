@@ -16,7 +16,7 @@ function ProductCard({
     const checkIfLiked = async () => {
       try {
         const res = await axios.get(
-          "https://localhost:8080/api/products/liked",
+          `${process.env.REACT_APP_API_BASE_URL}api/products/liked`,
           {
             params: { userId },
           }
@@ -35,12 +35,16 @@ function ProductCard({
   // 찜 , 찜 해제 요청
   const handleLike = async () => {
     try {
-      await axios.post(`https://localhost:8080/api/products/like`, product, {
-        params: { userId },
-        headers: {
-          "Content-Type": "application/json",
-        },
-      });
+      await axios.post(
+        `${process.env.REACT_APP_API_BASE_URL}api/products/like`,
+        product,
+        {
+          params: { userId },
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
       setLiked((prev) => !prev);
     } catch (err) {
       console.error("찜 요청 실패", err);

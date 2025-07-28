@@ -80,9 +80,9 @@ export default function MainPage() {
     const fetchCrews = async () => {
       try {
         const [allRes, joinedRes] = await Promise.all([
-          axios.get<Crew[]>("https://localhost:8080/api/crews"),
+          axios.get<Crew[]>(`${process.env.REACT_APP_API_BASE_URL}api/crews`),
           axios.get<Crew[]>(
-            `https://localhost:8080/api/crews/joined?userId=${userId}`
+            `${process.env.REACT_APP_API_BASE_URL}api/crews/joined?userId=${userId}`
           ),
         ]);
 
@@ -110,7 +110,7 @@ export default function MainPage() {
     const fetchTodayEvent = async () => {
       try {
         const { data } = await axios.get<RunningEvent[]>(
-          "https://localhost:8080/api/events"
+          `${process.env.REACT_APP_API_BASE_URL}api/events`
         );
         if (data.length > 0) setTodayEvent(data[0]);
       } catch (err) {
