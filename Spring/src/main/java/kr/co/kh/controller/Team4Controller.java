@@ -20,6 +20,9 @@ public class Team4Controller {
         return "test";
     }
 
-    
+    @GetMapping("/giphy-test")
+    public String giphyTest(){
+        return "giphy-test";
+    }
 
 }

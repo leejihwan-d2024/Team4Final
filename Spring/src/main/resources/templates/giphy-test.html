@@ -1,0 +1,394 @@
+<!DOCTYPE html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Giphy API 테스트</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        max-width: 800px;
+        margin: 0 auto;
+        padding: 20px;
+        background-color: #f5f5f5;
+      }
+      .container {
+        background: white;
+        padding: 30px;
+        border-radius: 10px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+      }
+      h1 {
+        color: #333;
+        text-align: center;
+        margin-bottom: 30px;
+      }
+      .gif-container {
+        text-align: center;
+        margin: 20px 0;
+        padding: 20px;
+        border: 2px dashed #ddd;
+        border-radius: 10px;
+        min-height: 200px;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+      }
+      .gif-container img {
+        max-width: 100%;
+        max-height: 400px;
+        border-radius: 8px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+      }
+      .btn {
+        background: linear-gradient(45deg, #ff6b6b, #ee5a24);
+        color: white;
+        border: none;
+        padding: 12px 24px;
+        border-radius: 25px;
+        cursor: pointer;
+        font-size: 16px;
+        font-weight: bold;
+        transition: all 0.3s ease;
+        margin: 10px;
+      }
+      .btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(255, 107, 107, 0.3);
+      }
+      .btn:disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
+        transform: none;
+      }
+      .loading {
+        color: #666;
+        font-style: italic;
+      }
+      .error {
+        color: #e74c3c;
+        background: #fdf2f2;
+        padding: 10px;
+        border-radius: 5px;
+        border-left: 4px solid #e74c3c;
+      }
+      .info {
+        background: #e8f4fd;
+        padding: 15px;
+        border-radius: 5px;
+        border-left: 4px solid #3498db;
+        margin-bottom: 20px;
+      }
+      .gif-info {
+        margin-top: 15px;
+        padding: 10px;
+        background: #f8f9fa;
+        border-radius: 5px;
+        font-size: 14px;
+        color: #666;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h1>🏃‍♂️ 랜덤 러닝 GIF 테스트</h1>
+
+      <div class="info">
+        <strong>API 정보:</strong><br />
+        • 단일 GIF: <code>/api/giphy/random-running</code><br />
+        • 다중 GIF: <code>/api/giphy/multiple-random-running?count=5</code
+        ><br />
+        • Giphy API 키: <code>ErmmZ2riyWkDwSkRT2z4BlNK8AmtJTDu</code><br />
+        • 검색 태그:
+        <code
+          >running, jogging, marathon, sprint</code
+        ><br />
+        • 등급: <code>g</code> (모든 연령)
+      </div>
+
+      <div style="text-align: center">
+        <button class="btn" onclick="loadRandomGif()" id="loadBtn">
+          🎲 랜덤 러닝 GIF 가져오기
+        </button>
+        <button
+          class="btn"
+          onclick="clearGif()"
+          style="background: linear-gradient(45deg, #95a5a6, #7f8c8d)"
+        >
+          🗑️ 지우기
+        </button>
+        <button
+          class="btn"
+          onclick="toggleAutoRefresh()"
+          id="autoRefreshBtn"
+          style="background: linear-gradient(45deg, #27ae60, #2ecc71)"
+        >
+          🔄 자동 새로고침 시작
+        </button>
+        <button
+          class="btn"
+          onclick="loadMultipleGifs()"
+          id="multipleBtn"
+          style="background: linear-gradient(45deg, #9b59b6, #8e44ad)"
+        >
+          🚀 5개 GIF 세트 로드
+        </button>
+        <button
+          class="btn"
+          onclick="nextGif()"
+          id="nextBtn"
+          style="background: linear-gradient(45deg, #3498db, #2980b9)"
+        >
+          ⏭️ 다음 GIF
+        </button>
+      </div>
+
+      <div class="gif-container" id="gifContainer">
+        <div class="loading">버튼을 클릭하여 랜덤 러닝 GIF를 가져오세요!</div>
+      </div>
+
+      <div id="gifInfo" class="gif-info" style="display: none"></div>
+    </div>
+
+    <script>
+      let currentGifData = null;
+      let autoRefreshInterval = null;
+      let isAutoRefreshing = false;
+      let gifQueue = [];
+      let currentGifIndex = 0;
+
+      async function loadRandomGif() {
+        const container = document.getElementById("gifContainer");
+        const loadBtn = document.getElementById("loadBtn");
+        const gifInfo = document.getElementById("gifInfo");
+
+        // 로딩 상태
+        loadBtn.disabled = true;
+        loadBtn.textContent = "🔄 로딩 중...";
+        container.innerHTML =
+          '<div class="loading">Giphy API에서 랜덤 러닝 GIF를 가져오는 중...</div>';
+        gifInfo.style.display = "none";
+
+        // 큐 초기화
+        gifQueue = [];
+        currentGifIndex = 0;
+
+        try {
+          // 현재 페이지의 프로토콜과 호스트를 사용하여 API 호출
+          const protocol = window.location.protocol;
+          const host = window.location.host;
+          const apiUrl = `${protocol}//${host}/api/giphy/random-running`;
+
+          console.log("API 호출 URL:", apiUrl);
+
+          const response = await fetch(apiUrl);
+          const data = await response.json();
+
+          console.log("Giphy API 응답:", data);
+
+          if (data.error) {
+            throw new Error(
+              data.error + (data.message ? ": " + data.message : "")
+            );
+          }
+
+          if (data.data && data.data.images) {
+            currentGifData = data;
+            const gifUrl = data.data.images.original.url;
+            const title = data.data.title || "제목 없음";
+            const rating = data.data.rating || "N/A";
+
+            container.innerHTML = `
+                        <img src="${gifUrl}" alt="${title}" onload="this.style.opacity='1'" style="opacity: 0; transition: opacity 0.3s ease;">
+                        <div style="margin-top: 10px; font-weight: bold; color: #333;">${title}</div>
+                    `;
+
+            const usedTag = data.usedTag || "N/A";
+            gifInfo.innerHTML = `
+                        <strong>GIF 정보:</strong><br>
+                        • 제목: ${title}<br>
+                        • 등급: ${rating.toUpperCase()}<br>
+                        • ID: ${data.data.id}<br>
+                        • 검색 태그: ${usedTag}<br>
+                        • 원본 URL: <a href="${
+                          data.data.url
+                        }" target="_blank">Giphy 페이지 보기</a>
+                    `;
+            gifInfo.style.display = "block";
+          } else {
+            throw new Error("GIF 데이터를 찾을 수 없습니다.");
+          }
+        } catch (error) {
+          console.error("Giphy API 오류:", error);
+          container.innerHTML = `
+                    <div class="error">
+                        <strong>오류 발생:</strong><br>
+                        ${error.message}
+                    </div>
+                `;
+        } finally {
+          // 버튼 상태 복원
+          loadBtn.disabled = false;
+          loadBtn.textContent = "🎲 랜덤 러닝 GIF 가져오기";
+        }
+      }
+
+      async function loadMultipleGifs() {
+        const container = document.getElementById("gifContainer");
+        const multipleBtn = document.getElementById("multipleBtn");
+        const gifInfo = document.getElementById("gifInfo");
+
+        // 로딩 상태
+        multipleBtn.disabled = true;
+        multipleBtn.textContent = "🔄 5개 로딩 중...";
+        container.innerHTML =
+          '<div class="loading">Giphy API에서 5개의 랜덤 러닝 GIF를 가져오는 중...</div>';
+        gifInfo.style.display = "none";
+
+        // 큐 초기화
+        gifQueue = [];
+        currentGifIndex = 0;
+
+        try {
+          const protocol = window.location.protocol;
+          const host = window.location.host;
+          const apiUrl = `${protocol}//${host}/api/giphy/multiple-random-running?count=5`;
+
+          console.log("다중 GIF API 호출 URL:", apiUrl);
+
+          const response = await fetch(apiUrl);
+          const data = await response.json();
+
+          console.log("다중 Giphy API 응답:", data);
+
+          if (data.error) {
+            throw new Error(
+              data.error + (data.message ? ": " + data.message : "")
+            );
+          }
+
+          if (data.success && data.data && data.data.length > 0) {
+            gifQueue = data.data;
+            currentGifIndex = 0;
+            displayCurrentGif();
+          } else {
+            throw new Error("GIF 데이터를 찾을 수 없습니다.");
+          }
+        } catch (error) {
+          console.error("다중 Giphy API 오류:", error);
+          container.innerHTML = `
+                    <div class="error">
+                        <strong>오류 발생:</strong><br>
+                        ${error.message}
+                    </div>
+                `;
+        } finally {
+          // 버튼 상태 복원
+          multipleBtn.disabled = false;
+          multipleBtn.textContent = "🚀 5개 GIF 세트 로드";
+        }
+      }
+
+      function displayCurrentGif() {
+        const container = document.getElementById("gifContainer");
+        const gifInfo = document.getElementById("gifInfo");
+
+        if (gifQueue.length === 0) return;
+
+        const currentGif = gifQueue[currentGifIndex];
+        const gifUrl = currentGif.data.images.original.url;
+        const title = currentGif.data.title || "제목 없음";
+        const rating = currentGif.data.rating || "N/A";
+        const usedTag = currentGif.usedTag || "N/A";
+
+        container.innerHTML = `
+                <img src="${gifUrl}" alt="${title}" onload="this.style.opacity='1'" style="opacity: 0; transition: opacity 0.3s ease;">
+                <div style="margin-top: 10px; font-weight: bold; color: #333;">${title}</div>
+                <div style="margin-top: 5px; font-size: 12px; color: #666;">
+                    ${currentGifIndex + 1} / ${gifQueue.length} 번째 GIF
+                </div>
+            `;
+
+        gifInfo.innerHTML = `
+                <strong>GIF 정보:</strong><br>
+                • 제목: ${title}<br>
+                • 등급: ${rating.toUpperCase()}<br>
+                • ID: ${currentGif.data.id}<br>
+                • 검색 태그: ${usedTag}<br>
+                • 원본 URL: <a href="${
+                  currentGif.data.url
+                }" target="_blank">Giphy 페이지 보기</a>
+            `;
+        gifInfo.style.display = "block";
+      }
+
+      function nextGif() {
+        if (gifQueue.length > 1) {
+          currentGifIndex = (currentGifIndex + 1) % gifQueue.length;
+          displayCurrentGif();
+        }
+      }
+
+              function clearGif() {
+          const container = document.getElementById("gifContainer");
+          const gifInfo = document.getElementById("gifInfo");
+
+          container.innerHTML =
+            '<div class="loading">버튼을 클릭하여 랜덤 러닝 GIF를 가져오세요!</div>';
+          gifInfo.style.display = "none";
+          currentGifData = null;
+          
+          // 큐 초기화
+          gifQueue = [];
+          currentGifIndex = 0;
+          
+          // 자동 새로고침 중지
+          if (autoRefreshInterval) {
+            clearInterval(autoRefreshInterval);
+            autoRefreshInterval = null;
+            isAutoRefreshing = false;
+            updateAutoRefreshButton();
+          }
+        }
+
+      function toggleAutoRefresh() {
+        const btn = document.getElementById("autoRefreshBtn");
+
+        if (isAutoRefreshing) {
+          // 자동 새로고침 중지
+          if (autoRefreshInterval) {
+            clearInterval(autoRefreshInterval);
+            autoRefreshInterval = null;
+          }
+          isAutoRefreshing = false;
+          btn.textContent = "🔄 자동 새로고침 시작";
+          btn.style.background = "linear-gradient(45deg, #27ae60, #2ecc71)";
+        } else {
+          // 자동 새로고침 시작
+          autoRefreshInterval = setInterval(loadRandomGif, 5000); // 5초마다
+          isAutoRefreshing = true;
+          btn.textContent = "⏹️ 자동 새로고침 중지";
+          btn.style.background = "linear-gradient(45deg, #e74c3c, #c0392b)";
+        }
+      }
+
+      function updateAutoRefreshButton() {
+        const btn = document.getElementById("autoRefreshBtn");
+        if (isAutoRefreshing) {
+          btn.textContent = "⏹️ 자동 새로고침 중지";
+          btn.style.background = "linear-gradient(45deg, #e74c3c, #c0392b)";
+        } else {
+          btn.textContent = "🔄 자동 새로고침 시작";
+          btn.style.background = "linear-gradient(45deg, #27ae60, #2ecc71)";
+        }
+      }
+
+      // 페이지 로드 시 자동으로 첫 번째 GIF 로드
+      window.addEventListener("load", () => {
+        // 3초 후 자동 로드
+        setTimeout(loadRandomGif, 3000);
+      });
+    </script>
+  </body>
+</html>
