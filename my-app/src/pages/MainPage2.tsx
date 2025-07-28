@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import axios from "axios";
 import styles from "./MainPage.module.css";
+import MainMenu from "../mainpage/MainMenu";
 
 type Crew = {
   crewId: string;
@@ -181,7 +182,7 @@ export default function MainPage() {
           allowFullScreen
         />
       </div>
-
+      <MainMenu />
       <input
         className={styles.searchInput}
         type="text"
