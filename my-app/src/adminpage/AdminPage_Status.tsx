@@ -16,9 +16,43 @@ function AdminPage_Status() {
       <CheckStatus path="/savecustompath" title="경로 저장(헤더 없이)" />
       <CheckStatus path="/getpath/181" />
       <CheckStatus path="/getrecentmeasure/1111" />
-
       <span>로그인 기능 관련</span>
       <CheckStatus path="/api/auth/login" title="로그인(헤더 없이)" />
+      <span>게시판 기능 관련</span>
+      <CheckStatus path="/api/posts" /> {/* 전체 게시글 조회 (GET) */}
+      <CheckStatus path="/api/posts/162" /> {/* 특정 게시글 조회 (GET) */}
+      <CheckStatus path="/api/posts/11111" />{" "}
+      {/* 존재하지 않는 게시글 테스트 */}
+      <CheckStatus path="/api/posts/author/user001" />{" "}
+      {/* 특정 작성자 게시글 조회 (GET) */}
+      <CheckStatus path="/api/posts" /> {/* 게시글 생성 (POST) */}
+      <CheckStatus path="/api/posts" /> {/* 게시글 수정 (PUT) */}
+      <CheckStatus path="/api/posts/162/like" /> {/* 좋아요 추가 (POST) */}
+      <CheckStatus path="/api/posts/162/view" /> {/* 조회수 증가 (POST) */}
+      <CheckStatus path="/api/posts/162/like" /> {/* 좋아요 감소 (DELETE) */}
+      <CheckStatus path="/api/posts/162" /> {/* 게시글 삭제 (DELETE) */}
+      <span>댓글 기능 관련</span>
+      <CheckStatus path="/api/comments/post/162" />{" "}
+      {/* 게시글별 댓글 조회 (GET) */}
+      <CheckStatus path="/api/comments" /> {/* 댓글 생성 (POST) */}
+      <CheckStatus path="/api/comments/10" /> {/* 댓글 수정 (PUT) */}
+      <CheckStatus path="/api/comments/10" /> {/* 댓글 삭제 (DELETE) */}
+      <span>마라톤 대회정보 검색</span>
+      <CheckStatus path="/api/marathon/search?input=서울" />
+      <span>상품좋아요 기능 관련</span>
+      <CheckStatus path="/api/products//like" />
+      <CheckStatus path="/api/products//liked" />
+      <span>러닝 정보관련 기능 검색</span>
+      <CheckStatus path="/api/info/search?query=러닝화" />
+      <span>찜 기능 관련</span>
+      <CheckStatus path="/api/products/liked?userId=user001" />
+      <span>러닝관련상품 기능 관련</span>
+      <CheckStatus path="/api/shop/search?query=러닝화" />
+      <span>랭킹 기능 관련</span>
+      <CheckStatus path="/api/ranking/weekly-distance" />
+      <CheckStatus path="/api/ranking/monthly-distance" />
+      <CheckStatus path="/api/ranking/weekly-posts" />
+      <CheckStatus path="/api/ranking/achievements" />
     </>
   );
 }
