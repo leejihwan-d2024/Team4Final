@@ -23,7 +23,7 @@ import java.util.Map;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/crews")
-@Api(tags = "🏃‍♀️ 러닝 크루 API", description = "크루 생성, 조회, 수정, 삭제 및 최근 활동 조회 기능 제공")
+@Api(tags = " 러닝 크루 API", description = "크루 생성, 조회, 수정, 삭제 및 최근 활동 조회 기능 제공")
 public class RunningCrewController {
 
     private final RunningCrewService crewService;
