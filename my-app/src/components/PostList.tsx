@@ -6,21 +6,22 @@ interface PostList {
   onSelect: (post: Post) => void;
 }
 
-function PostList({ posts, onSelect }: PostList) {
-  const Wrapper = styled.div`
-    max-width: 360px;
-    height: 640px;
-    margin: auto;
-    padding: 16px;
-    box-sizing: border-box;
-    background: #f9f9f9;
-    font-size: 14px;
+const Wrapper = styled.div`
+  max-width: 360px;
+  height: 640px;
+  margin: auto;
+  padding: 16px;
+  box-sizing: border-box;
+  background: #f9f9f9;
+  font-size: 14px;
 
-    position: relative; // ✅ 메뉴 기준 위치를 잡기 위해 필요
-    overflow: visible;
-    overflow-y: auto;
-    overflow-x: hidden; // ✅ 팝업 메뉴가 잘리지 않도록
-  `;
+  position: relative; // ✅ 메뉴 기준 위치를 잡기 위해 필요
+  overflow: visible;
+  overflow-y: auto;
+  overflow-x: hidden; // ✅ 팝업 메뉴가 잘리지 않도록
+`;
+
+function PostList({ posts, onSelect }: PostList) {
   return (
     <Wrapper>
       <div>

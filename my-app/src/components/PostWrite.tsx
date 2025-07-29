@@ -8,6 +8,19 @@ interface PostWriteProps {
   onSubmit: (post: Post) => void;
 }
 
+const Wrapper = styled.div`
+  max-width: 360px;
+  height: 640px;
+  margin: auto;
+  padding: 16px;
+  box-sizing: border-box;
+  background: #f9f9f9;
+  font-size: 14px;
+
+  position: relative; // ✅ 메뉴 기준 위치를 잡기 위해 필요
+  overflow: visible; // ✅ 팝업 메뉴가 잘리지 않도록
+`;
+
 function PostWrite({ onSubmit }: PostWriteProps) {
   const { id } = useParams();
   const navigate = useNavigate();
@@ -22,18 +35,6 @@ function PostWrite({ onSubmit }: PostWriteProps) {
   const currentUserId = currentUser?.userId || "익명";
 
   const [author, setAuthor] = useState(currentUserId);
-  const Wrapper = styled.div`
-    max-width: 360px;
-    height: 640px;
-    margin: auto;
-    padding: 16px;
-    box-sizing: border-box;
-    background: #f9f9f9;
-    font-size: 14px;
-
-    position: relative; // ✅ 메뉴 기준 위치를 잡기 위해 필요
-    overflow: visible; // ✅ 팝업 메뉴가 잘리지 않도록
-  `;
 
   // 수정 시 기존 게시글 불러오기
   useEffect(() => {
