@@ -17,7 +17,9 @@ function LikedProductList() {
     font-size: 14px;
 
     position: relative; // ✅ 메뉴 기준 위치를 잡기 위해 필요
-    overflow: visible; // ✅ 팝업 메뉴가 잘리지 않도록
+    overflow: visible;
+    overflow-y: auto;
+    overflow-x: hidden; // ✅ 팝업 메뉴가 잘리지 않도록
   `;
 
   // 🔹 찜 목록 불러오기
