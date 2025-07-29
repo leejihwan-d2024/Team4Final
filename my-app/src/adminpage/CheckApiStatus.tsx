@@ -11,7 +11,7 @@ interface ApiStatus {
 interface CheckStatusProps {
   path: string;
   method?: "get" | "post" | "put" | "delete";
-  title?: string; // ✅ 선택적 title 추가
+  title?: string;
 }
 
 const getStatusStyle = (statusCode: number | null): ApiStatus => {
@@ -86,8 +86,19 @@ const CheckStatus: React.FC<CheckStatusProps> = ({
   }, [path, method]);
 
   return (
-    <div style={{ fontWeight: "bold", padding: "8px", color: status.color }}>
-      {/* ✅ title이 있으면 title 출력, 없으면 path 출력 */}
+    <div
+      style={{
+        fontWeight: "bold",
+        padding: "10px 16px",
+        border: `2px solid ${status.color}`,
+        color: status.color,
+        borderRadius: "8px",
+        marginBottom: "12px",
+        maxWidth: "720px", // ✅ 너비 제한
+        width: "100%", // ✅ 반응형 유지
+        boxSizing: "border-box",
+      }}
+    >
       {title ?? path} : {status.emoji} {status.text}
     </div>
   );
