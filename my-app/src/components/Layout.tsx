@@ -46,6 +46,7 @@ function Layout({ children }: LayoutProps) {
 
   return (
     <div className="layout">
+      <MainMenu />
       <div style={{ float: "right", fontSize: "14px" }}>
         {/* {isLoggedIn ? (
           <>
@@ -71,9 +72,7 @@ function Layout({ children }: LayoutProps) {
           </button>
         )} */}
       </div>
-      <div className="search-area">
-        <MainMenu />
-      </div>
+      <div className="search-area"></div>
       {/* <nav className="navbar">
         <ul className="menu">
           <li className="menu-item">
