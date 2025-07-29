@@ -28,6 +28,8 @@ function Marathon() {
 
     position: relative; // ✅ 메뉴 기준 위치를 잡기 위해 필요
     overflow: visible; // ✅ 팝업 메뉴가 잘리지 않도록
+    overflow-y: auto;
+    overflow-x: hidden;
   `;
 
   useEffect(() => {
