@@ -219,7 +219,7 @@ export default function CrewCreatePage() {
 
       console.log("✅ 서버 응답:", response.data);
       alert("크루가 생성되었습니다!");
-      navigate("/");
+      navigate("/MainPage2");
     } catch (error) {
       console.error("❌ 크루 생성 실패:", error);
       alert("크루 생성에 실패했습니다.");
