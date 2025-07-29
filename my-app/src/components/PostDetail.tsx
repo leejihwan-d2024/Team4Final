@@ -5,24 +5,25 @@ import "../styles/PostDetail.css";
 import Comment from "./Comment";
 import styled from "styled-components";
 
+const Wrapper = styled.div`
+  max-width: 360px;
+  height: 640px;
+  margin: auto;
+  padding: 16px;
+  box-sizing: border-box;
+  background: #f9f9f9;
+  font-size: 14px;
+
+  position: relative; // ✅ 메뉴 기준 위치를 잡기 위해 필요
+  overflow: visible;
+  overflow-y: auto;
+  overflow-x: hidden; // ✅ 팝업 메뉴가 잘리지 않도록
+`;
+
 function PostDetail() {
   const { id } = useParams();
   const [post, setPost] = useState<Post | null>(null);
   const [error, setError] = useState<string | null>(null); // 🔹 에러 상태
-  const Wrapper = styled.div`
-    max-width: 360px;
-    height: 640px;
-    margin: auto;
-    padding: 16px;
-    box-sizing: border-box;
-    background: #f9f9f9;
-    font-size: 14px;
-
-    position: relative; // ✅ 메뉴 기준 위치를 잡기 위해 필요
-    overflow: visible;
-    overflow-y: auto;
-    overflow-x: hidden; // ✅ 팝업 메뉴가 잘리지 않도록
-  `;
 
   useEffect(() => {
     const fetchDetail = async () => {

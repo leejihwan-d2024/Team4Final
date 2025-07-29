@@ -11,26 +11,26 @@ interface Mara {
   종목: string;
   주최: string;
 }
+const Wrapper = styled.div`
+  max-width: 360px;
+  height: 640px;
+  margin: auto;
+  padding: 16px;
+  box-sizing: border-box;
+  background: #f9f9f9;
+  font-size: 14px;
+
+  position: relative; // ✅ 메뉴 기준 위치를 잡기 위해 필요
+  overflow: visible; // ✅ 팝업 메뉴가 잘리지 않도록
+  overflow-y: auto;
+  overflow-x: hidden;
+`;
 
 function Marathon() {
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
   const [allData, setAllData] = useState<Mara[]>([]);
   const [filteredData, setFilteredData] = useState<Mara[]>([]);
-  const Wrapper = styled.div`
-    max-width: 360px;
-    height: 640px;
-    margin: auto;
-    padding: 16px;
-    box-sizing: border-box;
-    background: #f9f9f9;
-    font-size: 14px;
-
-    position: relative; // ✅ 메뉴 기준 위치를 잡기 위해 필요
-    overflow: visible; // ✅ 팝업 메뉴가 잘리지 않도록
-    overflow-y: auto;
-    overflow-x: hidden;
-  `;
 
   useEffect(() => {
     const fetchData = async () => {
