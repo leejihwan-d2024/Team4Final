@@ -27,18 +27,19 @@ public class ChatRestController {
     private final ChatService chatService;
 
     @Operation(
-            summary = "특정 크루 채팅 메시지 조회",
-            description = "크루 ID에 해당하는 모든 채팅 메시지를 시간순으로 반환합니다."
+            summary = "크루 채팅 메시지 목록 조회",
+            description = "특정 크루 ID에 해당하는 채팅 메시지를 시간순으로 조회합니다.",
+            tags = {"🗨️ 채팅 API"}
     )
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "메시지 조회 성공"),
-            @ApiResponse(responseCode = "204", description = "메시지가 없음 (No Content)"),
+            @ApiResponse(responseCode = "204", description = "메시지가 없음"),
             @ApiResponse(responseCode = "500", description = "서버 오류")
     })
     @GetMapping("/{crewId}")
+
     public ResponseEntity<List<ChatMessageVO>> getMessagesByCrewId(
-            @Parameter(description = "크루 ID", example = "crew123")
-            @PathVariable String crewId
+            @Parameter(description = "크루 ID", example = "crew123") @PathVariable String crewId
     ) {
         log.info("채팅 메시지 요청 - 크루ID: {}", crewId);
 
