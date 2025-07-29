@@ -22,8 +22,6 @@ interface PersonalEditFormProps {
   userInfo: UserInfoType;
   onClose: () => void;
   onUpdate: (updated: Partial<UserInfoType>) => void;
-  setLoading: (loading: boolean) => void;
-  loading: boolean;
 }
 
 function MyPage() {
@@ -51,7 +49,6 @@ function MyPage() {
   } | null>(null);
   const [showProfileImageManager, setShowProfileImageManager] = useState(false);
   const [showPersonalEditModal, setShowPersonalEditModal] = useState(false);
-  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     if (userInfo.userId) loadUserInfo(userInfo.userId);
@@ -240,36 +237,18 @@ function MyPage() {
           <div className="bg-white rounded-lg shadow-lg w-11/12 max-w-sm max-h-[90vh] flex flex-col absolute top-4 left-4">
             <div className="flex justify-between items-center p-4 border-b">
               <h2 className="text-lg font-bold">개인정보 수정</h2>
-              <div className="flex items-center gap-2">
-                <button
-                  type="button"
-                  onClick={() => setShowPersonalEditModal(false)}
-                  className="px-3 py-1 bg-gray-500 text-white rounded text-sm"
-                >
-                  취소
-                </button>
-                <button
-                  type="submit"
-                  form="personalEditForm"
-                  className="px-3 py-1 bg-blue-500 text-white rounded text-sm"
-                >
-                  저장
-                </button>
-                <button
-                  onClick={() => setShowPersonalEditModal(false)}
-                  className="text-gray-700 text-xl font-bold ml-2"
-                >
-                  ×
-                </button>
-              </div>
+              <button
+                onClick={() => setShowPersonalEditModal(false)}
+                className="text-gray-700 text-xl font-bold"
+              >
+                ×
+              </button>
             </div>
             <div className="flex-1 overflow-y-auto p-4">
               <PersonalEditForm
                 userInfo={ownerInfo}
                 onClose={() => setShowPersonalEditModal(false)}
                 onUpdate={handleProfileUpdate}
-                setLoading={setLoading}
-                loading={loading}
               />
             </div>
           </div>
@@ -285,8 +264,6 @@ function PersonalEditForm({
   userInfo,
   onClose,
   onUpdate,
-  setLoading,
-  loading,
 }: PersonalEditFormProps) {
   const [form, setForm] = useState({
     userNn: userInfo.userNn,
@@ -302,6 +279,7 @@ function PersonalEditForm({
   const phone1Ref = React.useRef<HTMLInputElement>(null);
   const phone2Ref = React.useRef<HTMLInputElement>(null);
   const phone3Ref = React.useRef<HTMLInputElement>(null);
+  const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   // 전화번호 분리 및 초기화
@@ -380,7 +358,7 @@ function PersonalEditForm({
   };
 
   return (
-    <form id="personalEditForm" onSubmit={handleSubmit} className="space-y-4">
+    <form onSubmit={handleSubmit} className="space-y-4">
       <div className="form-group">
         <label
           htmlFor="userNn"
@@ -517,6 +495,22 @@ function PersonalEditForm({
         </>
       )}
       {error && <div className="text-red-500 text-sm">{error}</div>}
+      <div className="flex justify-end gap-2">
+        <button
+          type="button"
+          onClick={onClose}
+          className="px-4 py-2 bg-gray-500 text-white rounded"
+        >
+          취소
+        </button>
+        <button
+          type="submit"
+          className="px-4 py-2 bg-blue-500 text-white rounded"
+          disabled={loading}
+        >
+          {loading ? "저장 중..." : "저장"}
+        </button>
+      </div>
     </form>
   );
 }
