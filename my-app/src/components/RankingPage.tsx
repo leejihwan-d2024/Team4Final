@@ -65,7 +65,7 @@ function RankingPage() {
         )
       );
     axios
-      .get(`{process.env.REACT_APP_API_BASE_URL}api/ranking/achievements`)
+      .get(`${process.env.REACT_APP_API_BASE_URL}api/ranking/achievements`)
       .then((res) =>
         setAchievements(
           res.data.sort(
