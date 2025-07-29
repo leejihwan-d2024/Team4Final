@@ -18,6 +18,14 @@ const getStatusStyle = (statusCode: number | null): ApiStatus => {
   if (statusCode === null) {
     return { code: null, text: "확인 중...", color: "gray", emoji: "⏳" };
   }
+  if (statusCode === 404) {
+    return {
+      code: statusCode,
+      text: `404 페이지 없음`,
+      color: "red",
+      emoji: "🚫",
+    };
+  }
   if (statusCode >= 200 && statusCode < 300) {
     return {
       code: statusCode,
