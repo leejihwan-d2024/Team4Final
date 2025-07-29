@@ -72,10 +72,6 @@ function Layout({ children }: LayoutProps) {
         )} */}
       </div>
       <div className="search-area">
-        <input className="search-input" placeholder="검색 창" />
-        <button type="submit" className="searchBtn">
-          검색
-        </button>
         <MainMenu />
       </div>
       {/* <nav className="navbar">
