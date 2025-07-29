@@ -141,7 +141,7 @@ function MainMenu() {
               마이페이지
             </Link>
           </li>
-          {userInfo && userInfo.userNn === "1111" && (
+          {userInfo && userInfo.userId === "1111" && (
             <li>
               <Link to="/admin" className="text-blue-700 hover:underline">
                 관리자페이지

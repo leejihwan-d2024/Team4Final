@@ -4,11 +4,12 @@ import AdminPage_Status from "./AdminPage_Status";
 import UserTable from "./UserTable";
 import PostTable from "./PostTable";
 import { Link } from "react-router-dom";
+import CrewTable from "./CrewTable";
 
 function AdminPage() {
-  const [selectedTab, setSelectedTab] = useState<"user" | "post" | "status">(
-    "user"
-  );
+  const [selectedTab, setSelectedTab] = useState<
+    "user" | "post" | "status" | "crew"
+  >("user");
 
   const renderContent = () => {
     switch (selectedTab) {
@@ -26,6 +27,9 @@ function AdminPage() {
         );
       case "status":
         return <AdminPage_Status />;
+      case "crew":
+        return <CrewTable />;
+
       default:
         return null;
     }
@@ -53,6 +57,12 @@ function AdminPage() {
           style={{ marginRight: "8px" }}
         >
           게시글목록확인
+        </button>
+        <button
+          onClick={() => setSelectedTab("crew")}
+          style={{ marginRight: "8px" }}
+        >
+          크루목록확인
         </button>
         <button onClick={() => setSelectedTab("status")}>API 상태확인</button>
       </div>
