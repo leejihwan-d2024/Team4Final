@@ -29,7 +29,7 @@ public class ChatRestController {
     @Operation(
             summary = "크루 채팅 메시지 목록 조회",
             description = "특정 크루 ID에 해당하는 채팅 메시지를 시간순으로 조회합니다.",
-            tags = {"🗨️ 채팅 API"}
+            tags = {" 채팅 API"}
     )
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "메시지 조회 성공"),

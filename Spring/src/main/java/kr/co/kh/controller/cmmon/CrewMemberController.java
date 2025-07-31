@@ -19,14 +19,15 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/api/crew-members")
 @RequiredArgsConstructor
 @CrossOrigin(origins = "http://localhost:3000")
-@Tag(name = "🏃‍♂️ 크루 참가 API", description = "사용자의 크루 참가 및 참가 여부 확인 API입니다.")
+@Tag(name = "️ 크루 참가 API", description = "사용자의 크루 참가 및 참가 여부 확인 API입니다.")
 public class CrewMemberController {
 
     private final CrewMemberService crewMemberService;
 
     @Operation(
             summary = "크루 참가 요청",
-            description = "사용자가 특정 크루에 참가하도록 요청합니다."
+            description = "사용자가 특정 크루에 참가하도록 요청합니다.",
+            tags = {"🏃‍♂️ 크루 참가 API"}
     )
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "참가 완료"),
@@ -47,7 +48,8 @@ public class CrewMemberController {
 
     @Operation(
             summary = "크루 참가 여부 확인",
-            description = "해당 사용자가 특정 크루에 이미 참가했는지 여부를 확인합니다."
+            description = "해당 사용자가 특정 크루에 이미 참가했는지 여부를 확인합니다.",
+            tags = {"🏃‍♂️ 크루 참가 API"}
     )
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "참가 여부 반환 (true/false)")
