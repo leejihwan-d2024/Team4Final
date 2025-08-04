@@ -34,10 +34,13 @@ const ToggleBox: React.FC<ToggleBoxProps> = ({ userId, style }) => {
     }
 
     try {
-      const response = await axios.get("/api/achievements/badges", {
-        headers: { Authorization: `Bearer ${token}` },
-        params: { userId },
-      });
+      const response = await axios.get(
+        `${process.env.REACT_APP_API_BASE_URL}api/achievements/badges`,
+        {
+          headers: { Authorization: `Bearer ${token}` },
+          params: { userId },
+        }
+      );
 
       const camelCaseBadges = response.data.map((item: any) => ({
         achvTitle: item.ACHVTITLE ?? item.achvTitle ?? "제목 없음",

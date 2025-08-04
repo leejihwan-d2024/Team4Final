@@ -8,7 +8,7 @@ const getBaseURL = () => {
   const localURL =
     process.env.REACT_APP_API_BASE_URL || "https://localhost:8080";
   const deployURL =
-    process.env.REACT_APP_API_GUEST_URL || "https://200.200.200.72:8080";
+    process.env.REACT_APP_API_GUEST_URL || "https://200.200.200.62:8080";
 
   return isLocal ? localURL : deployURL;
 };
@@ -23,7 +23,7 @@ const api = axios.create({
   headers: {
     "Content-Type": "application/json",
   },
-  timeout: 10000,
+  timeout: 100000,
 });
 
 // ✅ 요청 인터셉터 – 토큰 자동 주입
