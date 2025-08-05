@@ -4,6 +4,7 @@ import SockJS from "sockjs-client";
 import { Client, Message, StompSubscription } from "@stomp/stompjs";
 import api from "../api/GG_axiosInstance"; // axios 인스턴스
 import "./ChatRoom.css";
+import { getApiBaseUrl } from "../utils/apiUtils";
 
 type Crew = {
   crewId: string;
@@ -44,9 +45,7 @@ const ChatRoom = () => {
 
     const fetchOldMessages = async () => {
       try {
-        const res = await fetch(
-          `${process.env.REACT_APP_API_BASE_URL}api/chat/${crewId}`
-        );
+        const res = await fetch(`${getApiBaseUrl()}api/chat/${crewId}`);
         if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
         const text = await res.text();
         if (!text) {
@@ -62,7 +61,7 @@ const ChatRoom = () => {
 
     fetchOldMessages();
 
-    const socket = new SockJS(`${process.env.REACT_APP_API_BASE_URL}ws-chat`);
+    const socket = new SockJS(`${getApiBaseUrl()}ws-chat`);
     const client = new Client({
       webSocketFactory: () => socket,
       reconnectDelay: 5000,

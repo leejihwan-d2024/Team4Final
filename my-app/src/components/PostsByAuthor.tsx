@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
+import { getApiBaseUrl } from "../utils/apiUtils";
 
 interface Post {
   postId: number;
@@ -22,7 +23,7 @@ export default function PostsByAuthor({ userId }: PostsByAuthorProps) {
 
       try {
         const res = await axios.get(
-          `${process.env.REACT_APP_HOST}posts/author/${userId}`
+          `${getApiBaseUrl()}api/posts/author/${userId}`
         );
         setPosts(res.data);
       } catch (error) {

@@ -2,6 +2,7 @@ import axios from "axios";
 import { useEffect, useState } from "react";
 import { Product } from "../components/NaverProductList";
 import styled from "styled-components";
+import { getApiBaseUrl } from "../utils/apiUtils";
 
 function ProductCard({
   product,
@@ -15,12 +16,9 @@ function ProductCard({
   useEffect(() => {
     const checkIfLiked = async () => {
       try {
-        const res = await axios.get(
-          `${process.env.REACT_APP_API_BASE_URL}api/products/liked`,
-          {
-            params: { userId },
-          }
-        );
+        const res = await axios.get(`${getApiBaseUrl()}api/products/liked`, {
+          params: { userId },
+        });
         const likedList: Product[] = res.data;
         const isLiked = likedList.some((p) => p.link === product.link);
         setLiked(isLiked);
@@ -35,16 +33,12 @@ function ProductCard({
   // 찜 , 찜 해제 요청
   const handleLike = async () => {
     try {
-      await axios.post(
-        `${process.env.REACT_APP_API_BASE_URL}api/products/like`,
-        product,
-        {
-          params: { userId },
-          headers: {
-            "Content-Type": "application/json",
-          },
-        }
-      );
+      await axios.post(`${getApiBaseUrl()}api/products/like`, product, {
+        params: { userId },
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
       setLiked((prev) => !prev);
     } catch (err) {
       console.error("찜 요청 실패", err);

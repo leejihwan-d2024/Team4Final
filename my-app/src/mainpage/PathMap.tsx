@@ -1,5 +1,6 @@
 import React, { SetStateAction, useEffect, useRef, useState } from "react";
 import axios from "axios";
+import { getApiBaseUrl } from "../utils/apiUtils";
 
 declare global {
   interface Window {
@@ -125,7 +126,7 @@ const PathMap: React.FC<PathMapProps> = ({
         if (measurementId) {
           try {
             const response = await axios.get<LatLngPoint[]>(
-              `${process.env.REACT_APP_API_BASE_URL}getpath/${measurementId}`
+              `${getApiBaseUrl()}getpath/${measurementId}`
             );
 
             const pathData = response.data;
@@ -261,10 +262,7 @@ const PathMap: React.FC<PathMapProps> = ({
         })
       );
 
-      await axios.post(
-        `${process.env.REACT_APP_API_BASE_URL}savecustompath`,
-        pathData
-      );
+      await axios.post(`${getApiBaseUrl()}savecustompath`, pathData);
       alert(`경로가 성공적으로 저장되었습니다. (ID: ${pathId})`);
     } catch (err) {
       console.error("경로 저장 실패:", err);
@@ -288,8 +286,8 @@ const PathMap: React.FC<PathMapProps> = ({
     try {
       const apiUrl =
         CrewId && mode === "OnlyMap"
-          ? `${process.env.REACT_APP_API_BASE_URL}getcustompath/${pathId}`
-          : `${process.env.REACT_APP_API_BASE_URL}getpath/${pathId}`;
+          ? `${getApiBaseUrl()}getcustompath/${pathId}`
+          : `${getApiBaseUrl()}getpath/${pathId}`;
 
       console.log("불러오기 API 호출:", apiUrl);
 

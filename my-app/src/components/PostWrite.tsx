@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { Post } from "../types/post";
 import "../styles/PostWrite.css";
 import styled from "styled-components";
+import { getApiBaseUrl } from "../utils/apiUtils";
 
 interface PostWriteProps {
   onSubmit: (post: Post) => void;
@@ -39,7 +40,7 @@ function PostWrite({ onSubmit }: PostWriteProps) {
   // 수정 시 기존 게시글 불러오기
   useEffect(() => {
     if (id) {
-      fetch(`${process.env.REACT_APP_API_BASE_URL}api/posts/${id}`)
+      fetch(`${getApiBaseUrl()}api/posts/${id}`)
         .then((res) => res.json())
         .then((data) => {
           setTitle(data.title);

@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import axios from "axios";
 import styles from "./RunningEventDetail.module.css";
+import { getApiBaseUrl } from "../utils/apiUtils";
 
 interface RunningEvent {
   eventId?: number;
@@ -24,9 +25,7 @@ export default function RunningEventDetailPage() {
     console.log(id);
     const fetchEvent = async () => {
       try {
-        const res = await axios.get(
-          `${process.env.REACT_APP_API_BASE_URL}api/events/${id}`
-        );
+        const res = await axios.get(`${getApiBaseUrl()}api/events/${id}`);
         setEvent(res.data);
       } catch (err) {
         console.error("❌ 이벤트 불러오기 실패", err);
@@ -41,7 +40,7 @@ export default function RunningEventDetailPage() {
     if (!event) return;
     try {
       await axios.post(
-        `${process.env.REACT_APP_API_BASE_URL}api/events/${event.eventId}/join?userId=1`
+        `${getApiBaseUrl()}api/events/${event.eventId}/join?userId=1`
       );
       alert("이벤트에 참가했습니다!");
     } catch (err) {

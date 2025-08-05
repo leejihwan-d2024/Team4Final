@@ -4,6 +4,7 @@ import { motion } from "framer-motion";
 import axios from "axios";
 import styles from "./MainPage.module.css";
 import MainMenu from "../mainpage/MainMenu";
+import { getApiBaseUrl } from "../utils/apiUtils";
 
 type Crew = {
   crewId: string;
@@ -80,9 +81,9 @@ export default function MainPage() {
     const fetchCrews = async () => {
       try {
         const [allRes, joinedRes] = await Promise.all([
-          axios.get<Crew[]>(`${process.env.REACT_APP_API_BASE_URL}api/crews`),
+          axios.get<Crew[]>(`${getApiBaseUrl()}api/crews`),
           axios.get<Crew[]>(
-            `${process.env.REACT_APP_API_BASE_URL}api/crews/joined?userId=${userId}`
+            `${getApiBaseUrl()}api/crews/joined?userId=${userId}`
           ),
         ]);
 
@@ -110,7 +111,7 @@ export default function MainPage() {
     const fetchTodayEvent = async () => {
       try {
         const { data } = await axios.get<RunningEvent[]>(
-          `${process.env.REACT_APP_API_BASE_URL}api/events`
+          `${getApiBaseUrl()}api/events`
         );
         if (data.length > 0) setTodayEvent(data[0]);
       } catch (err) {

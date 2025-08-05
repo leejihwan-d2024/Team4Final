@@ -3,6 +3,7 @@
  */
 
 import { createDeviceInfo, logDeviceInfo } from "../utils/deviceUtils";
+import { getApiBaseUrl } from "../utils/apiUtils";
 import {
   LoginRequest,
   KakaoLoginRequest,
@@ -11,7 +12,7 @@ import {
   User,
 } from "../types/auth";
 
-const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
+const API_BASE_URL = getApiBaseUrl();
 
 /**
  * 로그인 API

@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
+import { getApiBaseUrl } from "../utils/apiUtils";
 
 interface Post {
   postId: number;
@@ -20,9 +21,7 @@ const PostTable: React.FC = () => {
   useEffect(() => {
     const fetchPosts = async () => {
       try {
-        const response = await axios.get<Post[]>(
-          `${process.env.REACT_APP_API_BASE_URL}api/posts`
-        );
+        const response = await axios.get<Post[]>(`${getApiBaseUrl()}api/posts`);
         setPosts(response.data);
       } catch (error) {
         console.error("게시글 데이터를 불러오는데 실패했습니다.", error);

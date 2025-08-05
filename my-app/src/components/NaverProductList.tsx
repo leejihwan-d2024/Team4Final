@@ -4,6 +4,7 @@ import "../styles/NaverProductList.css"; // CSS 연결
 import Layout from "./Layout";
 import ProductCard from "./ProductCard";
 import styled from "styled-components";
+import { getApiBaseUrl } from "../utils/apiUtils";
 
 export interface Product {
   productId: string;
@@ -35,12 +36,9 @@ function NaverProductList() {
   useEffect(() => {
     const fetchProducts = async () => {
       try {
-        const res = await axios.get(
-          `${process.env.REACT_APP_API_BASE_URL}api/shop/search`,
-          {
-            params: { query },
-          }
-        );
+        const res = await axios.get(`${getApiBaseUrl()}api/shop/search`, {
+          params: { query },
+        });
         setProducts(res.data.items);
       } catch (err) {
         console.error("Spring 중계 API 호출 실패", err);

@@ -1,5 +1,6 @@
 import React, { useState, useRef, useEffect } from "react";
 import PathMap from "./PathMap";
+import { getApiBaseUrl } from "../utils/apiUtils";
 
 interface LocationData {
   x: number;
@@ -92,7 +93,7 @@ const LocationTracker = () => {
       console.log("전송할 위치 리스트:", locationList.current);
 
       // 서버 전송
-      fetch(`${process.env.REACT_APP_API_BASE_URL}savemeasure`, {
+      fetch(`${getApiBaseUrl()}savemeasure`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

@@ -2,6 +2,7 @@ import axios from "axios";
 import { useEffect, useState } from "react";
 import "../styles/Comment.css";
 import styled from "styled-components";
+import { getApiBaseUrl } from "../utils/apiUtils";
 
 interface Comment {
   commentId: number;
@@ -42,7 +43,7 @@ function Comment({ postId }: CommentProps) {
   // 댓글 목록 불러오기
   useEffect(() => {
     axios
-      .get(`${process.env.REACT_APP_API_BASE_URL}api/comments/post/${postId}`)
+      .get(`${getApiBaseUrl()}api/comments/post/${postId}`)
       .then((res) => setComments(res.data))
       .catch((err) => console.error("댓글 목록 불러오기 실패", err));
   }, [postId]);
@@ -52,7 +53,7 @@ function Comment({ postId }: CommentProps) {
     if (!newComment.trim()) return;
 
     try {
-      await axios.post(`${process.env.REACT_APP_API_BASE_URL}api/comments`, {
+      await axios.post(`${getApiBaseUrl()}api/comments`, {
         commentAuthor: currentUserId, // ✅ 로그인한 사용자 ID 사용
         commentComment: newComment,
         postId: postId,
@@ -61,7 +62,7 @@ function Comment({ postId }: CommentProps) {
       setNewComment("");
 
       const res = await axios.get(
-        `${process.env.REACT_APP_API_BASE_URL}api/comments/post/${postId}`
+        `${getApiBaseUrl()}api/comments/post/${postId}`
       );
       setComments(res.data);
     } catch (err) {
@@ -76,9 +77,7 @@ function Comment({ postId }: CommentProps) {
     if (!confirmed) return;
 
     try {
-      await axios.delete(
-        `${process.env.REACT_APP_API_BASE_URL}api/comments/${id}`
-      );
+      await axios.delete(`${getApiBaseUrl()}api/comments/${id}`);
       setComments((prev) => prev.filter((c) => c.commentId !== id));
     } catch (err) {
       console.error(err);

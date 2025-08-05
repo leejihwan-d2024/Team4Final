@@ -4,6 +4,7 @@ import { Post } from "../types/post";
 import "../styles/PostDetail.css";
 import Comment from "./Comment";
 import styled from "styled-components";
+import { getApiBaseUrl } from "../utils/apiUtils";
 
 const Wrapper = styled.div`
   max-width: 360px;
@@ -28,9 +29,7 @@ function PostDetail() {
   useEffect(() => {
     const fetchDetail = async () => {
       try {
-        const res = await fetch(
-          `${process.env.REACT_APP_API_BASE_URL}api/posts/${id}`
-        );
+        const res = await fetch(`${getApiBaseUrl()}api/posts/${id}`);
         if (!res.ok) {
           throw new Error(`HTTP error! status: ${res.status}`);
         }

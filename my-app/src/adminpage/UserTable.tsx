@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
+import { getApiBaseUrl } from "../utils/apiUtils";
 
 interface User {
   userId: string;
@@ -23,7 +24,7 @@ const UserTable: React.FC = () => {
 
   useEffect(() => {
     axios
-      .get<User[]>(`${process.env.REACT_APP_API_BASE_URL}users/all`)
+      .get<User[]>(`${getApiBaseUrl()}users/all`)
       .then((response) => setUsers(response.data))
       .catch((error) => console.error("Failed to fetch users", error));
   }, []);

@@ -1,15 +1,16 @@
 // api/crew.ts
 import axios from "../api/axiosInstance";
+import { getApiBaseUrl } from "../utils/apiUtils";
 import { MeasureSimpleDTO } from "../types/measure";
 
 export const fetchRecentCrewsCombined = async (
   userId: string
 ): Promise<MeasureSimpleDTO[]> => {
   const joinPromise = axios.get(
-    `${process.env.REACT_APP_API_BASE_URL}api/crews/getrecentjoin/${userId}`
+    `${getApiBaseUrl()}api/crews/getrecentjoin/${userId}`
   );
   const createPromise = axios.get(
-    `${process.env.REACT_APP_API_BASE_URL}api/crews/getrecentcreate/${userId}`
+    `${getApiBaseUrl()}api/crews/getrecentcreate/${userId}`
   );
 
   const [joinResponse, createResponse] = await Promise.all([

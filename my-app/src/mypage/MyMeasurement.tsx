@@ -3,6 +3,7 @@ import axios from "axios";
 import { useParams } from "react-router-dom";
 import PathMap from "../mainpage/PathMap";
 import MainMenu from "../mainpage/MainMenu";
+import { getApiBaseUrl } from "../utils/apiUtils";
 
 interface MeasureSimpleDTO {
   label: string;
@@ -21,9 +22,7 @@ const MyMeasure = () => {
     if (!UserId) return;
 
     axios
-      .get<MeasureSimpleDTO[]>(
-        `${process.env.REACT_APP_API_BASE_URL}getrecentmeasure/${UserId}`
-      )
+      .get<MeasureSimpleDTO[]>(`${getApiBaseUrl()}getrecentmeasure/${UserId}`)
       .then((res) => setMeasures(res.data))
       .catch((err) => console.error("측정 리스트 불러오기 실패:", err));
   }, [UserId]);

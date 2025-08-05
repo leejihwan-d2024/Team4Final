@@ -3,6 +3,7 @@ import axios from "axios";
 import { Product } from "./NaverProductList";
 import Layout from "./Layout";
 import styled from "styled-components";
+import { getApiBaseUrl } from "../utils/apiUtils";
 
 const Wrapper = styled.div`
   max-width: 360px;
@@ -26,12 +27,9 @@ function LikedProductList() {
   // 🔹 찜 목록 불러오기
   const fetchLikedProducts = async () => {
     try {
-      const res = await axios.get(
-        `${process.env.REACT_APP_API_BASE_URL}api/products/liked`,
-        {
-          params: { userId },
-        }
-      );
+      const res = await axios.get(`${getApiBaseUrl()}api/products/liked`, {
+        params: { userId },
+      });
       setLikedProducts(res.data);
     } catch (err) {
       console.error("찜 목록 불러오기 실패", err);
@@ -45,16 +43,12 @@ function LikedProductList() {
   // 🔸 찜 취소 기능
   const handleUnlike = async (product: Product) => {
     try {
-      await axios.post(
-        `${process.env.REACT_APP_API_BASE_URL}api/products/like`,
-        product,
-        {
-          params: { userId },
-          headers: {
-            "Content-Type": "application/json",
-          },
-        }
-      );
+      await axios.post(`${getApiBaseUrl()}api/products/like`, product, {
+        params: { userId },
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
       // 목록에서 제거
       setLikedProducts((prev) => prev.filter((p) => p.link !== product.link));
     } catch (err) {

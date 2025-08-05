@@ -3,6 +3,7 @@ import axios from "axios";
 import "../styles/RankingPage.css";
 import Layout from "./Layout";
 import styled from "styled-components";
+import { getApiBaseUrl } from "../utils/apiUtils";
 
 interface RankingVO {
   userId: string;
@@ -35,7 +36,7 @@ function RankingPage() {
 
   useEffect(() => {
     axios
-      .get(`${process.env.REACT_APP_API_BASE_URL}api/ranking/weekly-distance`)
+      .get(`${getApiBaseUrl()}api/ranking/weekly-distance`)
       .then((res) =>
         setWeeklyDistance(
           res.data.sort(
@@ -45,7 +46,7 @@ function RankingPage() {
         )
       );
     axios
-      .get(`${process.env.REACT_APP_API_BASE_URL}api/ranking/monthly-distance`)
+      .get(`${getApiBaseUrl()}api/ranking/monthly-distance`)
       .then((res) =>
         setMonthlyDistance(
           res.data.sort(
@@ -55,7 +56,7 @@ function RankingPage() {
         )
       );
     axios
-      .get(`${process.env.REACT_APP_API_BASE_URL}api/ranking/weekly-posts`)
+      .get(`${getApiBaseUrl()}api/ranking/weekly-posts`)
       .then((res) =>
         setWeeklyPosts(
           res.data.sort(
@@ -65,7 +66,7 @@ function RankingPage() {
         )
       );
     axios
-      .get(`${process.env.REACT_APP_API_BASE_URL}api/ranking/achievements`)
+      .get(`${getApiBaseUrl()}api/ranking/achievements`)
       .then((res) =>
         setAchievements(
           res.data.sort(

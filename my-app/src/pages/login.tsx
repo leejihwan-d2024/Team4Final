@@ -4,6 +4,7 @@ import api from "../api/GG_axiosInstance";
 import { isWebAuthnCapable } from "../utils/mobileDetector";
 import kakaoLoginImage from "../img/kakao_login_large_narrow.png";
 import "./login.css";
+import { getApiBaseUrl } from "../utils/apiUtils";
 
 // 타입 정의
 interface LoginRequest {

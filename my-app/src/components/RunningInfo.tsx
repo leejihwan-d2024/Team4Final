@@ -3,6 +3,7 @@ import axios from "axios";
 import "../styles/RunningInfo.css";
 import Layout from "./Layout";
 import styled from "styled-components";
+import { getApiBaseUrl } from "../utils/apiUtils";
 
 interface RInfo {
   title: string;
@@ -35,12 +36,9 @@ function RunningInfo() {
     if (!keyword.trim()) return;
     try {
       setLoading(true);
-      const res = await axios.get(
-        `${process.env.REACT_APP_API_BASE_URL}api/info/search`,
-        {
-          params: { query: keyword },
-        }
-      );
+      const res = await axios.get(`${getApiBaseUrl()}api/info/search`, {
+        params: { query: keyword },
+      });
       setResults(res.data.documents);
     } catch (err) {
       console.error("블로그 정보 가져오기 실패", err);
