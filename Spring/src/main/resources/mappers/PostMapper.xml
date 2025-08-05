@@ -95,7 +95,7 @@
     <update id="decreaseLike">
         UPDATE BOARD_POSTS
         SET like_count = like_count - 1
-        WHERE post_id = #{postId}
+        WHERE POST_ID = #{postId}
     </update>
 
     <update id="increaseViewCount">
@@ -119,6 +119,11 @@
         FROM BOARD_POSTS
         WHERE AUTHOR = #{author}
     </select>
+
+    <delete id="deleteLikesByPostId" parameterType="long">
+        DELETE FROM POST_LIKE
+        WHERE POST_ID = #{postId}
+    </delete>
 
 
 </mapper>

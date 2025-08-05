@@ -134,6 +134,11 @@ function MainMenu() {
             </Link>
           </li>
           <li>
+            <Link to={`/ranking`} className="text-blue-700 hover:underline">
+              랭킹
+            </Link>
+          </li>
+          <li>
             <Link
               to={`/mypage/${user?.userId}`}
               className="text-blue-700 hover:underline"

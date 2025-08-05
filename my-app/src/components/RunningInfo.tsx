@@ -11,25 +11,25 @@ interface RInfo {
   blogname: string;
   datetime: string;
 }
+const Wrapper = styled.div`
+  max-width: 360px;
+  height: 640px;
+  margin: auto;
+  padding: 16px;
+  box-sizing: border-box;
+  background: #f9f9f9;
+  font-size: 14px;
+
+  position: relative; // ✅ 메뉴 기준 위치를 잡기 위해 필요
+  overflow: visible;
+  overflow-y: auto;
+  overflow-x: hidden; // ✅ 팝업 메뉴가 잘리지 않도록
+`;
 
 function RunningInfo() {
   const [query, setQuery] = useState("러닝");
   const [results, setResults] = useState<RInfo[]>([]);
   const [loading, setLoading] = useState(false);
-  const Wrapper = styled.div`
-    max-width: 360px;
-    height: 640px;
-    margin: auto;
-    padding: 16px;
-    box-sizing: border-box;
-    background: #f9f9f9;
-    font-size: 14px;
-
-    position: relative; // ✅ 메뉴 기준 위치를 잡기 위해 필요
-    overflow: visible;
-    overflow-y: auto;
-    overflow-x: hidden; // ✅ 팝업 메뉴가 잘리지 않도록
-  `;
 
   const fetchBlogs = async (keyword: string) => {
     if (!keyword.trim()) return;

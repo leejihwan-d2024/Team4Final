@@ -46,6 +46,7 @@ function Layout({ children }: LayoutProps) {
 
   return (
     <div className="layout">
+      <MainMenu />
       <div style={{ float: "right", fontSize: "14px" }}>
         {/* {isLoggedIn ? (
           <>
@@ -71,13 +72,7 @@ function Layout({ children }: LayoutProps) {
           </button>
         )} */}
       </div>
-      <div className="search-area">
-        <input className="search-input" placeholder="검색 창" />
-        <button type="submit" className="searchBtn">
-          검색
-        </button>
-        <MainMenu />
-      </div>
+      <div className="search-area"></div>
       {/* <nav className="navbar">
         <ul className="menu">
           <li className="menu-item">

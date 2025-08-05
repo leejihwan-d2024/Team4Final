@@ -13,25 +13,25 @@ interface RankingVO {
   achvScore?: number;
 }
 
+const Wrapper = styled.div`
+  max-width: 360px;
+  height: 640px;
+  margin: auto;
+  padding: 16px;
+  box-sizing: border-box;
+  background: #f9f9f9;
+  font-size: 14px;
+
+  position: relative; // ✅ 메뉴 기준 위치를 잡기 위해 필요
+  overflow: visible;
+  overflow-y: auto;
+  overflow-x: hidden; // ✅ 팝업 메뉴가 잘리지 않도록
+`;
 function RankingPage() {
   const [weeklyDistance, setWeeklyDistance] = useState<RankingVO[]>([]);
   const [monthlyDistance, setMonthlyDistance] = useState<RankingVO[]>([]);
   const [weeklyPosts, setWeeklyPosts] = useState<RankingVO[]>([]);
   const [achievements, setAchievements] = useState<RankingVO[]>([]);
-  const Wrapper = styled.div`
-    max-width: 360px;
-    height: 640px;
-    margin: auto;
-    padding: 16px;
-    box-sizing: border-box;
-    background: #f9f9f9;
-    font-size: 14px;
-
-    position: relative; // ✅ 메뉴 기준 위치를 잡기 위해 필요
-    overflow: visible;
-    overflow-y: auto;
-    overflow-x: hidden; // ✅ 팝업 메뉴가 잘리지 않도록
-  `;
 
   useEffect(() => {
     axios
@@ -65,7 +65,7 @@ function RankingPage() {
         )
       );
     axios
-      .get(`{process.env.REACT_APP_API_BASE_URL}api/ranking/achievements`)
+      .get(`${process.env.REACT_APP_API_BASE_URL}api/ranking/achievements`)
       .then((res) =>
         setAchievements(
           res.data.sort(

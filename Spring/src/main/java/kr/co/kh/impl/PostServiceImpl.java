@@ -62,6 +62,7 @@ public class PostServiceImpl implements PostService {
     @Transactional
     @Override
     public void deletePostWithComments(Long postId) {
+        postMapper.deleteLikesByPostId(postId); // 좋아요먼저삭제
         commentMapper.deleteCommentsByPostId(postId);  // 자식(댓글) 먼저 삭제
         postMapper.deletePost(postId);                // 부모(게시글) 삭제
     }
