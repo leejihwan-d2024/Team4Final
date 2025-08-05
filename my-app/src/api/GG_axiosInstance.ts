@@ -1,12 +1,17 @@
 import axios, { AxiosInstance, InternalAxiosRequestConfig } from "axios";
+import { getApiBaseUrl } from "../utils/apiUtils";
 
 // 환경변수에서 API URL 가져오기
 export const getBaseURL = (): string => {
   console.log("=== API URL 설정 정보 ===");
   console.log("REACT_APP_API_BASE_URL:", process.env.REACT_APP_API_BASE_URL);
+  console.log("REACT_APP_FRONTEND_URL:", process.env.REACT_APP_FRONTEND_URL);
   console.log("================================");
 
-  return process.env.REACT_APP_API_BASE_URL || "";
+  const selectedURL = getApiBaseUrl();
+  console.log("최종 선택된 URL:", selectedURL);
+  console.log("================================");
+  return selectedURL;
 };
 
 const baseURL: string = getBaseURL();

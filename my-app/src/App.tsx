@@ -9,6 +9,7 @@ import {
   useNavigate,
 } from "react-router-dom";
 import { logTokenInfo, checkAndHandleAutoLogin } from "./api/tokenUtils";
+import { getApiBaseUrl } from "./utils/apiUtils";
 import MainPage from "./mainpage/MainPage";
 import Achv from "./achv/Achv";
 import PostMain from "./components/PostMain";
@@ -51,9 +52,7 @@ function App() {
   // 전체 게시글 불러오기
   const fetchPosts = async () => {
     try {
-      const res = await axios.get(
-        `${process.env.REACT_APP_API_BASE_URL}api/posts`
-      );
+      const res = await axios.get(`${getApiBaseUrl()}api/posts`);
       setPosts(res.data);
     } catch (error) {
       console.error("게시글 불러오기 실패:", error);
@@ -63,7 +62,7 @@ function App() {
   //  게시글 등록
   const handlePostSubmit = async (post: Omit<Post, "id">) => {
     try {
-      await axios.post(`${process.env.REACT_APP_API_BASE_URL}api/posts`, post);
+      await axios.post(`${getApiBaseUrl()}api/posts`, post);
       alert("등록 완료!");
       fetchPosts();
     } catch (error) {
@@ -75,9 +74,7 @@ function App() {
   //  게시글 상세 조회
   const fetchPostById = async (id: number) => {
     try {
-      const res = await axios.get(
-        `${process.env.REACT_APP_API_BASE_URL}api/posts/${id}`
-      );
+      const res = await axios.get(`${getApiBaseUrl()}api/posts/${id}`);
       setSelectedPost(res.data);
     } catch (error) {
       console.error("게시글 조회 실패:", error);
@@ -86,7 +83,7 @@ function App() {
   // 게시글 수정
   const updatePost = async (post: Post) => {
     try {
-      await axios.put(`${process.env.REACT_APP_API_BASE_URL}api/posts`, post);
+      await axios.put(`${getApiBaseUrl()}api/posts`, post);
       alert("수정 완료");
       fetchPosts();
     } catch (error) {
@@ -98,9 +95,7 @@ function App() {
   //  게시글 삭제
   const deletePost = async (id: number) => {
     try {
-      await axios.delete(
-        `${process.env.REACT_APP_API_BASE_URL}api/posts/${id}`
-      );
+      await axios.delete(`${getApiBaseUrl()}api/posts/${id}`);
       alert("삭제 완료");
       fetchPosts();
     } catch (error) {

@@ -19,6 +19,32 @@ function AdminPage_Status() {
 
       <span>로그인 기능 관련</span>
       <CheckStatus path="/api/auth/login" title="로그인(헤더 없이)" />
+      <CheckStatus path="/api/auth/kakao/login" title="카카오 로그인(헤더 없이)" />
+      <CheckStatus path="/api/auth/check/userId" />
+      <CheckStatus path="/api/auth/refresh" />
+      <CheckStatus path="/api/auth/register" />
+      <CheckStatus path="/api/auth/logout" />
+      <CheckStatus path="/api/auth/password/update" />
+      <CheckStatus path="/api/auth/user/1111" />
+      <CheckStatus path="/api/auth/auto-login" />
+      <CheckStatus path="/api/auth/profile/update" />
+      <CheckStatus path="/api/auth/account/delete" />
+      <CheckStatus path="/api/auth/find-id" />
+      <CheckStatus path="/api/auth/find-password" />
+      <CheckStatus path="/api/auth/reset-password" />
+      <CheckStatus path="/api/auth/check-email-config" />
+      <CheckStatus path="/api/profile/1111" />
+      <CheckStatus path="/api/profile/update-url" />
+      <CheckStatus path="/api/profile/kakao/1111" />
+      <CheckStatus path="/api/test/kakao-config" />
+
+      <span>Giphy API</span>
+      <CheckStatus path="/api/giphy/mixed-random" />
+
+      <span>UserProfile</span>
+      <CheckStatus path="/api/user-profile/1111/password" />
+      <CheckStatus path="/api/user-profile/1111/email" />
+      <CheckStatus path="/api/user-profile/1111" />
     </>
   );
 }
