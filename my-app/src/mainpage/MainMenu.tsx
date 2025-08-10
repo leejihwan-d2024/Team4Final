@@ -88,11 +88,13 @@ function MainMenu() {
               홈
             </Link>
           </li>
+          {/*
           <li>
             <Link to="/testmain" className="text-blue-700 hover:underline">
-              🔧테스트메인
+              
             </Link>
           </li>
+           */}
           <li>
             <Link to="/FirstPage" className="text-blue-700 hover:underline">
               로그인페이지
